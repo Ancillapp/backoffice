@@ -24,7 +24,55 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>React App</title>
+    <title>Ancillapp Backoffice</title>
+
+    <style>
+      @font-face {
+        font-family: 'Vesper Libre';
+        font-style: normal;
+        font-weight: 400;
+        src: url(%PUBLIC_URL%/fonts/vesper-libre.woff2) format('woff2');
+      }
+
+      @font-face {
+        font-family: 'Rosario';
+        font-style: normal;
+        font-weight: 400;
+        src: url(%PUBLIC_URL%/fonts/rosario.woff2) format('woff2');
+        font-display: fallback;
+      }
+
+      @font-face {
+        font-family: 'Rosario';
+        font-style: normal;
+        font-weight: 700;
+        src: url(%PUBLIC_URL%/fonts/rosario-bld.woff2) format('woff2');
+        font-display: fallback;
+      }
+
+      @font-face {
+        font-family: 'Rosario';
+        font-style: italic;
+        font-weight: 400;
+        src: url(%PUBLIC_URL%/fonts/rosario-itc.woff2) format('woff2');
+        font-display: fallback;
+      }
+
+      *, *::before, *::after {
+        box-sizing: border-box;
+      }
+
+      html, body {
+        width: 100%;
+        height: 100%;
+        min-height: 100%;
+        padding: 0;
+        margin: 0;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+        font-size: 14px;
+      }
+    </style>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

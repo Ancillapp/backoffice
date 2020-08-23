@@ -1,26 +1,23 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { FunctionComponent } from 'react';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+import { BrowserRouter } from 'react-router-dom';
+
+import { ThemeProvider, CssBaseline } from '@material-ui/core';
+
+import lightTheme from './themes/light';
+
+import Root from './containers/Root';
+import ServiceWorkerProvider from './providers/ServiceWorkerProvider';
+
+const App: FunctionComponent = () => (
+  <ThemeProvider theme={lightTheme}>
+    <CssBaseline />
+    <ServiceWorkerProvider>
+      <BrowserRouter>
+        <Root />
+      </BrowserRouter>
+    </ServiceWorkerProvider>
+  </ThemeProvider>
+);
 
 export default App;
