@@ -4,7 +4,13 @@ import { FixedSizeList, ListChildComponentProps } from 'react-window';
 
 import AutoSizer from 'react-virtualized-auto-sizer';
 
-import { Card, Grid, makeStyles, Typography } from '@material-ui/core';
+import {
+  Card,
+  makeStyles,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from '@material-ui/core';
 
 import { Link } from 'react-router-dom';
 
@@ -18,7 +24,7 @@ export interface SongsProps {
 }
 
 interface SongsRowProps extends Omit<ListChildComponentProps, 'data'> {
-  data: { height: number };
+  data: { width: number; height: number };
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -30,10 +36,17 @@ const useStyles = makeStyles((theme) => ({
     margin: '0 auto',
     padding: `0 ${theme.spacing(5)}px`,
   },
+  songsRow: {
+    display: 'grid',
+    placeItems: 'center',
+    gridTemplateColumns: 'repeat(5, 1fr)',
+  },
   songLink: {
     textDecoration: 'none',
+    margin: theme.spacing(1),
   },
   song: {
+    padding: theme.spacing(1),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -50,15 +63,19 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Songs: FunctionComponent<SongsProps> = ({ items }) => {
+  const theme = useTheme();
+
   const classes = useStyles();
 
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
+
   const SongsRow = useCallback<FunctionComponent<SongsRowProps>>(
-    ({ style, index, data: { height } }) => (
+    ({ style, index, data: { width, height } }) => (
       <div style={style}>
-        <Grid container spacing={5} style={{ height }}>
-          {[...Array(4)].map((_, subindex) => {
+        <div className={classes.songsRow} style={{ height }}>
+          {[...Array(5)].map((_, subindex) => {
             const {
-              [index * 4 + subindex]: {
+              [index * 5 + subindex]: {
                 number = undefined,
                 title = undefined,
               } = {},
@@ -67,40 +84,52 @@ const Songs: FunctionComponent<SongsProps> = ({ items }) => {
             return (
               number &&
               title && (
-                <Grid item xs={3} key={`${index}-${subindex}`}>
-                  <Link to={`/canti/${number}`} className={classes.songLink}>
-                    <Card className={classes.song}>
-                      <Typography variant="h3" align="center">
-                        {number.slice(2)}
-                      </Typography>
-                      <Typography variant="h6" align="center">
+                <Link
+                  to={`/canti/${number}`}
+                  key={`${index}-${subindex}`}
+                  className={classes.songLink}
+                  style={{
+                    width: width - theme.spacing(2),
+                    height: height - theme.spacing(2),
+                  }}
+                >
+                  <Card className={classes.song}>
+                    <Typography
+                      variant={isDesktop ? 'h2' : 'h4'}
+                      align="center"
+                    >
+                      {number.slice(2)}
+                    </Typography>
+                    {isDesktop && (
+                      <Typography variant="h6" align="center" color="secondary">
                         {title}
                       </Typography>
-                    </Card>
-                  </Link>
-                </Grid>
+                    )}
+                  </Card>
+                </Link>
               )
             );
           })}
-        </Grid>
+        </div>
       </div>
     ),
-    [classes.song, classes.songLink, items],
+    [classes.song, classes.songLink, classes.songsRow, isDesktop, items, theme],
   );
 
   return (
     <div className={classes.songsContainer}>
       <AutoSizer>
         {({ width, height }) => {
-          const itemHeight = Math.floor((width / 8) * 3);
+          const itemWidth = Math.floor(width / 5);
+          const itemHeight = Math.floor((itemWidth / 2) * 3);
 
           return (
             <FixedSizeList
               width={width}
               height={height}
-              itemCount={Math.ceil(items.length / 4)}
+              itemCount={Math.ceil(items.length / 5)}
               itemSize={itemHeight}
-              itemData={{ height: itemHeight }}
+              itemData={{ width: itemWidth, height: itemHeight }}
             >
               {SongsRow}
             </FixedSizeList>
