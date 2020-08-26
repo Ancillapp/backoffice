@@ -43,7 +43,7 @@ const MENU_ITEMS: MenuItem[] = [
   },
   {
     key: 'canti',
-    title: 'Songs',
+    title: 'Canti',
     icon: <LibraryMusicIcon />,
   },
 ];
