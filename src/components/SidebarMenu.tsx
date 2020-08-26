@@ -16,6 +16,7 @@ import {
 } from '@material-ui/core';
 
 import DashboardIcon from '@material-ui/icons/Dashboard';
+import LibraryMusicIcon from '@material-ui/icons/LibraryMusic';
 
 const useStyles = makeStyles((theme) => ({
   active: {
@@ -39,6 +40,11 @@ const MENU_ITEMS: MenuItem[] = [
     title: 'Dashboard',
     link: '/',
     icon: <DashboardIcon />,
+  },
+  {
+    key: 'canti',
+    title: 'Songs',
+    icon: <LibraryMusicIcon />,
   },
 ];
 
