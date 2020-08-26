@@ -98,7 +98,9 @@ const Songs: FunctionComponent<SongsProps> = ({ items }) => {
                       variant={isDesktop ? 'h2' : 'h4'}
                       align="center"
                     >
-                      {number.slice(2)}
+                      {number.endsWith('bis')
+                        ? number.slice(2, -2)
+                        : number.slice(2)}
                     </Typography>
                     {isDesktop && (
                       <Typography variant="h6" align="center" color="secondary">
