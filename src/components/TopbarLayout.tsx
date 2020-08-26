@@ -36,6 +36,9 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(0.5),
   },
   toolbar: theme.mixins.toolbar,
+  title: {
+    fontFamily: theme.typography.fontFamily,
+  },
   menu: {
     width: 'min(100vw - 56px, 280px)',
 
