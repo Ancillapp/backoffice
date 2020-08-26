@@ -14,6 +14,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 
 export interface TopbarLayoutProps {
   title?: ReactNode;
+  startAdornment?: ReactNode;
   topbarContent?: ReactNode;
   onMenuButtonClick?(): void;
 }
@@ -49,7 +50,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const TopbarLayout: FunctionComponent<TopbarLayoutProps> = ({
-  title = 'Steganography Toolkit',
+  title = 'Ancillapp',
+  startAdornment,
   topbarContent,
   onMenuButtonClick,
   children,
@@ -67,8 +69,8 @@ const TopbarLayout: FunctionComponent<TopbarLayoutProps> = ({
   return (
     <div className={classes.root}>
       <AppBar position="static" className={classes.appBar}>
-        <Toolbar>
-          {!isNarrow && (
+        <Toolbar className={classes.toolbar}>
+          {!isNarrow && !startAdornment ? (
             <IconButton
               edge="start"
               color="inherit"
@@ -78,8 +80,12 @@ const TopbarLayout: FunctionComponent<TopbarLayoutProps> = ({
             >
               <MenuIcon />
             </IconButton>
+          ) : (
+            startAdornment
           )}
-          <Typography variant="h6">{title}</Typography>
+          <Typography variant="h6" className={classes.title}>
+            {title}
+          </Typography>
         </Toolbar>
 
         {topbarContent}
