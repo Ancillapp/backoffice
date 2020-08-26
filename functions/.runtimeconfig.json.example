@@ -1,0 +1,6 @@
+{
+  "mongodb": {
+    "uri": "<mongodb-uri>",
+    "name": "<mongodb-name>"
+  }
+}
