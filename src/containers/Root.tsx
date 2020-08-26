@@ -16,8 +16,9 @@ import SidebarLayout from '../components/SidebarLayout';
 import SidebarMenu from '../components/SidebarMenu';
 import Loader from '../components/Loader';
 
+import SongsRouter from './SongsRouter';
+
 const Dashboard = lazy(() => import('./Dashboard'));
-const SongsList = lazy(() => import('./SongsList'));
 
 const Root: FunctionComponent = () => {
   const { assetsUpdateReady, updateAssets } = useServiceWorker();
@@ -55,7 +56,7 @@ const Root: FunctionComponent = () => {
               <Dashboard onMenuButtonClick={handleMenuButtonClick} />
             </Route>
             <Route path="/canti">
-              <SongsList onMenuButtonClick={handleMenuButtonClick} />
+              <SongsRouter onMenuButtonClick={handleMenuButtonClick} />
             </Route>
 
             <Redirect to="/" />
