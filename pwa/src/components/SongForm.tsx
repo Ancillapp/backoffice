@@ -1,5 +1,4 @@
 import React, {
-  FormEventHandler,
   FunctionComponent,
   HTMLAttributes,
   Reducer,
@@ -105,6 +104,7 @@ const SongForm: FunctionComponent<SongFormProps> = ({
   disabled,
   onChange,
   onSubmit,
+  onReset,
   ...props
 }) => {
   const classes = useStyles();
@@ -142,13 +142,29 @@ const SongForm: FunctionComponent<SongFormProps> = ({
     });
   }, []);
 
-  const handleSubmit = useCallback<FormEventHandler>(
+  const handleSubmit = useCallback<
+    NonNullable<HTMLAttributes<HTMLFormElement>['onSubmit']>
+  >(
     (event) => {
       event.preventDefault();
 
       onSubmit?.(state);
     },
     [onSubmit, state],
+  );
+
+  const handleReset = useCallback<
+    NonNullable<HTMLAttributes<HTMLFormElement>['onReset']>
+  >(
+    (event) => {
+      dispatch({
+        type: SongFormActionType.INIT,
+        value: initialState,
+      });
+
+      onReset?.(event);
+    },
+    [initialState, onReset],
   );
 
   const SongFormTextField = useCallback<FunctionComponent<TextFieldProps>>(
@@ -192,6 +208,7 @@ const SongForm: FunctionComponent<SongFormProps> = ({
         spacing={3}
         component="form"
         onSubmit={handleSubmit}
+        onReset={handleReset}
         {...props}
       >
         <Grid item xs={6} sm={3} lg={2}>
