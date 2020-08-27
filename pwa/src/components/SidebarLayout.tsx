@@ -16,6 +16,10 @@ export interface SidebarLayoutProps extends DrawerProps {
 }
 
 const useStyles = makeStyles((theme) => ({
+  root: {
+    width: '100%',
+    minHeight: '100%',
+  },
   toolbar: theme.mixins.toolbar,
   menu: {
     width: 'min(100vw - 56px, 280px)',
@@ -49,7 +53,7 @@ const SidebarLayout: FunctionComponent<SidebarLayoutProps> = ({
   const isNarrow = useMediaQuery(theme.breakpoints.up('sm'));
 
   return (
-    <>
+    <div className={classes.root}>
       <Drawer
         anchor="left"
         variant={isNarrow ? 'permanent' : 'temporary'}
@@ -64,7 +68,7 @@ const SidebarLayout: FunctionComponent<SidebarLayoutProps> = ({
       </Drawer>
 
       <div className={classes.content}>{children}</div>
-    </>
+    </div>
   );
 };
 export default SidebarLayout;

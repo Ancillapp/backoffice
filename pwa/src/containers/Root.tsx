@@ -11,17 +11,21 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 import { Snackbar, Button } from '@material-ui/core';
 
 import { useServiceWorker } from '../providers/ServiceWorkerProvider';
+import { useToken } from '../providers/FirebaseProvider';
 
 import SidebarLayout from '../components/SidebarLayout';
 import SidebarMenu from '../components/SidebarMenu';
 import Loader from '../components/Loader';
 
-import SongsRouter from './SongsRouter';
-
 const Dashboard = lazy(() => import('./Dashboard'));
+const SongsRouter = lazy(() => import('./SongsRouter'));
+const Login = lazy(() => import('./Login'));
+const Logout = lazy(() => import('./Logout'));
 
 const Root: FunctionComponent = () => {
   const { assetsUpdateReady, updateAssets } = useServiceWorker();
+
+  const token = useToken();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -43,26 +47,46 @@ const Root: FunctionComponent = () => {
     setSidebarOpen(false);
   }, []);
 
-  return (
-    <>
-      <SidebarLayout
-        menuContent={<SidebarMenu onItemClick={handleSidebarItemClick} />}
-        open={sidebarOpen}
-        onClose={handleSidebarClose}
-      >
-        <Suspense fallback={<Loader />}>
-          <Switch>
-            <Route exact path="/">
-              <Dashboard onMenuButtonClick={handleMenuButtonClick} />
-            </Route>
-            <Route path="/canti">
-              <SongsRouter onMenuButtonClick={handleMenuButtonClick} />
-            </Route>
+  if (token === undefined) {
+    return <Loader />;
+  }
 
-            <Redirect to="/" />
-          </Switch>
-        </Suspense>
-      </SidebarLayout>
+  return (
+    <Suspense fallback={<Loader />}>
+      {token ? (
+        <Switch>
+          <Route path="/disconnessione">
+            <Logout />
+          </Route>
+
+          <Route>
+            <SidebarLayout
+              menuContent={<SidebarMenu onItemClick={handleSidebarItemClick} />}
+              open={sidebarOpen}
+              onClose={handleSidebarClose}
+            >
+              <Switch>
+                <Route exact path="/">
+                  <Dashboard onMenuButtonClick={handleMenuButtonClick} />
+                </Route>
+                <Route path="/canti">
+                  <SongsRouter onMenuButtonClick={handleMenuButtonClick} />
+                </Route>
+
+                <Redirect to="/" />
+              </Switch>
+            </SidebarLayout>
+          </Route>
+        </Switch>
+      ) : (
+        <Switch>
+          <Route exact path="/accesso">
+            <Login />
+          </Route>
+
+          <Redirect to="/accesso" />
+        </Switch>
+      )}
 
       <Snackbar
         open={assetsUpdateReady}
@@ -80,7 +104,7 @@ const Root: FunctionComponent = () => {
           </Button>
         }
       />
-    </>
+    </Suspense>
   );
 };
 
