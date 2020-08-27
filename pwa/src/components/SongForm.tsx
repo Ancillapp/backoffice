@@ -1,4 +1,5 @@
 import React, {
+  FormEventHandler,
   FunctionComponent,
   HTMLAttributes,
   Reducer,
@@ -57,10 +58,14 @@ export interface SetFieldSongFormAction<
 export type SongFormAction = InitSongFormAction | SetFieldSongFormAction;
 
 export interface SongFormProps
-  extends Omit<HTMLAttributes<HTMLFormElement>, 'defaultValue' | 'onChange'> {
+  extends Omit<
+    HTMLAttributes<HTMLFormElement>,
+    'defaultValue' | 'onSubmit' | 'onChange'
+  > {
   disabled?: boolean;
   defaultValue?: SongFormValue;
-  onChange?(value: SongFormValue): void;
+  onSubmit?(value: SongFormValue): void;
+  onChange?(value: Partial<SongFormValue>): void;
 }
 
 const reduceSongForm: Reducer<SongFormState, SongFormAction> = (
@@ -99,6 +104,7 @@ const SongForm: FunctionComponent<SongFormProps> = ({
   defaultValue,
   disabled,
   onChange,
+  onSubmit,
   ...props
 }) => {
   const classes = useStyles();
@@ -136,6 +142,15 @@ const SongForm: FunctionComponent<SongFormProps> = ({
     });
   }, []);
 
+  const handleSubmit = useCallback<FormEventHandler>(
+    (event) => {
+      event.preventDefault();
+
+      onSubmit?.(state);
+    },
+    [onSubmit, state],
+  );
+
   const SongFormTextField = useCallback<FunctionComponent<TextFieldProps>>(
     ({ InputLabelProps, InputProps, ...props }) => (
       <TextField
@@ -172,7 +187,13 @@ const SongForm: FunctionComponent<SongFormProps> = ({
 
   return (
     <Page size="md">
-      <Grid container spacing={3} component="form" {...props}>
+      <Grid
+        container
+        spacing={3}
+        component="form"
+        onSubmit={handleSubmit}
+        {...props}
+      >
         <Grid item xs={6} sm={3} lg={2}>
           <SongFormTextField
             label="Numero"
