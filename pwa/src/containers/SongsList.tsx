@@ -1,17 +1,12 @@
 import React, { FunctionComponent } from 'react';
 
-import { useQuery } from 'react-query';
-
 import TopbarLayout, { TopbarLayoutProps } from '../components/TopbarLayout';
 import Loader from '../components/Loader';
-import Songs, { SongSummary } from '../components/Songs';
+import Songs from '../components/Songs';
+import { useSongs } from '../providers/ApiProvider';
 
 const SongsList: FunctionComponent<TopbarLayoutProps> = (props) => {
-  const { isLoading, data, error } = useQuery<SongSummary[], Error>(
-    'songs',
-    () =>
-      fetch(`${process.env.REACT_APP_API_URL}/songs`).then((res) => res.json()),
-  );
+  const { loading, data, error } = useSongs();
 
   if (error) {
     return <span>{error.message}</span>;
@@ -19,7 +14,7 @@ const SongsList: FunctionComponent<TopbarLayoutProps> = (props) => {
 
   return (
     <TopbarLayout title="Canti" {...props}>
-      {isLoading || !data ? <Loader /> : <Songs items={data} />}
+      {loading || !data ? <Loader /> : <Songs items={data} />}
     </TopbarLayout>
   );
 };
