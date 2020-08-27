@@ -15,6 +15,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 export interface TopbarLayoutProps {
   title?: ReactNode;
   startAdornment?: ReactNode;
+  endAdornment?: ReactNode;
   topbarContent?: ReactNode;
   onMenuButtonClick?(): void;
 }
@@ -39,6 +40,7 @@ const useStyles = makeStyles((theme) => ({
   toolbar: theme.mixins.toolbar,
   title: {
     fontFamily: theme.typography.fontFamily,
+    flex: '1 1 auto',
   },
   menu: {
     width: 'min(100vw - 56px, 280px)',
@@ -52,6 +54,7 @@ const useStyles = makeStyles((theme) => ({
 const TopbarLayout: FunctionComponent<TopbarLayoutProps> = ({
   title = 'Ancillapp',
   startAdornment,
+  endAdornment,
   topbarContent,
   onMenuButtonClick,
   children,
@@ -86,6 +89,7 @@ const TopbarLayout: FunctionComponent<TopbarLayoutProps> = ({
           <Typography variant="h6" className={classes.title}>
             {title}
           </Typography>
+          {endAdornment}
         </Toolbar>
 
         {topbarContent}

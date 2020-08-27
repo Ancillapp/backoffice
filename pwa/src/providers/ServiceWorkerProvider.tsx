@@ -1,5 +1,6 @@
 import React, {
   createContext,
+  useContext,
   FunctionComponent,
   useMemo,
   useState,
@@ -67,7 +68,7 @@ const ServiceWorkerProvider: FunctionComponent = (props) => {
 };
 
 export const useServiceWorker = (): NonNullable<ServiceWorkerContextValue> => {
-  const context = React.useContext(ServiceWorkerContext);
+  const context = useContext(ServiceWorkerContext);
 
   if (!context) {
     throw new Error(
