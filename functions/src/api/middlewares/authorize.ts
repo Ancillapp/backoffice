@@ -21,7 +21,7 @@ export const authorize: RequestHandler = async (
     .verifyIdToken(token)
     .catch(() => null);
 
-  if (decodedToken?.customClaims?.role !== 'SUPERUSER') {
+  if (decodedToken?.role !== 'SUPERUSER') {
     res.status(403).send();
     return;
   }
