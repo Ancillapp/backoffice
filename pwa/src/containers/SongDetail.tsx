@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useCallback, useState } from 'react';
 
-import { Link, LinkProps, useRouteMatch } from 'react-router-dom';
+import { Link, LinkProps, useHistory, useRouteMatch } from 'react-router-dom';
 
 import { Box, IconButton } from '@material-ui/core';
 
@@ -10,7 +10,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import CloseIcon from '@material-ui/icons/Close';
 import DoneIcon from '@material-ui/icons/Done';
 
-import { useSong } from '../providers/ApiProvider';
+import { useSong, useSongUpdate } from '../providers/ApiProvider';
 
 import TopbarLayout, { TopbarLayoutProps } from '../components/TopbarLayout';
 import Loader from '../components/Loader';
@@ -19,18 +19,24 @@ import SongForm, { SongFormProps, SongLanguage } from '../components/SongForm';
 const mapSongNumberToLanguage = (number: string): SongLanguage =>
   number.startsWith('DE') ? SongLanguage.GERMAN : SongLanguage.ITALIAN;
 
+const mapLanguageToSongNumberPrefix = (language: SongLanguage): string =>
+  language === SongLanguage.GERMAN ? 'DE' : 'IT';
+
 const SongDetail: FunctionComponent<Omit<
   TopbarLayoutProps,
   'startAdornment'
 >> = (props) => {
   const [editMode, setEditMode] = useState(false);
-  const [updatingSong, setUpdatingSong] = useState(false);
 
   const {
     params: { number },
   } = useRouteMatch<{ number: string }>();
 
+  const history = useHistory();
+
   const { loading, data, error } = useSong(number);
+
+  const [updateSong, { loading: updatingSong }] = useSongUpdate(number);
 
   const toggleEditMode = useCallback(() => {
     setEditMode((oldEditMode) => !oldEditMode);
@@ -46,16 +52,28 @@ const SongDetail: FunctionComponent<Omit<
   );
 
   const handleSubmit = useCallback<NonNullable<SongFormProps['onSubmit']>>(
-    (data) => {
-      setUpdatingSong(true);
+    async ({ number, title, content, language }) => {
+      const computedNumber = `${mapLanguageToSongNumberPrefix(
+        language,
+      )}${number}`;
 
-      // TODO: actually update the song
-      console.log(data);
+      const payload = {
+        ...(data?.number !== computedNumber && { number: computedNumber }),
+        ...(data?.title !== title && { title }),
+        ...(data?.content !== content && { content }),
+      };
 
-      setUpdatingSong(false);
+      if (Object.keys(payload).length > 0) {
+        await updateSong(payload);
+      }
+
       setEditMode(false);
+
+      if (data?.number !== computedNumber) {
+        history.replace(`/canti/${computedNumber}`);
+      }
     },
-    [],
+    [data?.content, data?.number, data?.title, history, updateSong],
   );
 
   const handleReset = useCallback<NonNullable<SongFormProps['onReset']>>(() => {
