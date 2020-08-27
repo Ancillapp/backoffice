@@ -57,3 +57,5 @@ export interface Song {
 export type SongSummary = Pick<Song, 'number' | 'title'>;
 
 export const useSongs = () => useApi<SongSummary[]>('songs');
+
+export const useSong = (number: string) => useApi<Song>(`songs/${number}`);
