@@ -6,7 +6,7 @@ import React, {
   useEffect,
 } from 'react';
 
-import type { app, User } from 'firebase';
+import type { app, auth, User } from 'firebase';
 
 export interface FirebaseProviderProps {
   firebase: app.App;
@@ -38,19 +38,48 @@ export const useUser = () => {
 
   const auth = firebase.auth();
 
-  const [user, setUser] = useState<User | undefined>(
+  const [user, setUser] = useState<User | null | undefined>(
     auth.currentUser || undefined,
   );
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((nextUser) =>
-      setUser(nextUser || undefined),
+      setUser(nextUser || null),
     );
 
     return () => unsubscribe();
-  }, []);
+  }, [auth]);
 
   return user;
+};
+
+export interface Token extends Omit<auth.IdTokenResult, 'claims'> {
+  claims: {
+    role: string;
+  };
+}
+
+export const useToken = () => {
+  const user = useUser();
+
+  const [token, setToken] = useState<Token | null | undefined>(undefined);
+
+  useEffect(() => {
+    const handleRoles = async (): Promise<void> => {
+      if (user === null) {
+        setToken(null);
+        return;
+      }
+
+      const data = await user?.getIdTokenResult();
+
+      setToken(data as Token | undefined);
+    };
+
+    handleRoles();
+  }, [user]);
+
+  return token;
 };
 
 export default FirebaseProvider;
