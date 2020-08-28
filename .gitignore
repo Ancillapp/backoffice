@@ -6,3 +6,4 @@ functions/lib/
 .env
 .runtimeconfig.json
 sitemap.xml
+.firebase*
