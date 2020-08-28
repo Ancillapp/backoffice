@@ -26,6 +26,6 @@ jobs:
           REACT_APP_FIREBASE_PROJECT_ID: "ancillapp-staging"
           REACT_APP_FIREBASE_APP_ID: "1:763416140715:web:abc575d84c1e9e346210ee"
       - name: Deploy
-        run: npx firebase deploy --project ancillapp-staging --config firebase.json --token "$FIREBASE_TOKEN" --only hosting:ancillapp-backoffice-staging,functions:backoffice
+        run: yarn firebase deploy --project ancillapp-staging --config firebase.json --token "$FIREBASE_TOKEN" --only hosting:ancillapp-backoffice-staging,functions:backoffice
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
