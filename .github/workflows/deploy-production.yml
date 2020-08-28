@@ -1,0 +1,31 @@
+name: Deploy to production
+on:
+  push:
+    branches:
+      - master
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Use Node.js 14
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: 14
+      - name: Install deps
+        run: yarn install
+      - name: Build
+        run: yarn build
+        env:
+          REACT_APP_API_URL: "/api"
+          REACT_APP_FIREBASE_API_KEY: "AIzaSyB6D52G0iHr9TREcR3Lu6OQN8a2jtqpQWA"
+          REACT_APP_FIREBASE_AUTH_DOMAIN: "ffb-ancillapp.firebaseapp.com"
+          REACT_APP_FIREBASE_PROJECT_ID: "ffb-ancillapp"
+          REACT_APP_FIREBASE_APP_ID: "1:890551951388:web:e424e3022dcab15c47bfd9"
+      - name: Deploy
+        run: yarn firebase deploy --project ffb-ancillapp --config firebase.production.json --token "$FIREBASE_TOKEN" --only hosting:ancillapp-backoffice,functions:backoffice
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}

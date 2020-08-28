@@ -1,0 +1,31 @@
+name: Deploy to staging
+on:
+  push:
+    branches:
+      - develop
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Use Node.js 14
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: 14
+      - name: Install deps
+        run: yarn install
+      - name: Build
+        run: yarn build
+        env:
+          REACT_APP_API_URL: "/api"
+          REACT_APP_FIREBASE_API_KEY: "AIzaSyBrqhBWuzUtf_bVfamE9xPb-e7E5XBCOH0"
+          REACT_APP_FIREBASE_AUTH_DOMAIN: "ancillapp-staging.firebaseapp.com"
+          REACT_APP_FIREBASE_PROJECT_ID: "ancillapp-staging"
+          REACT_APP_FIREBASE_APP_ID: "1:763416140715:web:abc575d84c1e9e346210ee"
+      - name: Deploy
+        run: yarn firebase deploy --project ancillapp-staging --config firebase.json --token "$FIREBASE_TOKEN" --only hosting:ancillapp-backoffice-staging,functions:backoffice
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
