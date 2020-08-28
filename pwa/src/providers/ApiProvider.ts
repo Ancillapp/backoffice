@@ -123,3 +123,8 @@ export const useSongUpdate = (number: string) =>
   useMutation<Song, Partial<Song>>(`songs/${number}`, {
     method: 'PATCH',
   });
+
+export const useSongDeletion = (number: string) =>
+  useMutation<void, void>(`songs/${number}`, {
+    method: 'DELETE',
+  });
