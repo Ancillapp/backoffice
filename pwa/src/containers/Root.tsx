@@ -101,7 +101,7 @@ const Root: FunctionComponent = () => {
             disabled={isUpdating}
             onClick={handleUpdate}
           >
-            {isUpdating && <Loader size={24} color="secondary" />}
+            {isUpdating && <Loader size={18} color="secondary" />}
             Update now
           </Button>
         }
