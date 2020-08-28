@@ -4,7 +4,7 @@
   },
   "hosting": {
     "site": "ancillapp-backoffice-staging",
-    "public": "build",
+    "public": "pwa/build",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
       {
