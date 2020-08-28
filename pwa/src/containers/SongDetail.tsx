@@ -15,6 +15,7 @@ import { useSong, useSongUpdate } from '../providers/ApiProvider';
 import TopbarLayout, { TopbarLayoutProps } from '../components/TopbarLayout';
 import Loader from '../components/Loader';
 import SongForm, { SongFormProps, SongLanguage } from '../components/SongForm';
+import PageSkeleton from '../components/PageSkeleton';
 
 const mapSongNumberToLanguage = (number: string): SongLanguage =>
   number.startsWith('DE') ? SongLanguage.GERMAN : SongLanguage.ITALIAN;
@@ -84,13 +85,11 @@ const SongDetail: FunctionComponent<Omit<
     return <span>{error.message}</span>;
   }
 
-  return (
+  return loading || !data ? (
+    <PageSkeleton />
+  ) : (
     <TopbarLayout
-      title={
-        loading || !data
-          ? 'Caricamento...'
-          : `${data.number.slice(2)}. ${data.title}`
-      }
+      title={`${data.number.slice(2)}. ${data.title}`}
       startAdornment={
         <Box color="primary.contrastText" marginRight={0.5} clone>
           <Link to="/canti" onClick={handleBackClick}>
@@ -159,21 +158,17 @@ const SongDetail: FunctionComponent<Omit<
       }
       {...props}
     >
-      {loading || !data ? (
-        <Loader />
-      ) : (
-        <SongForm
-          id="edit-song-form"
-          disabled={!editMode || updatingSong}
-          defaultValue={{
-            ...data,
-            number: data.number.slice(2),
-            language: mapSongNumberToLanguage(data.number),
-          }}
-          onSubmit={handleSubmit}
-          onReset={handleReset}
-        />
-      )}
+      <SongForm
+        id="edit-song-form"
+        disabled={!editMode || updatingSong}
+        defaultValue={{
+          ...data,
+          number: data.number.slice(2),
+          language: mapSongNumberToLanguage(data.number),
+        }}
+        onSubmit={handleSubmit}
+        onReset={handleReset}
+      />
     </TopbarLayout>
   );
 };

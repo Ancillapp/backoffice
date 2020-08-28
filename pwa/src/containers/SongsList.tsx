@@ -1,9 +1,9 @@
 import React, { FunctionComponent } from 'react';
 
 import TopbarLayout, { TopbarLayoutProps } from '../components/TopbarLayout';
-import Loader from '../components/Loader';
 import Songs from '../components/Songs';
 import { useSongs } from '../providers/ApiProvider';
+import PageSkeleton from '../components/PageSkeleton';
 
 const SongsList: FunctionComponent<TopbarLayoutProps> = (props) => {
   const { loading, data, error } = useSongs();
@@ -12,9 +12,11 @@ const SongsList: FunctionComponent<TopbarLayoutProps> = (props) => {
     return <span>{error.message}</span>;
   }
 
-  return (
+  return loading || !data ? (
+    <PageSkeleton />
+  ) : (
     <TopbarLayout title="Canti" {...props}>
-      {loading || !data ? <Loader /> : <Songs items={data} />}
+      <Songs items={data} />
     </TopbarLayout>
   );
 };
