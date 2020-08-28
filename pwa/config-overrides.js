@@ -2,7 +2,11 @@ const CopyPlugin = require('copy-webpack-plugin');
 const { GenerateSW, InjectManifest } = require('workbox-webpack-plugin');
 const path = require('path');
 
-module.exports = (config) => {
+module.exports = (config, env) => {
+  if (env !== 'production') {
+    return config;
+  }
+
   config.plugins.unshift(
     new CopyPlugin({
       patterns: [
