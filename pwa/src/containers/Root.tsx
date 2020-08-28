@@ -16,6 +16,7 @@ import { useToken } from '../providers/FirebaseProvider';
 import SidebarLayout from '../components/SidebarLayout';
 import SidebarMenu from '../components/SidebarMenu';
 import Loader from '../components/Loader';
+import PageSkeleton from '../components/PageSkeleton';
 
 const Dashboard = lazy(() => import('./Dashboard'));
 const SongsRouter = lazy(() => import('./SongsRouter'));
@@ -65,16 +66,18 @@ const Root: FunctionComponent = () => {
               open={sidebarOpen}
               onClose={handleSidebarClose}
             >
-              <Switch>
-                <Route exact path="/">
-                  <Dashboard onMenuButtonClick={handleMenuButtonClick} />
-                </Route>
-                <Route path="/canti">
-                  <SongsRouter onMenuButtonClick={handleMenuButtonClick} />
-                </Route>
+              <Suspense fallback={<PageSkeleton />}>
+                <Switch>
+                  <Route exact path="/">
+                    <Dashboard onMenuButtonClick={handleMenuButtonClick} />
+                  </Route>
+                  <Route path="/canti">
+                    <SongsRouter onMenuButtonClick={handleMenuButtonClick} />
+                  </Route>
 
-                <Redirect to="/" />
-              </Switch>
+                  <Redirect to="/" />
+                </Switch>
+              </Suspense>
             </SidebarLayout>
           </Route>
         </Switch>
