@@ -125,6 +125,6 @@ export const useSongUpdate = (number: string) =>
   });
 
 export const useSongDeletion = (number: string) =>
-  useMutation<void, void>(`songs/${number}`, {
+  useMutation<Song, void>(`songs/${number}`, {
     method: 'DELETE',
   });
