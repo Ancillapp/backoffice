@@ -1,4 +1,7 @@
 {
+  "functions": {
+    "runtime": "nodejs10"
+  },
   "hosting": {
     "site": "ancillapp-backoffice-staging",
     "public": "build",
