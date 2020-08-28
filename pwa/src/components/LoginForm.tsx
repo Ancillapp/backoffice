@@ -27,6 +27,10 @@ const useStyles = makeStyles((theme) => ({
     height: '100%',
     flex: '1 1 auto',
   },
+  icon: {
+    width: 72,
+    borderRadius: '50%',
+  },
   paper: {
     display: 'flex',
     flexDirection: 'column',
@@ -73,6 +77,11 @@ const LoginForm: FunctionComponent<LoginFormProps> = ({
   return (
     <div className={classes.root}>
       <Paper component="form" className={classes.paper} onSubmit={handleSubmit}>
+        <img
+          className={classes.icon}
+          src={`${process.env.PUBLIC_URL}/images/icons/apple-touch-icon.png`}
+          alt="Ancillapp Backoffice"
+        />
         <Typography variant="h4">Accedi</Typography>
         <TextField
           type="email"
