@@ -49,7 +49,7 @@ const SongDetail: FunctionComponent<Omit<
 
   const history = useHistory();
 
-  const { loading, data, error } = useSong(number);
+  const { loading, data, error, refetch } = useSong(number);
 
   const [updateSong, { loading: updatingSong }] = useSongUpdate(number);
   const [deleteSong, { loading: deletingSong }] = useSongDeletion(number);
@@ -89,6 +89,7 @@ const SongDetail: FunctionComponent<Omit<
 
       if (Object.keys(payload).length > 0) {
         await updateSong(payload);
+        await refetch();
       }
 
       setEditMode(false);
@@ -97,7 +98,7 @@ const SongDetail: FunctionComponent<Omit<
         history.replace(`/canti/${computedNumber}`);
       }
     },
-    [data?.content, data?.number, data?.title, history, updateSong],
+    [data?.content, data?.number, data?.title, history, refetch, updateSong],
   );
 
   const handleReset = useCallback<NonNullable<SongFormProps['onReset']>>(() => {
