@@ -96,9 +96,8 @@ const Root: FunctionComponent = () => {
         message="Update available!"
         action={
           <Button
-            color="secondary"
+            color="inherit"
             size="small"
-            autoFocus
             disabled={isUpdating}
             onClick={handleUpdate}
           >
