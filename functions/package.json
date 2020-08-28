@@ -7,6 +7,9 @@
     "start:functions": "cross-env NODE_ENV=development tsc -w",
     "build": "cross-env NODE_ENV=production tsc"
   },
+  "engines": {
+    "node": "10"
+  },
   "main": "lib/index.js",
   "dependencies": {
     "body-parser": "^1.19.0",
