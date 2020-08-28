@@ -6,7 +6,7 @@ import React, {
   useState,
   useEffect,
 } from 'react';
-import * as serviceWorker from '../serviceWorker';
+import * as serviceWorker from '../serviceWorker/browser';
 
 export type ServiceWorkerContextValue =
   | {
