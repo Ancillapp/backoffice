@@ -14,7 +14,8 @@
     "build:functions": "yarn workspace ancillapp-backoffice-functions run build"
   },
   "devDependencies": {
-    "firebase-tools": "^8.7.0",
+    "firebase-tools": "^8.9.2",
+    "lerna": "^3.22.1",
     "typescript": "^4.0.2"
   },
   "workspaces": [
