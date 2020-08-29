@@ -54,7 +54,7 @@ const Root: FunctionComponent = () => {
 
   return (
     <Suspense fallback={<Loader />}>
-      {token ? (
+      {token?.claims.role === 'SUPERUSER' ? (
         <Switch>
           <Route path="/disconnessione">
             <Logout />

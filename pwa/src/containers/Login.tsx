@@ -24,11 +24,22 @@ const Login: FunctionComponent = () => {
       try {
         setLoading(true);
 
-        await firebase.auth().signInWithEmailAndPassword(email, password);
-      } catch ({ code }) {
+        const auth = firebase.auth();
+
+        const { user } = await auth.signInWithEmailAndPassword(email, password);
+
+        const token = await user?.getIdTokenResult();
+
+        if (token?.claims.role !== 'SUPERUSER') {
+          await auth.signOut();
+
+          throw new Error('INVALID_USER');
+        }
+      } catch ({ code, message }) {
         setLoading(false);
         setError(
-          code === 'auth/invalid-email' ||
+          message === 'INVALID_USER' ||
+            code === 'auth/invalid-email' ||
             code === 'auth/wrong-password' ||
             code === 'auth/user-not-found'
             ? 'Email o password non corretti.'
