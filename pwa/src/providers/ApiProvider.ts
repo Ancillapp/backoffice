@@ -18,37 +18,31 @@ export const useApi = <T>(
   const { isLoading: loading, data, error, refetch: refetchQuery } = useQuery<
     T,
     Error
-  >(
-    url,
-    async () => {
-      const auth = firebase.auth();
+  >(url, async () => {
+    const auth = firebase.auth();
 
-      if (!auth.currentUser) {
-        throw new Error('User must be logged in to use APIs');
-      }
+    if (!auth.currentUser) {
+      throw new Error('User must be logged in to use APIs');
+    }
 
-      const token = await auth.currentUser.getIdToken();
+    const token = await auth.currentUser.getIdToken();
 
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/${url}`, {
-        ...options,
-        headers: {
-          accept: 'application/json',
-          authorization: `Bearer ${token}`,
-          ...options.headers,
-        },
-      });
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/${url}`, {
+      ...options,
+      headers: {
+        accept: 'application/json',
+        authorization: `Bearer ${token}`,
+        ...options.headers,
+      },
+    });
 
-      if (res.status === 401 || res.status === 403) {
-        firebase.auth().signOut();
-        return undefined;
-      }
+    if (res.status === 401 || res.status === 403) {
+      firebase.auth().signOut();
+      return undefined;
+    }
 
-      return res.status === 204 ? undefined : res.json();
-    },
-    {
-      cacheTime: 0,
-    },
-  );
+    return res.status === 204 ? undefined : res.json();
+  });
 
   const refetch = useCallback(
     () => refetchQuery({ throwOnError: true }) as Promise<T>,
