@@ -89,14 +89,15 @@ const SongDetail: FunctionComponent<Omit<
 
       if (Object.keys(payload).length > 0) {
         await updateSong(payload);
-        await refetch();
+
+        if (data?.number !== computedNumber) {
+          history.replace(`/canti/${computedNumber}`);
+        } else {
+          await refetch();
+        }
       }
 
       setEditMode(false);
-
-      if (data?.number !== computedNumber) {
-        history.replace(`/canti/${computedNumber}`);
-      }
     },
     [data?.content, data?.number, data?.title, history, refetch, updateSong],
   );
