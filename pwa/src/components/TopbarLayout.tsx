@@ -73,7 +73,7 @@ const TopbarLayout: FunctionComponent<TopbarLayoutProps> = ({
     <div className={classes.root}>
       <AppBar position="static" className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
-          {!isNarrow && !startAdornment ? (
+          {!isNarrow && typeof startAdornment === 'undefined' ? (
             <IconButton
               edge="start"
               color="inherit"

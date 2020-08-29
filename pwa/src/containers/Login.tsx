@@ -48,8 +48,8 @@ const Login: FunctionComponent = () => {
         color="primary"
         disabled={loading}
       >
-        Accedi
         {loading && <Loader size={18} />}
+        Accedi
       </Button>
     </LoginForm>
   );

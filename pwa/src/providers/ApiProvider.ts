@@ -6,6 +6,7 @@ export interface UseApiValue<T> {
   loading: boolean;
   data?: T;
   error?: Error;
+  refetch(): Promise<T>;
 }
 
 export const useApi = <T>(
@@ -14,40 +15,41 @@ export const useApi = <T>(
 ): UseApiValue<T> => {
   const firebase = useFirebase();
 
-  const { isLoading: loading, data, error } = useQuery<T, Error>(
-    url,
-    async () => {
-      const auth = firebase.auth();
+  const { isLoading: loading, data, error, refetch: refetchQuery } = useQuery<
+    T,
+    Error
+  >(url, async () => {
+    const auth = firebase.auth();
 
-      if (!auth.currentUser) {
-        throw new Error('User must be logged in to use APIs');
-      }
+    if (!auth.currentUser) {
+      throw new Error('User must be logged in to use APIs');
+    }
 
-      const token = await auth.currentUser.getIdToken();
+    const token = await auth.currentUser.getIdToken();
 
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/${url}`, {
-        ...options,
-        headers: {
-          accept: 'application/json',
-          authorization: `Bearer ${token}`,
-          ...options.headers,
-        },
-      });
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/${url}`, {
+      ...options,
+      headers: {
+        accept: 'application/json',
+        authorization: `Bearer ${token}`,
+        ...options.headers,
+      },
+    });
 
-      if (res.status === 401 || res.status === 403) {
-        firebase.auth().signOut();
-        return undefined;
-      }
+    if (res.status === 401 || res.status === 403) {
+      firebase.auth().signOut();
+      return undefined;
+    }
 
-      return res.status === 204 ? undefined : res.json();
-    },
+    return res.status === 204 ? undefined : res.json();
+  });
+
+  const refetch = useCallback(
+    () => refetchQuery({ throwOnError: true }) as Promise<T>,
+    [refetchQuery],
   );
 
-  if (error) {
-    console.log(error);
-  }
-
-  return { loading, data, error: error || undefined };
+  return { loading, data, error: error || undefined, refetch };
 };
 
 export interface Song {
@@ -65,7 +67,7 @@ export const useSong = (number: string) => useApi<Song>(`songs/${number}`);
 export const useMutation = <T, B>(
   url: string,
   options: RequestInit = {},
-): [(body: B) => Promise<T>, UseApiValue<T>] => {
+): [(body: B) => Promise<T>, Omit<UseApiValue<T>, 'refetch'>] => {
   const firebase = useFirebase();
 
   const [loading, setLoading] = useState(false);
@@ -122,4 +124,14 @@ export const useMutation = <T, B>(
 export const useSongUpdate = (number: string) =>
   useMutation<Song, Partial<Song>>(`songs/${number}`, {
     method: 'PATCH',
+  });
+
+export const useSongDeletion = (number: string) =>
+  useMutation<Song, void>(`songs/${number}`, {
+    method: 'DELETE',
+  });
+
+export const useSongCreation = () =>
+  useMutation<Song, Song>('songs', {
+    method: 'POST',
   });
