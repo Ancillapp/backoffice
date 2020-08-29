@@ -1,5 +1,7 @@
 import React, { FunctionComponent, ReactNode } from 'react';
 
+import { Link } from 'react-router-dom';
+
 import {
   Drawer,
   Toolbar,
@@ -9,7 +11,10 @@ import {
   useTheme,
   Divider,
   DrawerProps,
+  IconButton,
 } from '@material-ui/core';
+
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 export interface SidebarLayoutProps extends DrawerProps {
   menuContent?: ReactNode;
@@ -20,7 +25,10 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     minHeight: '100%',
   },
-  toolbar: theme.mixins.toolbar,
+  toolbar: {
+    ...theme.mixins.toolbar,
+    justifyContent: 'space-between',
+  },
   menu: {
     width: 'min(100vw - 56px, 280px)',
 
@@ -62,6 +70,11 @@ const SidebarLayout: FunctionComponent<SidebarLayoutProps> = ({
       >
         <Toolbar className={classes.toolbar}>
           <Typography variant="h6">Ancillapp Backoffice</Typography>
+          <Link to="/disconnessione">
+            <IconButton edge="end" aria-label="esci">
+              <ExitToAppIcon />
+            </IconButton>
+          </Link>
         </Toolbar>
         <Divider />
         <div className={classes.menu}>{menuContent}</div>
