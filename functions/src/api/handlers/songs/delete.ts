@@ -1,5 +1,4 @@
-import { mongoDb } from '../../../helpers/mongo';
-import { Song } from '../../../models/mongo';
+import { remove } from '../../../services/song';
 
 import type { RequestHandler } from 'express';
 
@@ -7,15 +6,12 @@ export const deleteSong: RequestHandler = async (
   { params: { number } },
   res,
 ) => {
-  const db = await mongoDb;
-  const songsCollection = db.collection<Song>('songs');
+  const deletedSong = await remove(number);
 
-  const response = await songsCollection.findOneAndDelete({ number });
-
-  if (!response.value) {
+  if (!deletedSong) {
     res.status(404).send();
     return;
   }
 
-  res.json(response.value);
+  res.json(deletedSong);
 };
