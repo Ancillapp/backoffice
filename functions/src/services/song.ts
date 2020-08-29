@@ -83,3 +83,21 @@ export const remove = async (number: string) => {
 
   return response.value || null;
 };
+
+export const create = async (song: SongData) => {
+  const existingSong = await get(song.number);
+
+  if (existingSong) {
+    return null;
+  }
+
+  const songsCollection = await getSongsCollection();
+
+  const response = await songsCollection.insertOne(song);
+
+  if (response.insertedCount !== 1) {
+    return null;
+  }
+
+  return song;
+};

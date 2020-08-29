@@ -11,6 +11,7 @@ import { getSongs } from './handlers/songs/list';
 import { getSong } from './handlers/songs/detail';
 import { updateSong } from './handlers/songs/update';
 import { deleteSong } from './handlers/songs/delete';
+import { createSong } from './handlers/songs/create';
 import { authorize } from './middlewares/authorize';
 
 const app = express();
@@ -25,5 +26,6 @@ app.get('/api/songs', authorize, getSongs);
 app.get('/api/songs/:number', authorize, getSong);
 app.patch('/api/songs/:number', authorize, bodyParser.json(), updateSong);
 app.delete('/api/songs/:number', authorize, deleteSong);
+app.post('/api/songs', authorize, createSong);
 
 export const api = functions.https.onRequest(app);
