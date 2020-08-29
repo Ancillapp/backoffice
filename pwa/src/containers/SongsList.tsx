@@ -1,9 +1,13 @@
 import React, { FunctionComponent } from 'react';
 
+import AddIcon from '@material-ui/icons/Add';
+
 import TopbarLayout, { TopbarLayoutProps } from '../components/TopbarLayout';
 import Songs from '../components/Songs';
 import { useSongs } from '../providers/ApiProvider';
-import PageSkeleton from '../components/PageSkeleton';
+import AutosizedFab from '../components/FloatingActionButton';
+import { Link } from 'react-router-dom';
+import Loader from '../components/Loader';
 
 const SongsList: FunctionComponent<TopbarLayoutProps> = (props) => {
   const { loading, data, error } = useSongs();
@@ -12,12 +16,18 @@ const SongsList: FunctionComponent<TopbarLayoutProps> = (props) => {
     return <span>{error.message}</span>;
   }
 
-  return loading || !data ? (
-    <PageSkeleton />
-  ) : (
-    <TopbarLayout title="Canti" {...props}>
-      <Songs items={data} />
-    </TopbarLayout>
+  return (
+    <>
+      <TopbarLayout title="Canti" {...props}>
+        {loading || !data ? <Loader /> : <Songs items={data} />}
+      </TopbarLayout>
+
+      <Link to="/canti/nuovo">
+        <AutosizedFab>
+          <AddIcon />
+        </AutosizedFab>
+      </Link>
+    </>
   );
 };
 
