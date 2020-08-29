@@ -1,6 +1,8 @@
 import { mongoDb } from '../helpers/mongo';
 import { Song } from '../models/mongo';
 
+export type SongData = Omit<Song, '_id'>;
+
 const getSongsCollection = async () => {
   const db = await mongoDb;
 
@@ -19,7 +21,7 @@ export const get = async (number: string) => {
     },
   );
 
-  return song as Song | null;
+  return song as SongData | null;
 };
 
 export const list = async (fullData?: boolean) => {
@@ -33,12 +35,11 @@ export const list = async (fullData?: boolean) => {
           _id: 0,
           number: 1,
           title: 1,
-          language: 1,
           ...(fullData && { content: 1 }),
         },
       },
     )
-    .toArray()) as Song[];
+    .toArray()) as SongData[] | Omit<SongData, 'content'>[];
 
   return songs.sort(({ number: a }, { number: b }) => {
     const normalizedA = a.slice(2).replace('bis', '').padStart(4, '0');
@@ -54,7 +55,7 @@ export const list = async (fullData?: boolean) => {
 
 export const update = async (
   number: string,
-  { number: newNumber, title, content }: Partial<Song>,
+  { number: newNumber, title, content }: Partial<SongData>,
 ) => {
   const songsCollection = await getSongsCollection();
 
