@@ -191,6 +191,7 @@ const SongForm: FunctionComponent<SongFormProps> = ({
           },
           ...InputProps,
         }}
+        required
         {...props}
       />
     ),
@@ -221,10 +222,10 @@ const SongForm: FunctionComponent<SongFormProps> = ({
         </Grid>
         <Grid item xs={6} sm={3} lg={2}>
           <FormControl variant="outlined" fullWidth>
-            <InputLabel htmlFor="song-language">Lingua</InputLabel>
+            <InputLabel htmlFor="song-language">Lingua *</InputLabel>
             <Select
               native
-              label="Lingua"
+              label="Lingua *"
               inputProps={{
                 name: 'language',
                 id: 'song-language',
@@ -233,6 +234,7 @@ const SongForm: FunctionComponent<SongFormProps> = ({
               onChange={handleLanguageChange}
               value={state.language}
               disabled={disabled}
+              required
             >
               <option value={SongLanguage.ITALIAN}>Italiano</option>
               <option value={SongLanguage.GERMAN}>Tedesco</option>
