@@ -5,6 +5,7 @@ import { useRouteMatch, Switch, Route, Redirect } from 'react-router-dom';
 import { TopbarLayoutProps } from '../components/TopbarLayout';
 
 const SongsList = lazy(() => import('./SongsList'));
+const NewSong = lazy(() => import('./NewSong'));
 const SongDetail = lazy(() => import('./SongDetail'));
 
 const SongsRouter: FunctionComponent<TopbarLayoutProps> = (props) => {
@@ -17,7 +18,7 @@ const SongsRouter: FunctionComponent<TopbarLayoutProps> = (props) => {
       </Route>
 
       <Route exact path={`${path}/nuovo`}>
-        <h1>Nuovo canto</h1>
+        <NewSong />
       </Route>
 
       <Route exact path={`${path}/:number`}>
