@@ -6,13 +6,15 @@ import React, {
   useEffect,
 } from 'react';
 
-import type { app, auth, User } from 'firebase';
+import type Firebase from 'firebase';
 
 export interface FirebaseProviderProps {
-  firebase: app.App;
+  firebase: typeof Firebase;
 }
 
-export const FirebaseContext = createContext<app.App | undefined>(undefined);
+export const FirebaseContext = createContext<typeof Firebase | undefined>(
+  undefined,
+);
 
 export const FirebaseProvider: FunctionComponent<FirebaseProviderProps> = ({
   firebase,
@@ -38,7 +40,7 @@ export const useUser = () => {
 
   const auth = firebase.auth();
 
-  const [user, setUser] = useState<User | null | undefined>(
+  const [user, setUser] = useState<Firebase.User | null | undefined>(
     auth.currentUser || undefined,
   );
 
@@ -53,7 +55,7 @@ export const useUser = () => {
   return user;
 };
 
-export interface Token extends Omit<auth.IdTokenResult, 'claims'> {
+export interface Token extends Omit<Firebase.auth.IdTokenResult, 'claims'> {
   claims: {
     role: string;
   };

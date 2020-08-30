@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useCallback, useState } from 'react';
 
-import { Button, FormHelperText } from '@material-ui/core';
+import { Button, FormHelperText, Typography } from '@material-ui/core';
 
 import { useFirebase } from '../providers/FirebaseProvider';
 
@@ -50,6 +50,33 @@ const Login: FunctionComponent = () => {
     [firebase],
   );
 
+  const handleGoogleLogin = useCallback(async () => {
+    try {
+      setLoading(true);
+
+      const auth = firebase.auth();
+
+      const { user } = await auth.signInWithPopup(
+        new firebase.auth.GoogleAuthProvider(),
+      );
+
+      const token = await user?.getIdTokenResult();
+
+      if (token?.claims.role !== 'SUPERUSER') {
+        await auth.signOut();
+
+        throw new Error('INVALID_USER');
+      }
+    } catch ({ code, message }) {
+      setLoading(false);
+      setError(
+        message === 'INVALID_USER'
+          ? 'Email o password non corretti.'
+          : "C'è stato un errore non previsto, riprova più tardi.",
+      );
+    }
+  }, [firebase]);
+
   return (
     <LoginForm onChange={handleChange} onSubmit={handleSubmit}>
       {error && <FormHelperText error>{error}</FormHelperText>}
@@ -61,6 +88,10 @@ const Login: FunctionComponent = () => {
       >
         {loading && <Loader size={18} />}
         Accedi
+      </Button>
+      <Typography variant="subtitle1">Oppure</Typography>
+      <Button variant="contained" onClick={handleGoogleLogin}>
+        Accedi con Google
       </Button>
     </LoginForm>
   );
