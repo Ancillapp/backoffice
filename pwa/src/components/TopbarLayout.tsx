@@ -28,6 +28,10 @@ const useStyles = makeStyles((theme) => ({
   },
   appBar: {
     flex: '0 0 auto',
+    background:
+      theme.palette.type === 'dark'
+        ? theme.palette.background.paper
+        : theme.palette.primary.main,
   },
   content: {
     flex: '1 1 auto',
