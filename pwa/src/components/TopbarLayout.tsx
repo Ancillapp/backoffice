@@ -45,6 +45,10 @@ const useStyles = makeStyles((theme) => ({
   title: {
     fontFamily: theme.typography.fontFamily,
     flex: '1 1 auto',
+    color:
+      theme.palette.type === 'dark'
+        ? theme.palette.text.primary
+        : theme.palette.primary.contrastText,
   },
   menu: {
     width: 'min(100vw - 56px, 280px)',
