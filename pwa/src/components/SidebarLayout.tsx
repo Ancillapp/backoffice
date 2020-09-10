@@ -16,6 +16,8 @@ import {
 
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
+import TauIcon from './icons/Tau';
+
 export interface SidebarLayoutProps extends DrawerProps {
   menuContent?: ReactNode;
 }
@@ -28,6 +30,19 @@ const useStyles = makeStyles((theme) => ({
   toolbar: {
     ...theme.mixins.toolbar,
     justifyContent: 'space-between',
+  },
+  header: {
+    display: 'flex',
+
+    '& > svg': {
+      height: theme.spacing(3.5),
+      paddingBottom: theme.spacing(0.5),
+      marginRight: theme.spacing(2),
+    },
+
+    '& > span': {
+      paddingTop: theme.spacing(0.5),
+    },
   },
   menu: {
     width: 'min(100vw - 56px, 280px)',
@@ -69,7 +84,10 @@ const SidebarLayout: FunctionComponent<SidebarLayoutProps> = ({
         {...props}
       >
         <Toolbar className={classes.toolbar}>
-          <Typography variant="h6">Ancillapp Backoffice</Typography>
+          <Typography variant="h6" className={classes.header}>
+            <TauIcon />
+            <span>Ancillapp Backoffice</span>
+          </Typography>
           <Link to="/disconnessione">
             <IconButton edge="end" aria-label="esci">
               <ExitToAppIcon />
