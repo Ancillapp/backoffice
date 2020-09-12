@@ -8,7 +8,7 @@ export interface Ancilla extends MongoDBRecord {
   code: string;
   name: {
     en: string;
-    id: string;
+    it: string;
     de: string;
     pt: string;
   };

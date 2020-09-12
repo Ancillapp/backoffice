@@ -5,6 +5,8 @@ import * as bodyParser from 'body-parser';
 
 import { ssr } from './middlewares/ssr';
 
+import { getAncillas } from './handlers/ancillas/list';
+import { getAncilla } from './handlers/ancillas/detail';
 import { getPrayers } from './handlers/prayers/list';
 import { getPrayer } from './handlers/prayers/detail';
 import { getSongs } from './handlers/songs/list';
@@ -20,6 +22,8 @@ app.use(cors());
 
 app.use(ssr);
 
+app.get('/api/ancillas', getAncillas);
+app.get('/api/ancillas/:code', getAncilla);
 app.get('/api/prayers', authorize, getPrayers);
 app.get('/api/prayers/:slug', authorize, getPrayer);
 app.get('/api/songs', authorize, getSongs);
