@@ -14,10 +14,7 @@ import {
 
 import { Link } from 'react-router-dom';
 
-export interface SongSummary {
-  number: string;
-  title: string;
-}
+import { SongSummary } from '../providers/ApiProvider';
 
 export interface SongsProps {
   items: SongSummary[];
@@ -54,7 +51,9 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     height: '100%',
     willChange: 'transform',
-    transition: '0.3s transform',
+    transition: theme.transitions.create('transform', {
+      duration: 300,
+    }),
 
     '&:hover, &:active': {
       transform: 'scale(1.025)',
@@ -86,7 +85,7 @@ const Songs: FunctionComponent<SongsProps> = ({ items }) => {
               title && (
                 <Link
                   to={`/canti/${number}`}
-                  key={`${index}-${subindex}`}
+                  key={number}
                   className={classes.songLink}
                   style={{
                     width: width - theme.spacing(2),
