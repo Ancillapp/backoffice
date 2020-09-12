@@ -135,3 +135,24 @@ export const useSongCreation = () =>
   useMutation<Song, Song>('songs', {
     method: 'POST',
   });
+
+export interface Ancilla {
+  code: string;
+  name: {
+    en: string;
+    id: string;
+    de: string;
+    pt: string;
+  };
+  link: string;
+  thumbnail: string;
+}
+
+export interface AncillaSummary extends Omit<Ancilla, 'name'> {
+  name: string;
+}
+
+export const useAncillas = () => useApi<AncillaSummary[]>('ancillas');
+
+export const useAncilla = (number: string) =>
+  useApi<Ancilla>(`ancillas/${number}`);
