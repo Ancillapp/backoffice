@@ -73,7 +73,7 @@ const SidebarMenu: FunctionComponent<SidebarMenuProps> = ({ onItemClick }) => {
           <ListItem
             button
             component={NavLink}
-            exact
+            exact={key === 'dashboard'}
             to={link || `/${key}`}
             activeClassName={classes.active}
             onClick={handleListItemClick}
