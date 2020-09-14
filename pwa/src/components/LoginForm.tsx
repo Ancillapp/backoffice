@@ -9,6 +9,8 @@ import {
   Typography,
 } from '@material-ui/core';
 
+import TauIcon from './icons/Tau';
+
 export interface LoginFormValue {
   email: string;
   password: string;
@@ -29,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
   },
   icon: {
     width: 72,
-    borderRadius: '50%',
+    height: 72,
   },
   paper: {
     display: 'flex',
@@ -77,11 +79,7 @@ const LoginForm: FunctionComponent<LoginFormProps> = ({
   return (
     <div className={classes.root}>
       <Paper component="form" className={classes.paper} onSubmit={handleSubmit}>
-        <img
-          className={classes.icon}
-          src={`${process.env.PUBLIC_URL}/images/icons/apple-touch-icon.png`}
-          alt="Ancillapp Backoffice"
-        />
+        <TauIcon color="primary" className={classes.icon} />
         <Typography variant="h4">Accedi</Typography>
         <TextField
           type="email"

@@ -18,6 +18,8 @@ import {
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import LibraryMusicIcon from '@material-ui/icons/LibraryMusic';
 
+import AncillaDominiIcon from './icons/AncillaDomini';
+
 const useStyles = makeStyles((theme) => ({
   active: {
     '& *': {
@@ -46,6 +48,11 @@ const MENU_ITEMS: MenuItem[] = [
     title: 'Canti',
     icon: <LibraryMusicIcon />,
   },
+  {
+    key: 'ancilla-domini',
+    title: 'Ancilla Domini',
+    icon: <AncillaDominiIcon />,
+  },
 ];
 
 interface SidebarMenuProps {
@@ -66,7 +73,7 @@ const SidebarMenu: FunctionComponent<SidebarMenuProps> = ({ onItemClick }) => {
           <ListItem
             button
             component={NavLink}
-            exact
+            exact={key === 'dashboard'}
             to={link || `/${key}`}
             activeClassName={classes.active}
             onClick={handleListItemClick}
