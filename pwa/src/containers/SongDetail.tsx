@@ -3,7 +3,6 @@ import React, { FunctionComponent, useCallback, useState } from 'react';
 import { Link, LinkProps, useHistory, useRouteMatch } from 'react-router-dom';
 
 import {
-  Box,
   Button,
   Dialog,
   DialogActions,
@@ -29,6 +28,7 @@ import TopbarLayout, { TopbarLayoutProps } from '../components/TopbarLayout';
 import Loader from '../components/Loader';
 import SongForm, { SongFormProps, SongLanguage } from '../components/SongForm';
 import PageSkeleton from '../components/PageSkeleton';
+import TopbarIcon from '../components/TopbarIcon';
 
 const mapSongNumberToLanguage = (number: string): SongLanguage =>
   number.startsWith('DE') ? SongLanguage.GERMAN : SongLanguage.ITALIAN;
@@ -123,7 +123,7 @@ const SongDetail: FunctionComponent<Omit<
       <TopbarLayout
         title={`${data.number.slice(2)}. ${data.title}`}
         startAdornment={
-          <Box color="primary.contrastText" marginRight={0.5} clone>
+          <TopbarIcon mr={0.5}>
             <Link to="/canti" onClick={handleBackClick}>
               <IconButton
                 color="inherit"
@@ -134,7 +134,7 @@ const SongDetail: FunctionComponent<Omit<
                 <ArrowBackIcon />
               </IconButton>
             </Link>
-          </Box>
+          </TopbarIcon>
         }
         endAdornment={
           editMode ? (
@@ -159,9 +159,9 @@ const SongDetail: FunctionComponent<Omit<
                 disabled={updatingSong}
               >
                 {updatingSong && (
-                  <Box color="primary.contrastText" clone>
+                  <TopbarIcon>
                     <Loader size={24} color="inherit" />
-                  </Box>
+                  </TopbarIcon>
                 )}
                 <DoneIcon />
               </IconButton>

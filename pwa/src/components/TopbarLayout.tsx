@@ -41,14 +41,16 @@ const useStyles = makeStyles((theme) => ({
   menuButton: {
     marginRight: theme.spacing(0.5),
   },
-  toolbar: theme.mixins.toolbar,
-  title: {
-    fontFamily: theme.typography.fontFamily,
-    flex: '1 1 auto',
+  toolbar: {
+    ...theme.mixins.toolbar,
     color:
       theme.palette.type === 'dark'
         ? theme.palette.text.primary
         : theme.palette.primary.contrastText,
+  },
+  title: {
+    fontFamily: theme.typography.fontFamily,
+    flex: '1 1 auto',
   },
   menu: {
     width: 'min(100vw - 56px, 280px)',

@@ -2,7 +2,7 @@ import React, { FunctionComponent, useCallback } from 'react';
 
 import { Link, LinkProps, useHistory } from 'react-router-dom';
 
-import { Box, IconButton } from '@material-ui/core';
+import { IconButton } from '@material-ui/core';
 
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import SaveIcon from '@material-ui/icons/Save';
@@ -12,6 +12,7 @@ import { useSongCreation } from '../providers/ApiProvider';
 import TopbarLayout, { TopbarLayoutProps } from '../components/TopbarLayout';
 import SongForm, { SongFormProps, SongLanguage } from '../components/SongForm';
 import Loader from '../components/Loader';
+import TopbarIcon from '../components/TopbarIcon';
 
 const mapLanguageToSongNumberPrefix = (language: SongLanguage): string =>
   language === SongLanguage.GERMAN ? 'DE' : 'IT';
@@ -52,7 +53,7 @@ const NewSong: FunctionComponent<Omit<TopbarLayoutProps, 'startAdornment'>> = (
     <TopbarLayout
       title="Nuovo canto"
       startAdornment={
-        <Box color="primary.contrastText" marginRight={0.5} clone>
+        <TopbarIcon mr={0.5}>
           <Link to="/canti" onClick={handleBackClick}>
             <IconButton
               color="inherit"
@@ -63,7 +64,7 @@ const NewSong: FunctionComponent<Omit<TopbarLayoutProps, 'startAdornment'>> = (
               <ArrowBackIcon />
             </IconButton>
           </Link>
-        </Box>
+        </TopbarIcon>
       }
       endAdornment={
         <IconButton
@@ -75,9 +76,9 @@ const NewSong: FunctionComponent<Omit<TopbarLayoutProps, 'startAdornment'>> = (
           disabled={creatingSong}
         >
           {creatingSong && (
-            <Box color="primary.contrastText" clone>
+            <TopbarIcon>
               <Loader size={24} color="inherit" />
-            </Box>
+            </TopbarIcon>
           )}
           <SaveIcon />
         </IconButton>
