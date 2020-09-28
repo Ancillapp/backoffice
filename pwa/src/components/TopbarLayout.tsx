@@ -8,9 +8,15 @@ import {
   makeStyles,
   useMediaQuery,
   useTheme,
+  ThemeProvider,
+  createMuiTheme,
 } from '@material-ui/core';
 
 import MenuIcon from '@material-ui/icons/Menu';
+
+import darkTheme from '../themes/dark';
+import lightTheme from '../themes/light';
+import { useThemeName } from '../providers/ThemeNameProvider';
 
 export interface TopbarLayoutProps {
   title?: ReactNode;
@@ -20,6 +26,16 @@ export interface TopbarLayoutProps {
   onMenuButtonClick?(): void;
 }
 
+const tweakedDarkTheme = createMuiTheme({
+  ...darkTheme,
+  palette: { ...darkTheme.palette, primary: { main: '#424242' } },
+});
+
+const tweakedLightTheme = createMuiTheme({
+  ...lightTheme,
+  palette: { ...lightTheme.palette, type: 'dark', text: { primary: '#fff' } },
+});
+
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
@@ -28,10 +44,6 @@ const useStyles = makeStyles((theme) => ({
   },
   appBar: {
     flex: '0 0 auto',
-    background:
-      theme.palette.type === 'dark'
-        ? theme.palette.background.paper
-        : theme.palette.primary.main,
   },
   content: {
     flex: '1 1 auto',
@@ -41,13 +53,7 @@ const useStyles = makeStyles((theme) => ({
   menuButton: {
     marginRight: theme.spacing(0.5),
   },
-  toolbar: {
-    ...theme.mixins.toolbar,
-    color:
-      theme.palette.type === 'dark'
-        ? theme.palette.text.primary
-        : theme.palette.primary.contrastText,
-  },
+  toolbar: theme.mixins.toolbar,
   title: {
     fontFamily: theme.typography.fontFamily,
     flex: '1 1 auto',
@@ -61,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const TopbarLayout: FunctionComponent<TopbarLayoutProps> = ({
+const TopbarLayoutTemplate: FunctionComponent<TopbarLayoutProps> = ({
   title = 'Ancillapp',
   startAdornment,
   endAdornment,
@@ -70,6 +76,8 @@ const TopbarLayout: FunctionComponent<TopbarLayoutProps> = ({
   children,
 }) => {
   const theme = useTheme();
+
+  const themeName = useThemeName();
 
   const classes = useStyles();
 
@@ -86,7 +94,6 @@ const TopbarLayout: FunctionComponent<TopbarLayoutProps> = ({
           {!isNarrow && typeof startAdornment === 'undefined' ? (
             <IconButton
               edge="start"
-              color="inherit"
               aria-label="menu"
               onClick={handleMenuButtonClick}
               className={classes.menuButton}
@@ -105,8 +112,23 @@ const TopbarLayout: FunctionComponent<TopbarLayoutProps> = ({
         {topbarContent}
       </AppBar>
 
-      <div className={classes.content}>{children}</div>
+      <ThemeProvider theme={themeName === 'dark' ? darkTheme : lightTheme}>
+        <div className={classes.content}>{children}</div>
+      </ThemeProvider>
     </div>
   );
 };
+
+const TopbarLayout: FunctionComponent<TopbarLayoutProps> = (props) => {
+  const themeName = useThemeName();
+
+  return (
+    <ThemeProvider
+      theme={themeName === 'dark' ? tweakedDarkTheme : tweakedLightTheme}
+    >
+      <TopbarLayoutTemplate {...props} />
+    </ThemeProvider>
+  );
+};
+
 export default TopbarLayout;
