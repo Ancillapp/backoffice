@@ -49,6 +49,11 @@ const MENU_ITEMS: MenuItem[] = [
     icon: <LibraryMusicIcon />,
   },
   {
+    key: 'preghiere',
+    title: 'Preghiere',
+    icon: <LibraryMusicIcon />,
+  },
+  {
     key: 'ancilla-domini',
     title: 'Ancilla Domini',
     icon: <AncillaDominiIcon />,
