@@ -20,6 +20,7 @@ import PageSkeleton from '../components/PageSkeleton';
 
 const Dashboard = lazy(() => import('./Dashboard'));
 const SongsRouter = lazy(() => import('./SongsRouter'));
+const PrayersRouter = lazy(() => import('./PrayersRouter'));
 const AncillasRouter = lazy(() => import('./AncillasRouter'));
 const Login = lazy(() => import('./Login'));
 const Logout = lazy(() => import('./Logout'));
@@ -74,6 +75,9 @@ const Root: FunctionComponent = () => {
                   </Route>
                   <Route path="/canti">
                     <SongsRouter onMenuButtonClick={handleMenuButtonClick} />
+                  </Route>
+                  <Route path="/preghiere">
+                    <PrayersRouter onMenuButtonClick={handleMenuButtonClick} />
                   </Route>
                   <Route path="/ancilla-domini">
                     <AncillasRouter onMenuButtonClick={handleMenuButtonClick} />
