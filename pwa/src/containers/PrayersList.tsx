@@ -1,5 +1,4 @@
 import React, {
-  ChangeEvent,
   FunctionComponent,
   useCallback,
   useEffect,
@@ -12,12 +11,8 @@ import {
   Box,
   IconButton,
   InputAdornment,
-  Tab,
-  Tabs,
   TextField,
   TextFieldProps,
-  useMediaQuery,
-  useTheme,
 } from '@material-ui/core';
 
 import SearchIcon from '@material-ui/icons/Search';
@@ -32,12 +27,7 @@ import Loader from '../components/Loader';
 
 const PrayersList: FunctionComponent<TopbarLayoutProps> = (props) => {
   const [search, setSearch] = useState('');
-  const [language, setLanguage] = useState('IT');
   const [displayedPrayers, setDisplayedPrayers] = useState<PrayerSummary[]>([]);
-
-  const theme = useTheme();
-
-  const isNarrow = useMediaQuery(theme.breakpoints.up('sm'));
 
   const { loading, data, error } = usePrayers();
 
@@ -57,14 +47,7 @@ const PrayersList: FunctionComponent<TopbarLayoutProps> = (props) => {
 
     // TODO: use fuzzy search (fuse.js)
     setDisplayedPrayers(filteredPrayers);
-  }, [data, language, search]);
-
-  const handleLanguageChange = useCallback(
-    (_: ChangeEvent<{}>, value: string) => {
-      setLanguage(value);
-    },
-    [],
-  );
+  }, [data, search]);
 
   const handleSearchInput = useCallback<NonNullable<TextFieldProps['onInput']>>(
     (event) => {
@@ -109,16 +92,6 @@ const PrayersList: FunctionComponent<TopbarLayoutProps> = (props) => {
               onInput={handleSearchInput}
             />
           </Box>
-        }
-        topbarContent={
-          <Tabs
-            value={language}
-            onChange={handleLanguageChange}
-            {...(isNarrow ? { centered: true } : { variant: 'fullWidth' })}
-          >
-            <Tab label="Italiano" value="IT" />
-            <Tab label="Tedesco" value="DE" />
-          </Tabs>
         }
         {...props}
       >
