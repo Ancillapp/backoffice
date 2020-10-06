@@ -1,4 +1,4 @@
-import { get } from '../../../services/song';
+import { get } from '../../../services/prayer';
 
 import type { RequestHandler } from 'express';
 
