@@ -22,8 +22,8 @@ app.use(cors());
 
 app.use(ssr);
 
-app.get('/api/ancillas', getAncillas);
-app.get('/api/ancillas/:code', getAncilla);
+app.get('/api/ancillas', authorize, getAncillas);
+app.get('/api/ancillas/:code', authorize, getAncilla);
 app.get('/api/prayers', authorize, getPrayers);
 app.get('/api/prayers/:slug', authorize, getPrayer);
 app.get('/api/songs', authorize, getSongs);
