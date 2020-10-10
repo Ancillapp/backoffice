@@ -7,6 +7,7 @@ import { OverrideProps } from '@material-ui/core/OverridableComponent';
 
 const useStyles = makeStyles((theme) => ({
   root: {
+    display: 'block',
     willChange: 'transform',
     transition: theme.transitions.create('transform', {
       duration: 300,
