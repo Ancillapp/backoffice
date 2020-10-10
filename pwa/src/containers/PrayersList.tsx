@@ -1,5 +1,4 @@
 import React, {
-  ChangeEvent,
   FunctionComponent,
   useCallback,
   useEffect,
@@ -12,64 +11,43 @@ import {
   Box,
   IconButton,
   InputAdornment,
-  Tab,
-  Tabs,
   TextField,
   TextFieldProps,
-  useMediaQuery,
-  useTheme,
 } from '@material-ui/core';
 
 import SearchIcon from '@material-ui/icons/Search';
 import ClearIcon from '@material-ui/icons/Clear';
 import AddIcon from '@material-ui/icons/Add';
 
-import { SongSummary, useSongs } from '../providers/ApiProvider';
+import { PrayerSummary, usePrayers } from '../providers/ApiProvider';
 import TopbarLayout, { TopbarLayoutProps } from '../components/TopbarLayout';
-import Songs from '../components/Songs';
+import Prayers from '../components/Prayers';
 import AutosizedFab from '../components/FloatingActionButton';
 import Loader from '../components/Loader';
 
-const SongsList: FunctionComponent<TopbarLayoutProps> = (props) => {
+const PrayersList: FunctionComponent<TopbarLayoutProps> = (props) => {
   const [search, setSearch] = useState('');
-  const [language, setLanguage] = useState('IT');
-  const [displayedSongs, setDisplayedSongs] = useState<SongSummary[]>([]);
+  const [displayedPrayers, setDisplayedPrayers] = useState<PrayerSummary[]>([]);
 
-  const theme = useTheme();
-
-  const isNarrow = useMediaQuery(theme.breakpoints.up('sm'));
-
-  const { loading, data, error } = useSongs();
+  const { loading, data, error } = usePrayers();
 
   useEffect(() => {
     if (!data) {
-      setDisplayedSongs([]);
+      setDisplayedPrayers([]);
       return;
     }
 
-    const filteredSongs = data.filter(({ number, title }) => {
-      if (!number.startsWith(language)) {
-        return false;
-      }
-
+    const filteredPrayers = data.filter(({ title }) => {
       const lowerCaseSearch = search.toLowerCase();
 
-      return (
-        number.toLowerCase().includes(lowerCaseSearch) ||
-        title.toLowerCase().includes(lowerCaseSearch)
+      return Object.values(title).some((localizedTitle) =>
+        localizedTitle?.toLowerCase().includes(lowerCaseSearch),
       );
     });
 
     // TODO: use fuzzy search (fuse.js)
-    setDisplayedSongs(filteredSongs);
-  }, [data, language, search]);
-
-  const handleLanguageChange = useCallback(
-    (_: ChangeEvent<{}>, value: string) => {
-      setLanguage(value);
-    },
-    [],
-  );
+    setDisplayedPrayers(filteredPrayers);
+  }, [data, search]);
 
   const handleSearchInput = useCallback<NonNullable<TextFieldProps['onInput']>>(
     (event) => {
@@ -115,19 +93,9 @@ const SongsList: FunctionComponent<TopbarLayoutProps> = (props) => {
             />
           </Box>
         }
-        topbarContent={
-          <Tabs
-            value={language}
-            onChange={handleLanguageChange}
-            {...(isNarrow ? { centered: true } : { variant: 'fullWidth' })}
-          >
-            <Tab label="Italiano" value="IT" />
-            <Tab label="Tedesco" value="DE" />
-          </Tabs>
-        }
         {...props}
       >
-        {loading ? <Loader /> : <Songs items={displayedSongs} />}
+        {loading ? <Loader /> : <Prayers items={displayedPrayers} />}
       </TopbarLayout>
 
       <Link to="/canti/nuovo">
@@ -139,4 +107,4 @@ const SongsList: FunctionComponent<TopbarLayoutProps> = (props) => {
   );
 };
 
-export default SongsList;
+export default PrayersList;

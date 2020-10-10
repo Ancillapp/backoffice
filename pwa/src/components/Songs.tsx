@@ -27,16 +27,16 @@ interface SongsRowProps extends Omit<ListChildComponentProps, 'data'> {
 const useStyles = makeStyles((theme) => ({
   songsContainer: {
     width: '100%',
-    maxWidth: theme.breakpoints.width('md'),
     height: '100%',
     flex: '1 1 auto',
-    margin: '0 auto',
-    padding: `0 ${theme.spacing(5)}px`,
   },
   songsRow: {
     display: 'grid',
     placeItems: 'center',
     gridTemplateColumns: 'repeat(5, 1fr)',
+    width: '100%',
+    maxWidth: theme.breakpoints.width('md'),
+    margin: '0 auto',
   },
   songLink: {
     textDecoration: 'none',
@@ -121,7 +121,9 @@ const Songs: FunctionComponent<SongsProps> = ({ items }) => {
     <div className={classes.songsContainer}>
       <AutoSizer>
         {({ width, height }) => {
-          const itemWidth = Math.floor(width / 5);
+          const maxWidth = Math.min(width, theme.breakpoints.width('md'));
+
+          const itemWidth = Math.floor(maxWidth / 5);
           const itemHeight = Math.floor((itemWidth / 2) * 3);
 
           return (

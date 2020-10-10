@@ -62,6 +62,8 @@ export type SongSummary = Pick<Song, 'number' | 'title'>;
 
 export const useSongs = () => useApi<SongSummary[]>('songs');
 
+export const useSongsCount = () => useApi<{ count: number }>('songs/count');
+
 export const useSong = (number: string) => useApi<Song>(`songs/${number}`);
 
 export const useMutation = <T, B>(
@@ -136,6 +138,33 @@ export const useSongCreation = () =>
     method: 'POST',
   });
 
+export interface Prayer {
+  slug: string;
+  title: {
+    it?: string;
+    la?: string;
+    de?: string;
+    en?: string;
+    pt?: string;
+  };
+  image: string;
+  content: {
+    it?: string;
+    la?: string;
+    de?: string;
+    en?: string;
+    pt?: string;
+  };
+}
+
+export type PrayerSummary = Pick<Prayer, 'slug' | 'title' | 'image'>;
+
+export const usePrayers = () => useApi<PrayerSummary[]>('prayers');
+
+export const usePrayersCount = () => useApi<{ count: number }>('prayers/count');
+
+export const usePrayer = (slug: string) => useApi<Prayer>(`prayers/${slug}`);
+
 export interface Ancilla {
   code: string;
   name: {
@@ -153,6 +182,9 @@ export interface AncillaSummary extends Omit<Ancilla, 'name'> {
 }
 
 export const useAncillas = () => useApi<AncillaSummary[]>('ancillas');
+
+export const useAncillasCount = () =>
+  useApi<{ count: number }>('ancillas/count');
 
 export const useAncilla = (number: string) =>
   useApi<Ancilla>(`ancillas/${number}`);

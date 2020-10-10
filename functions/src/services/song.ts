@@ -53,6 +53,14 @@ export const list = async (fullData?: boolean) => {
   });
 };
 
+export const count = async () => {
+  const songsCollection = await getSongsCollection();
+
+  const count = await songsCollection.find().count();
+
+  return count;
+};
+
 export const update = async (
   number: string,
   { number: newNumber, title, content }: Partial<SongData>,
