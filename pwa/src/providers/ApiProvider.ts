@@ -18,7 +18,9 @@ export const useApi = <T>(
   const { isLoading: loading, data, error, refetch: refetchQuery } = useQuery<
     T,
     Error
-  >(url, async () => {
+  >(
+    url,
+    async () => {
     const auth = firebase.auth();
 
     if (!auth.currentUser) {
@@ -42,7 +44,11 @@ export const useApi = <T>(
     }
 
     return res.status === 204 ? undefined : res.json();
-  });
+    },
+    {
+      refetchOnWindowFocus: false,
+    },
+  );
 
   const refetch = useCallback(
     () => refetchQuery({ throwOnError: true }) as Promise<T>,
