@@ -75,3 +75,11 @@ export const list = async () => {
     )}.jpg?alt=media`,
   }));
 };
+
+export const count = async () => {
+  const ancillasCollection = await getAncillasCollection();
+
+  const count = await ancillasCollection.find().count();
+
+  return count;
+};

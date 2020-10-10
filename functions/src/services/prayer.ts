@@ -46,3 +46,11 @@ export const list = async (fullData?: boolean) => {
 
   return prayers;
 };
+
+export const count = async () => {
+  const prayersCollection = await getPrayersCollection();
+
+  const count = await prayersCollection.find().count();
+
+  return count;
+};
