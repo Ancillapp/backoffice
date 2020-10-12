@@ -85,7 +85,12 @@ const FileInput: FunctionComponent<FileInputProps> = ({
           startAdornment: <input {...getInputProps()} />,
           ...(value && {
             endAdornment: (
-              <IconButton edge="end" size="small" onClick={handleFileRemoval}>
+              <IconButton
+                edge="end"
+                size="small"
+                onClick={handleFileRemoval}
+                disabled={disabled}
+              >
                 <ClearIcon />
               </IconButton>
             ),
