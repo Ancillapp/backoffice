@@ -21,29 +21,29 @@ export const useApi = <T>(
   >(
     url,
     async () => {
-    const auth = firebase.auth();
+      const auth = firebase.auth();
 
-    if (!auth.currentUser) {
-      throw new Error('User must be logged in to use APIs');
-    }
+      if (!auth.currentUser) {
+        throw new Error('User must be logged in to use APIs');
+      }
 
-    const token = await auth.currentUser.getIdToken();
+      const token = await auth.currentUser.getIdToken();
 
-    const res = await fetch(`${process.env.REACT_APP_API_URL}/${url}`, {
-      ...options,
-      headers: {
-        accept: 'application/json',
-        authorization: `Bearer ${token}`,
-        ...options.headers,
-      },
-    });
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/${url}`, {
+        ...options,
+        headers: {
+          accept: 'application/json',
+          authorization: `Bearer ${token}`,
+          ...options.headers,
+        },
+      });
 
-    if (res.status === 401 || res.status === 403) {
-      firebase.auth().signOut();
-      return undefined;
-    }
+      if (res.status === 401 || res.status === 403) {
+        firebase.auth().signOut();
+        return undefined;
+      }
 
-    return res.status === 204 ? undefined : res.json();
+      return res.status === 204 ? undefined : res.json();
     },
     {
       refetchOnWindowFocus: false,
@@ -194,3 +194,11 @@ export const useAncillasCount = () =>
 
 export const useAncilla = (number: string) =>
   useApi<Ancilla>(`ancillas/${number}`);
+
+export interface PageViewReportRecord {
+  date: string;
+  pageViews: number;
+}
+
+export const usePageViews = (days = 14) =>
+  useApi<PageViewReportRecord[]>(`analytics/page-views?days=${days}`);

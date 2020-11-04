@@ -1,16 +1,23 @@
 import React, { FunctionComponent } from 'react';
 
+import { Card, CardContent, CardHeader } from '@material-ui/core';
+
 import TopbarLayout, { TopbarLayoutProps } from '../components/TopbarLayout';
 import DashboardLayout from '../components/DashboardLayout';
 import CounterCard from '../components/CounterCard';
-import GrowingLink from '../GrowingLink';
+import GrowingLink from '../components/GrowingLink';
 import {
   useAncillasCount,
+  usePageViews,
   usePrayersCount,
   useSongsCount,
 } from '../providers/ApiProvider';
+import PageViewsChart from '../components/PageViewsChart';
+import Masonry from '../components/Masonry';
+import Loader from '../components/Loader';
 
 const Dashboard: FunctionComponent<TopbarLayoutProps> = (props) => {
+  const { data: pageViewsData, error: pageViewsError } = usePageViews();
   const { data: songsCountData, error: songsCountError } = useSongsCount();
   const {
     data: prayersCountData,
@@ -21,7 +28,11 @@ const Dashboard: FunctionComponent<TopbarLayoutProps> = (props) => {
     error: ancillasCountError,
   } = useAncillasCount();
 
-  const error = songsCountError || prayersCountError || ancillasCountError;
+  const error =
+    pageViewsError ||
+    songsCountError ||
+    prayersCountError ||
+    ancillasCountError;
 
   if (error) {
     return <span>{error.message}</span>;
@@ -30,18 +41,38 @@ const Dashboard: FunctionComponent<TopbarLayoutProps> = (props) => {
   return (
     <TopbarLayout title="Dashboard" {...props}>
       <DashboardLayout>
-        <GrowingLink to="/canti">
-          <CounterCard title="Canti" value={songsCountData?.count} />
-        </GrowingLink>
-        <GrowingLink to="/preghiere">
-          <CounterCard title="Preghiere" value={prayersCountData?.count} />
-        </GrowingLink>
-        <GrowingLink to="/ancilla-domini">
-          <CounterCard
-            title="Ancilla Domini"
-            value={ancillasCountData?.count}
-          />
-        </GrowingLink>
+        <Masonry container spacing={3}>
+          <Masonry item md={8}>
+            <Card>
+              <CardHeader title="Visualizzazioni di pagina" />
+              <CardContent style={{ height: 240 }}>
+                {pageViewsData ? (
+                  <PageViewsChart data={pageViewsData} />
+                ) : (
+                  <Loader variant="linear" />
+                )}
+              </CardContent>
+            </Card>
+          </Masonry>
+          <Masonry item md={4}>
+            <GrowingLink to="/canti">
+              <CounterCard title="Canti" value={songsCountData?.count} />
+            </GrowingLink>
+          </Masonry>
+          <Masonry item md={4}>
+            <GrowingLink to="/preghiere">
+              <CounterCard title="Preghiere" value={prayersCountData?.count} />
+            </GrowingLink>
+          </Masonry>
+          <Masonry item md={4}>
+            <GrowingLink to="/ancilla-domini">
+              <CounterCard
+                title="Ancilla Domini"
+                value={ancillasCountData?.count}
+              />
+            </GrowingLink>
+          </Masonry>
+        </Masonry>
       </DashboardLayout>
     </TopbarLayout>
   );
