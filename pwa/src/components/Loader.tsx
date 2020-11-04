@@ -4,28 +4,56 @@ import {
   Theme,
   CircularProgress,
   CircularProgressProps,
+  LinearProgressProps,
+  LinearProgress,
 } from '@material-ui/core';
 
-export interface LoaderProps extends CircularProgressProps {
+export interface CircularLoaderProps
+  extends Omit<CircularProgressProps, 'variant' | 'size'> {
+  variant?: 'circular';
   size?: number;
 }
 
-const useStyles = makeStyles<Theme, number>(() => ({
-  root: (size) => ({
+export interface LinearLoaderProps
+  extends Omit<LinearProgressProps, 'variant'> {
+  variant: 'linear';
+}
+
+export type LoaderProps = CircularLoaderProps | LinearLoaderProps;
+
+const useStyles = makeStyles<Theme, { size?: number }>((theme) => ({
+  root: ({ size }) => ({
     position: 'absolute',
     top: '50%',
-    left: '50%',
-    marginTop: `-${size / 2}px`,
-    marginLeft: `-${size / 2}px`,
+
+    ...(typeof size === 'undefined'
+      ? {
+          left: theme.spacing(2),
+          width: `calc(100% - ${theme.spacing(4)}px)`,
+          marginTop: theme.spacing(0.25),
+        }
+      : {
+          left: '50%',
+          marginTop: `-${size / 2}px`,
+          marginLeft: `-${size / 2}px`,
+        }),
   }),
 }));
 
-const Loader: FunctionComponent<LoaderProps> = ({ size = 32, ...props }) => {
-  const classes = useStyles(size);
+const Loader: FunctionComponent<LoaderProps> = (props) => {
+  const classes = useStyles({
+    size: props.variant === 'linear' ? undefined : props.size ?? 32,
+  });
+
+  const { variant, ...otherProps } = props;
 
   return (
     <div className={classes.root}>
-      <CircularProgress size={size} {...props} />
+      {props.variant === 'linear' ? (
+        <LinearProgress {...(otherProps as LinearProgressProps)} />
+      ) : (
+        <CircularProgress {...(otherProps as CircularProgressProps)} />
+      )}
     </div>
   );
 };
