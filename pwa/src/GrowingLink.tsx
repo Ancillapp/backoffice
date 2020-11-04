@@ -2,7 +2,10 @@ import React, { FunctionComponent } from 'react';
 
 import { Link as RouterLink, LinkProps } from 'react-router-dom';
 
+import clsx from 'clsx';
+
 import { Link, LinkTypeMap, makeStyles } from '@material-ui/core';
+
 import { OverrideProps } from '@material-ui/core/OverridableComponent';
 
 const useStyles = makeStyles((theme) => ({
@@ -23,10 +26,16 @@ const useStyles = makeStyles((theme) => ({
 const GrowingLink: FunctionComponent<OverrideProps<
   LinkTypeMap<LinkProps, typeof RouterLink>,
   typeof Link
->> = (props) => {
+>> = ({ className, ...props }) => {
   const classes = useStyles();
 
-  return <Link className={classes.root} component={RouterLink} {...props} />;
+  return (
+    <Link
+      className={clsx(classes.root, className)}
+      component={RouterLink}
+      {...props}
+    />
+  );
 };
 
 export default GrowingLink;
