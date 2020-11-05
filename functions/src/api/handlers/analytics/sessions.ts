@@ -89,8 +89,8 @@ export const getTotalSessions: RequestHandler = async (
       dateRanges: [
         {
           name: 'total',
-          startDate: from,
-          endDate: to,
+          startDate: from as string,
+          endDate: to as string,
         },
       ],
     },
