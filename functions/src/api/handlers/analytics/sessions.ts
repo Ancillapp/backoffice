@@ -6,18 +6,16 @@ import { google } from 'googleapis';
 
 import { getDateRange } from './common';
 
-const { OAuth2 } = google.auth;
-
-const clientId = functions.config().analytics.clientid;
-const clientSecret = functions.config().analytics.clientsecret;
-const redirectUri = functions.config().analytics.redirecturi;
-const refreshToken = functions.config().analytics.refreshtoken;
+const clientEmail = functions.config().analytics.clientemail;
+const privateKey = functions.config().analytics.privatekey;
 const propertyId = functions.config().analytics.propertyid;
 
-const oauth2Client = new OAuth2(clientId, clientSecret, redirectUri);
-
-oauth2Client.setCredentials({
-  refresh_token: refreshToken,
+const googleAuthClient = new google.auth.GoogleAuth({
+  credentials: {
+    client_email: clientEmail,
+    private_key: privateKey,
+  },
+  scopes: 'https://www.googleapis.com/auth/analytics.readonly',
 });
 
 const { v1alpha: analyticsData } = google.analyticsdata('v1alpha');
@@ -26,7 +24,7 @@ export const getSessionsReport: RequestHandler = async (
   { query: { days: rawDays = '14' } },
   res,
 ) => {
-  const { token } = await oauth2Client.getAccessToken();
+  const token = await googleAuthClient.getAccessToken();
 
   if (!token) {
     res.status(500).send();
@@ -72,7 +70,7 @@ export const getTotalSessions: RequestHandler = async (
   { query: { from = '2020-05-01', to = 'today' } },
   res,
 ) => {
-  const { token } = await oauth2Client.getAccessToken();
+  const token = await googleAuthClient.getAccessToken();
 
   if (!token) {
     res.status(500).send();
