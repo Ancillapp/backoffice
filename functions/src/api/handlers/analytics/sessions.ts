@@ -6,11 +6,9 @@ import { google } from 'googleapis';
 
 import { getDateRange } from './common';
 
-const propertyId = functions.config().analytics.propertyid;
 const clientEmail = functions.config().analytics.clientemail;
-const privateKey = functions
-  .config()
-  .analytics.privatekey.replace(/\\n/gm, '\n');
+const privateKey = functions.config().analytics.privatekey;
+const propertyId = functions.config().analytics.propertyid;
 
 const googleAuthClient = new google.auth.GoogleAuth({
   credentials: {
