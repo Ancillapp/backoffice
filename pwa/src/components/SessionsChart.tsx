@@ -67,22 +67,14 @@ const SessionsChart: FunctionComponent<SessionsChartProps> = ({ data }) => {
       }}
       axisBottom={{
         format: (value) => dateFormatter.format(value as Date),
-        legend: 'Data',
-        legendOffset: 36,
-        legendPosition: 'middle',
         tickValues: displayedData
           .filter((_, index) => index % 2 === 0)
           .map(({ date }) => new Date(date)),
       }}
-      axisLeft={{
-        legend: 'Sessioni',
-        legendOffset: -50,
-        legendPosition: 'middle',
-        tickValues: 5,
-      }}
+      axisLeft={{ tickValues: 5 }}
       curve="linear"
       useMesh
-      margin={{ top: 5, right: 20, bottom: 55, left: 70 }}
+      margin={{ top: 5, right: 20, bottom: 20, left: 35 }}
     />
   );
 };
