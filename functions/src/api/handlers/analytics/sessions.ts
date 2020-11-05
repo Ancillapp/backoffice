@@ -67,3 +67,34 @@ export const getSessionsReport: RequestHandler = async (
     ),
   );
 };
+
+export const getTotalSessions: RequestHandler = async (
+  { query: { from = '2020-05-01', to = 'today' } },
+  res,
+) => {
+  const { token } = await oauth2Client.getAccessToken();
+
+  if (!token) {
+    res.status(500).send();
+    return;
+  }
+
+  const {
+    data: { rows: [{ metricValues: [{ value = '0' }] = [] }] = [] },
+  } = await analyticsData.runReport({
+    access_token: token,
+    requestBody: {
+      entity: { propertyId },
+      metrics: [{ name: 'sessions' }],
+      dateRanges: [
+        {
+          name: 'total',
+          startDate: from,
+          endDate: to,
+        },
+      ],
+    },
+  });
+
+  res.json({ count: Number(value) });
+};
