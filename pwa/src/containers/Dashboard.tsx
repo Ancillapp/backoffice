@@ -8,16 +8,16 @@ import CounterCard from '../components/CounterCard';
 import GrowingLink from '../components/GrowingLink';
 import {
   useAncillasCount,
-  usePageViews,
+  useSessions,
   usePrayersCount,
   useSongsCount,
 } from '../providers/ApiProvider';
-import PageViewsChart from '../components/PageViewsChart';
+import SessionsChart from '../components/SessionsChart';
 import Masonry from '../components/Masonry';
 import Loader from '../components/Loader';
 
 const Dashboard: FunctionComponent<TopbarLayoutProps> = (props) => {
-  const { data: pageViewsData, error: pageViewsError } = usePageViews();
+  const { data: sessionsData, error: sessionsError } = useSessions();
   const { data: songsCountData, error: songsCountError } = useSongsCount();
   const {
     data: prayersCountData,
@@ -29,10 +29,7 @@ const Dashboard: FunctionComponent<TopbarLayoutProps> = (props) => {
   } = useAncillasCount();
 
   const error =
-    pageViewsError ||
-    songsCountError ||
-    prayersCountError ||
-    ancillasCountError;
+    sessionsError || songsCountError || prayersCountError || ancillasCountError;
 
   if (error) {
     return <span>{error.message}</span>;
@@ -44,10 +41,10 @@ const Dashboard: FunctionComponent<TopbarLayoutProps> = (props) => {
         <Masonry container spacing={3}>
           <Masonry item md={8}>
             <Card>
-              <CardHeader title="Visualizzazioni di pagina" />
+              <CardHeader title="Sessioni" />
               <CardContent style={{ height: 240 }}>
-                {pageViewsData ? (
-                  <PageViewsChart data={pageViewsData} />
+                {sessionsData ? (
+                  <SessionsChart data={sessionsData} />
                 ) : (
                   <Loader variant="linear" />
                 )}

@@ -4,12 +4,12 @@ import { ResponsiveLine } from '@nivo/line';
 
 import { useMediaQuery, useTheme } from '@material-ui/core';
 
-import { PageViewReportRecord } from '../providers/ApiProvider';
+import { SessionsReportRecord } from '../providers/ApiProvider';
 
 import ChartTooltip from './ChartTooltip';
 
-export interface PageViewsChartProps {
-  data: PageViewReportRecord[];
+export interface SessionsChartProps {
+  data: SessionsReportRecord[];
 }
 
 const dateFormatter = new Intl.DateTimeFormat('it', {
@@ -17,7 +17,7 @@ const dateFormatter = new Intl.DateTimeFormat('it', {
   day: 'numeric',
 });
 
-const PageViewsChart: FunctionComponent<PageViewsChartProps> = ({ data }) => {
+const SessionsChart: FunctionComponent<SessionsChartProps> = ({ data }) => {
   const theme = useTheme();
 
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
@@ -48,8 +48,8 @@ const PageViewsChart: FunctionComponent<PageViewsChartProps> = ({ data }) => {
       colors={theme.palette.primary.main}
       data={[
         {
-          id: 'Visualizzazioni',
-          data: displayedData.map(({ date: x, pageViews: y }) => ({ x, y })),
+          id: 'Sessioni',
+          data: displayedData.map(({ date: x, sessions: y }) => ({ x, y })),
         },
       ]}
       tooltip={ChartTooltip}
@@ -75,7 +75,7 @@ const PageViewsChart: FunctionComponent<PageViewsChartProps> = ({ data }) => {
           .map(({ date }) => new Date(date)),
       }}
       axisLeft={{
-        legend: 'Visualizzazioni',
+        legend: 'Sessioni',
         legendOffset: -50,
         legendPosition: 'middle',
         tickValues: 5,
@@ -87,4 +87,4 @@ const PageViewsChart: FunctionComponent<PageViewsChartProps> = ({ data }) => {
   );
 };
 
-export default PageViewsChart;
+export default SessionsChart;

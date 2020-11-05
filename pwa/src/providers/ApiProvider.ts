@@ -195,10 +195,10 @@ export const useAncillasCount = () =>
 export const useAncilla = (number: string) =>
   useApi<Ancilla>(`ancillas/${number}`);
 
-export interface PageViewReportRecord {
+export interface SessionsReportRecord {
   date: string;
-  pageViews: number;
+  sessions: number;
 }
 
-export const usePageViews = (days = 14) =>
-  useApi<PageViewReportRecord[]>(`analytics/page-views?days=${days}`);
+export const useSessions = (days = 14) =>
+  useApi<SessionsReportRecord[]>(`analytics/sessions?days=${days}`);

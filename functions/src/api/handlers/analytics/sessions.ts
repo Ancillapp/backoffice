@@ -2,9 +2,9 @@ import * as functions from 'firebase-functions';
 
 import type { RequestHandler } from 'express';
 
-import { chunk } from '../../../helpers/utils';
-
 import { google } from 'googleapis';
+
+import { getDateRange } from './common';
 
 const { OAuth2 } = google.auth;
 
@@ -22,30 +22,7 @@ oauth2Client.setCredentials({
 
 const { v1alpha: analyticsData } = google.analyticsdata('v1alpha');
 
-const getDateRange = (days = 20, batchSize = 4) =>
-  chunk(
-    Array.from({ length: days }, (_, index) => {
-      const date = new Date();
-      date.setHours(12, 0, 0, 0);
-      date.setDate(date.getDate() - index);
-
-      return date.toISOString().slice(0, 10);
-    }),
-    batchSize,
-  ).map((datesChunk) => ({
-    metrics: [
-      {
-        name: 'screenPageViews',
-      },
-    ],
-    dateRanges: datesChunk.map((date) => ({
-      name: date,
-      startDate: date,
-      endDate: date,
-    })),
-  }));
-
-export const getPageViewsReport: RequestHandler = async (
+export const getSessionsReport: RequestHandler = async (
   { query: { days: rawDays = '14' } },
   res,
 ) => {
@@ -64,7 +41,7 @@ export const getPageViewsReport: RequestHandler = async (
     access_token: token,
     requestBody: {
       entity: { propertyId },
-      requests: getDateRange(days),
+      requests: getDateRange(days, 'sessions'),
     },
   });
 
@@ -83,7 +60,7 @@ export const getPageViewsReport: RequestHandler = async (
             metricValues: [{ value }] = [],
           }) => ({
             date: date || '',
-            pageViews: Number(value),
+            sessions: Number(value),
           }),
         )
         .sort((a, b) => Date.parse(b.date) - Date.parse(a.date)),
