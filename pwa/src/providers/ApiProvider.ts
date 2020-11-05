@@ -202,3 +202,6 @@ export interface SessionsReportRecord {
 
 export const useSessions = (days = 14) =>
   useApi<SessionsReportRecord[]>(`analytics/sessions?days=${days}`);
+
+export const useTotalSessions = (from = '2020-05-01', to = 'today') =>
+  useApi<{ count: number }>(`analytics/sessions/total?from=${from}&to=${to}`);

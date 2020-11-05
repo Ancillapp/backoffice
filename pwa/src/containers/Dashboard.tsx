@@ -9,12 +9,23 @@ import {
   useSessions,
   usePrayersCount,
   useSongsCount,
+  useTotalSessions,
 } from '../providers/ApiProvider';
 import Masonry from '../components/Masonry';
 import SessionsChartCard from '../components/SessionsChartCard';
 
+const serviceStartDate = new Intl.DateTimeFormat('it', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+}).format(new Date('2020-05-01T00:00:00.000+0200'));
+
 const Dashboard: FunctionComponent<TopbarLayoutProps> = (props) => {
   const { data: sessionsData, error: sessionsError } = useSessions();
+  const {
+    data: totalSessionsData,
+    error: totalSessionsError,
+  } = useTotalSessions();
   const { data: songsCountData, error: songsCountError } = useSongsCount();
   const {
     data: prayersCountData,
@@ -26,7 +37,11 @@ const Dashboard: FunctionComponent<TopbarLayoutProps> = (props) => {
   } = useAncillasCount();
 
   const error =
-    sessionsError || songsCountError || prayersCountError || ancillasCountError;
+    sessionsError ||
+    totalSessionsError ||
+    songsCountError ||
+    prayersCountError ||
+    ancillasCountError;
 
   if (error) {
     return <span>{error.message}</span>;
@@ -38,6 +53,17 @@ const Dashboard: FunctionComponent<TopbarLayoutProps> = (props) => {
         <Masonry container spacing={3}>
           <Masonry item md={8}>
             <SessionsChartCard data={sessionsData} />
+          </Masonry>
+          <Masonry item md={4}>
+            <CounterCard
+              title="Sessioni"
+              subtitle={
+                <>
+                  Totali <small>(dal {serviceStartDate})</small>
+                </>
+              }
+              value={totalSessionsData?.count}
+            />
           </Masonry>
           <Masonry item md={4}>
             <GrowingLink to="/canti">
