@@ -2,7 +2,7 @@ import React, { FunctionComponent } from 'react';
 
 import { ResponsiveLine } from '@nivo/line';
 
-import { useMediaQuery, useTheme } from '@material-ui/core';
+import { useTheme } from '@material-ui/core';
 
 import { SessionsReportRecord } from '../providers/ApiProvider';
 
@@ -19,10 +19,6 @@ const dateFormatter = new Intl.DateTimeFormat('it', {
 
 const SessionsChart: FunctionComponent<SessionsChartProps> = ({ data }) => {
   const theme = useTheme();
-
-  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
-
-  const displayedData = data.slice(0, isDesktop ? 14 : 7);
 
   return (
     <ResponsiveLine
@@ -49,11 +45,11 @@ const SessionsChart: FunctionComponent<SessionsChartProps> = ({ data }) => {
       data={[
         {
           id: 'Sessioni',
-          data: displayedData.map(({ date: x, sessions: y }) => ({ x, y })),
+          data: data.map(({ date: x, sessions: y }) => ({ x, y })),
         },
       ]}
       tooltip={ChartTooltip}
-      gridXValues={displayedData.length}
+      gridXValues={data.length}
       gridYValues={5}
       xScale={{
         type: 'time',
@@ -67,7 +63,7 @@ const SessionsChart: FunctionComponent<SessionsChartProps> = ({ data }) => {
       }}
       axisBottom={{
         format: (value) => dateFormatter.format(value as Date),
-        tickValues: displayedData
+        tickValues: data
           .filter((_, index) => index % 2 === 0)
           .map(({ date }) => new Date(date)),
       }}

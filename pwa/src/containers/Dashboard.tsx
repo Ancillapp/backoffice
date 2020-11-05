@@ -1,7 +1,5 @@
 import React, { FunctionComponent } from 'react';
 
-import { Card, CardContent, CardHeader } from '@material-ui/core';
-
 import TopbarLayout, { TopbarLayoutProps } from '../components/TopbarLayout';
 import DashboardLayout from '../components/DashboardLayout';
 import CounterCard from '../components/CounterCard';
@@ -12,9 +10,8 @@ import {
   usePrayersCount,
   useSongsCount,
 } from '../providers/ApiProvider';
-import SessionsChart from '../components/SessionsChart';
 import Masonry from '../components/Masonry';
-import Loader from '../components/Loader';
+import SessionsChartCard from '../components/SessionsChartCard';
 
 const Dashboard: FunctionComponent<TopbarLayoutProps> = (props) => {
   const { data: sessionsData, error: sessionsError } = useSessions();
@@ -40,16 +37,7 @@ const Dashboard: FunctionComponent<TopbarLayoutProps> = (props) => {
       <DashboardLayout>
         <Masonry container spacing={3}>
           <Masonry item md={8}>
-            <Card>
-              <CardHeader title="Sessioni" />
-              <CardContent style={{ height: 240 }}>
-                {sessionsData ? (
-                  <SessionsChart data={sessionsData} />
-                ) : (
-                  <Loader variant="linear" />
-                )}
-              </CardContent>
-            </Card>
+            <SessionsChartCard data={sessionsData} />
           </Masonry>
           <Masonry item md={4}>
             <GrowingLink to="/canti">
