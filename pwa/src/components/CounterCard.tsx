@@ -7,26 +7,31 @@ import {
   Card,
   CardContent,
   CardHeader,
+  CardProps,
   Typography,
 } from '@material-ui/core';
 
 import { Skeleton } from '@material-ui/lab';
 
-export interface CounterCardProps {
-  title?: string;
+export interface CounterCardProps
+  extends Omit<CardProps, 'title' | 'placeholder'> {
+  title?: ReactNode;
+  subtitle?: ReactNode;
   value?: number;
   placeholder?: ReactNode;
 }
 
 const CounterCard: FunctionComponent<CounterCardProps> = ({
   title,
+  subtitle,
   value,
   placeholder = <Skeleton variant="text" width={96} />,
+  ...props
 }) => (
-  <Card>
-    {title && <CardHeader title={title} />}
+  <Card {...props}>
+    {title && <CardHeader title={title} subheader={subtitle} />}
     <CardContent>
-      <Typography variant="h1" align="center">
+      <Typography variant="h2" align="center">
         {typeof value === 'number' ? (
           <CountUp end={value} />
         ) : (

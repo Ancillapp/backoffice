@@ -18,6 +18,10 @@ import { updateSong } from './handlers/songs/update';
 import { deleteSong } from './handlers/songs/delete';
 import { createSong } from './handlers/songs/create';
 // import { getUsersCount } from './handlers/users/count';
+import {
+  getSessionsReport,
+  getTotalSessions,
+} from './handlers/analytics/sessions';
 import { authorize } from './middlewares/authorize';
 
 const app = express();
@@ -39,5 +43,7 @@ app.patch('/api/songs/:number', authorize, bodyParser.json(), updateSong);
 app.delete('/api/songs/:number', authorize, deleteSong);
 app.post('/api/songs', authorize, createSong);
 // app.get('/api/users/count', authorize, getUsersCount);
+app.get('/api/analytics/sessions', authorize, getSessionsReport);
+app.get('/api/analytics/sessions/total', authorize, getTotalSessions);
 
 export const api = functions.https.onRequest(app);

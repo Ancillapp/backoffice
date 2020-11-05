@@ -2,5 +2,12 @@
   "mongodb": {
     "uri": "<mongodb-uri>",
     "name": "<mongodb-name>"
+  },
+  "analytics": {
+    "clientid": "<client-id>",
+    "clientsecret": "<client-secret>",
+    "redirecturi": "<redirect-uri>",
+    "refreshtoken": "<refresh-token>",
+    "propertyid": "<property-id>"
   }
 }
