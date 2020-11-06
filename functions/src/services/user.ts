@@ -2,7 +2,7 @@ import { firebase } from '../helpers/firebase';
 
 export const list = async () => {
   let nextPageToken: string | undefined = undefined;
-  const users: firebase.auth.UserRecord[] = [];
+  let users: firebase.auth.UserRecord[] = [];
 
   do {
     const result: firebase.auth.ListUsersResult = await firebase
@@ -10,7 +10,7 @@ export const list = async () => {
       .listUsers(1000, nextPageToken);
 
     nextPageToken = result.pageToken;
-    users.concat(result.users);
+    users = users.concat(result.users);
   } while (nextPageToken);
 
   return users;
