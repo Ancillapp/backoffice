@@ -6,6 +6,7 @@ import { useFirebase } from '../providers/FirebaseProvider';
 
 import LoginForm, { LoginFormProps } from '../components/LoginForm';
 import Loader from '../components/Loader';
+import { Role } from '../providers/ApiProvider';
 
 const Login: FunctionComponent = () => {
   const firebase = useFirebase();
@@ -30,7 +31,7 @@ const Login: FunctionComponent = () => {
 
         const token = await user?.getIdTokenResult();
 
-        if (token?.claims.role !== 'SUPERUSER') {
+        if (!(token?.claims.roles || []).includes(Role.SUPERUSER)) {
           await auth.signOut();
 
           throw new Error('INVALID_USER');
@@ -62,7 +63,7 @@ const Login: FunctionComponent = () => {
 
       const token = await user?.getIdTokenResult();
 
-      if (token?.claims.role !== 'SUPERUSER') {
+      if (!(token?.claims.roles || []).includes(Role.SUPERUSER)) {
         await auth.signOut();
 
         throw new Error('INVALID_USER');

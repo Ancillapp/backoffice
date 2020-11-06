@@ -57,7 +57,7 @@ export const useUser = () => {
 
 export interface Token extends Omit<Firebase.auth.IdTokenResult, 'claims'> {
   claims: {
-    role: string;
+    roles?: string[];
   };
 }
 
