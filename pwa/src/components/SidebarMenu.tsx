@@ -15,6 +15,7 @@ import {
   makeStyles,
 } from '@material-ui/core';
 
+import PeopleIcon from '@material-ui/icons/People';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import LibraryMusicIcon from '@material-ui/icons/LibraryMusic';
 
@@ -42,6 +43,11 @@ const MENU_ITEMS: MenuItem[] = [
     title: 'Dashboard',
     link: '/',
     icon: <DashboardIcon />,
+  },
+  {
+    key: 'utenti',
+    title: 'Utenti',
+    icon: <PeopleIcon />,
   },
   {
     key: 'canti',

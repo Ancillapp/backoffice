@@ -17,8 +17,10 @@ import SidebarLayout from '../components/SidebarLayout';
 import SidebarMenu from '../components/SidebarMenu';
 import Loader from '../components/Loader';
 import PageSkeleton from '../components/PageSkeleton';
+import { Role } from '../providers/ApiProvider';
 
 const Dashboard = lazy(() => import('./Dashboard'));
+const UsersRouter = lazy(() => import('./UsersRouter'));
 const SongsRouter = lazy(() => import('./SongsRouter'));
 const PrayersRouter = lazy(() => import('./PrayersRouter'));
 const AncillasRouter = lazy(() => import('./AncillasRouter'));
@@ -56,7 +58,7 @@ const Root: FunctionComponent = () => {
 
   return (
     <Suspense fallback={<Loader />}>
-      {token?.claims.role === 'SUPERUSER' ? (
+      {(token?.claims.roles || []).includes(Role.SUPERUSER) ? (
         <Switch>
           <Route path="/disconnessione">
             <Logout />
@@ -72,6 +74,9 @@ const Root: FunctionComponent = () => {
                 <Switch>
                   <Route exact path="/">
                     <Dashboard onMenuButtonClick={handleMenuButtonClick} />
+                  </Route>
+                  <Route path="/utenti">
+                    <UsersRouter onMenuButtonClick={handleMenuButtonClick} />
                   </Route>
                   <Route path="/canti">
                     <SongsRouter onMenuButtonClick={handleMenuButtonClick} />

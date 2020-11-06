@@ -1,4 +1,5 @@
 import { firebase } from '../../helpers/firebase';
+import { Role } from '../../services/user';
 
 import type { RequestHandler } from 'express';
 
@@ -21,7 +22,7 @@ export const authorize: RequestHandler = async (
     .verifyIdToken(token)
     .catch(() => null);
 
-  if (decodedToken?.role !== 'SUPERUSER') {
+  if (!(decodedToken?.roles || []).includes(Role.SUPERUSER)) {
     res.status(403).send();
     return;
   }
