@@ -19,6 +19,7 @@ import Loader from '../components/Loader';
 import PageSkeleton from '../components/PageSkeleton';
 
 const Dashboard = lazy(() => import('./Dashboard'));
+const UsersRouter = lazy(() => import('./UsersRouter'));
 const SongsRouter = lazy(() => import('./SongsRouter'));
 const PrayersRouter = lazy(() => import('./PrayersRouter'));
 const AncillasRouter = lazy(() => import('./AncillasRouter'));
@@ -72,6 +73,9 @@ const Root: FunctionComponent = () => {
                 <Switch>
                   <Route exact path="/">
                     <Dashboard onMenuButtonClick={handleMenuButtonClick} />
+                  </Route>
+                  <Route path="/utenti">
+                    <UsersRouter onMenuButtonClick={handleMenuButtonClick} />
                   </Route>
                   <Route path="/canti">
                     <SongsRouter onMenuButtonClick={handleMenuButtonClick} />
