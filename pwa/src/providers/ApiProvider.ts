@@ -58,19 +58,33 @@ export const useApi = <T>(
   return { loading, data, error: error || undefined, refetch };
 };
 
-export interface Song {
-  number: string;
-  title: string;
-  content: string;
+export enum Role {
+  USER = 'USER',
+  SUPERUSER = 'SUPERUSER',
 }
 
-export type SongSummary = Pick<Song, 'number' | 'title'>;
+export enum Provider {
+  EMAIL_PASSWORD = 'EMAIL_PASSWORD',
+  GOOGLE = 'GOOGLE',
+  FACEBOOK = 'FACEBOOK',
+  TWITTER = 'TWITTER',
+  MICROSOFT = 'MICROSOFT',
+  APPLE = 'APPLE',
+  GITHUB = 'GITHUB',
+}
 
-export const useSongs = () => useApi<SongSummary[]>('songs');
+export interface User {
+  id: string;
+  email: string;
+  verified: boolean;
+  disabled: boolean;
+  createdAt: string;
+  lastLoggedInAt: string;
+  roles: Role[];
+  providers: Provider[];
+}
 
-export const useSongsCount = () => useApi<{ count: number }>('songs/count');
-
-export const useSong = (number: string) => useApi<Song>(`songs/${number}`);
+export const useUsers = () => useApi<User[]>('users');
 
 export const useMutation = <T, B>(
   url: string,
@@ -128,6 +142,20 @@ export const useMutation = <T, B>(
 
   return [mutate, { loading, data, error }];
 };
+
+export interface Song {
+  number: string;
+  title: string;
+  content: string;
+}
+
+export type SongSummary = Pick<Song, 'number' | 'title'>;
+
+export const useSongs = () => useApi<SongSummary[]>('songs');
+
+export const useSongsCount = () => useApi<{ count: number }>('songs/count');
+
+export const useSong = (number: string) => useApi<Song>(`songs/${number}`);
 
 export const useSongUpdate = (number: string) =>
   useMutation<Song, Partial<Song>>(`songs/${number}`, {
