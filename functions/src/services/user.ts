@@ -1,6 +1,7 @@
 import { firebase } from '../helpers/firebase';
 
-export enum UserRole {
+export enum Role {
+  USER = 'USER',
   SUPERUSER = 'SUPERUSER',
 }
 
@@ -21,8 +22,8 @@ export interface UserData {
   disabled: boolean;
   createdAt: string;
   lastLoggedInAt: string;
-  roles: UserRole[];
-  providers: string[];
+  roles: Role[];
+  providers: Provider[];
 }
 
 const getAllUsersFromFirebase = async () => {
@@ -61,7 +62,7 @@ export const list = async () => {
       emailVerified: verified,
       disabled,
       metadata: { creationTime, lastSignInTime },
-      customClaims: { roles = [] } = {},
+      customClaims: { roles = [Role.USER] } = {},
       providerData,
     }) => ({
       id,
