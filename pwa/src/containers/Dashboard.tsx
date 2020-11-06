@@ -10,6 +10,7 @@ import {
   usePrayersCount,
   useSongsCount,
   useTotalSessions,
+  useUsersCount,
 } from '../providers/ApiProvider';
 import Masonry from '../components/Masonry';
 import SessionsChartCard from '../components/SessionsChartCard';
@@ -26,6 +27,7 @@ const Dashboard: FunctionComponent<TopbarLayoutProps> = (props) => {
     data: totalSessionsData,
     error: totalSessionsError,
   } = useTotalSessions();
+  const { data: usersCountData, error: usersCountError } = useUsersCount();
   const { data: songsCountData, error: songsCountError } = useSongsCount();
   const {
     data: prayersCountData,
@@ -36,9 +38,11 @@ const Dashboard: FunctionComponent<TopbarLayoutProps> = (props) => {
     error: ancillasCountError,
   } = useAncillasCount();
 
+  // TODO: improve error handling (handle it per API call)
   const error =
     sessionsError ||
     totalSessionsError ||
+    usersCountError ||
     songsCountError ||
     prayersCountError ||
     ancillasCountError;
@@ -64,6 +68,11 @@ const Dashboard: FunctionComponent<TopbarLayoutProps> = (props) => {
               }
               value={totalSessionsData?.count}
             />
+          </Masonry>
+          <Masonry item md={4}>
+            <GrowingLink to="/utenti">
+              <CounterCard title="Utenti" value={usersCountData?.count} />
+            </GrowingLink>
           </Masonry>
           <Masonry item md={4}>
             <GrowingLink to="/canti">

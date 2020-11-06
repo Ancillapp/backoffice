@@ -195,6 +195,8 @@ export const useAncillasCount = () =>
 export const useAncilla = (number: string) =>
   useApi<Ancilla>(`ancillas/${number}`);
 
+export const useUsersCount = () => useApi<{ count: number }>('users/count');
+
 export interface SessionsReportRecord {
   date: string;
   sessions: number;
