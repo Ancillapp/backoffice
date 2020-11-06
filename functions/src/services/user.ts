@@ -1,6 +1,31 @@
 import { firebase } from '../helpers/firebase';
 
-export const list = async () => {
+export enum UserRole {
+  SUPERUSER = 'SUPERUSER',
+}
+
+export enum Provider {
+  EMAIL_PASSWORD = 'EMAIL_PASSWORD',
+  GOOGLE = 'GOOGLE',
+  FACEBOOK = 'FACEBOOK',
+  TWITTER = 'TWITTER',
+  MICROSOFT = 'MICROSOFT',
+  APPLE = 'APPLE',
+  GITHUB = 'GITHUB',
+}
+
+export interface UserData {
+  id: string;
+  email: string;
+  verified: boolean;
+  disabled: boolean;
+  createdAt: string;
+  lastLoggedInAt: string;
+  roles: UserRole[];
+  providers: string[];
+}
+
+const getAllUsersFromFirebase = async () => {
   let nextPageToken: string | undefined = undefined;
   let users: firebase.auth.UserRecord[] = [];
 
@@ -16,8 +41,45 @@ export const list = async () => {
   return users;
 };
 
-export const count = async () => {
-  const usersList = await list();
+const providerIdToProviderMap: Record<string, Provider> = {
+  password: Provider.EMAIL_PASSWORD,
+  'google.com': Provider.GOOGLE,
+  'facebook.com': Provider.FACEBOOK,
+  'twitter.com': Provider.TWITTER,
+  'microsoft.com': Provider.MICROSOFT,
+  'apple.com': Provider.APPLE,
+  'github.com': Provider.GITHUB,
+};
 
-  return usersList.length;
+export const list = async () => {
+  const firebaseUsers = await getAllUsersFromFirebase();
+
+  return firebaseUsers.map(
+    ({
+      uid: id,
+      email = '',
+      emailVerified: verified,
+      disabled,
+      metadata: { creationTime, lastSignInTime },
+      customClaims: { roles = [] } = {},
+      providerData,
+    }) => ({
+      id,
+      email,
+      verified,
+      disabled,
+      createdAt: new Date(creationTime).toISOString(),
+      lastLoggedInAt: new Date(lastSignInTime).toISOString(),
+      roles,
+      providers: providerData.map(
+        ({ providerId }) => providerIdToProviderMap[providerId],
+      ),
+    }),
+  );
+};
+
+export const count = async () => {
+  const firebaseUsers = await getAllUsersFromFirebase();
+
+  return firebaseUsers.length;
 };

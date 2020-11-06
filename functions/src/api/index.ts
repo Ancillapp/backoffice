@@ -17,6 +17,7 @@ import { getSong } from './handlers/songs/detail';
 import { updateSong } from './handlers/songs/update';
 import { deleteSong } from './handlers/songs/delete';
 import { createSong } from './handlers/songs/create';
+import { getUsers } from './handlers/users/list';
 import { getUsersCount } from './handlers/users/count';
 import {
   getSessionsReport,
@@ -42,6 +43,7 @@ app.get('/api/songs/:number', authorize, getSong);
 app.patch('/api/songs/:number', authorize, bodyParser.json(), updateSong);
 app.delete('/api/songs/:number', authorize, deleteSong);
 app.post('/api/songs', authorize, createSong);
+app.get('/api/users', authorize, getUsers);
 app.get('/api/users/count', authorize, getUsersCount);
 app.get('/api/analytics/sessions', authorize, getSessionsReport);
 app.get('/api/analytics/sessions/total', authorize, getTotalSessions);
