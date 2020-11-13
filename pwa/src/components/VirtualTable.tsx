@@ -188,7 +188,7 @@ const VirtualTable: VirtualTableComponent = ({
             <FixedSizeList
               width={width}
               height={height}
-              itemCount={items?.length ?? estimatedRows}
+              itemCount={loading ? estimatedRows : items?.length || 0}
               itemSize={ROW_HEIGHT}
             >
               {VirtualTableRow}
