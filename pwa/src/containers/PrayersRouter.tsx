@@ -1,5 +1,7 @@
 import React, { lazy, FunctionComponent } from 'react';
 
+import { Helmet } from 'react-helmet';
+
 import { useRouteMatch, Switch, Route, Redirect } from 'react-router-dom';
 
 import { TopbarLayoutProps } from '../components/TopbarLayout';
@@ -12,21 +14,28 @@ const PrayersRouter: FunctionComponent<TopbarLayoutProps> = (props) => {
   const { path } = useRouteMatch();
 
   return (
-    <Switch>
-      <Route exact path={path}>
-        <PrayersList {...props} />
-      </Route>
+    <>
+      <Helmet
+        defaultTitle="Ancillapp Backoffice - Preghiere"
+        titleTemplate="Ancillapp Backoffice - Preghiere - %s"
+      />
 
-      <Route exact path={`${path}/nuova`}>
-        {/* <NewPrayer /> */}
-      </Route>
+      <Switch>
+        <Route exact path={path}>
+          <PrayersList {...props} />
+        </Route>
 
-      <Route exact path={`${path}/:slug`}>
-        {/* <PrayerDetail /> */}
-      </Route>
+        <Route exact path={`${path}/nuova`}>
+          {/* <NewPrayer /> */}
+        </Route>
 
-      <Redirect to={path} />
-    </Switch>
+        <Route exact path={`${path}/:slug`}>
+          {/* <PrayerDetail /> */}
+        </Route>
+
+        <Redirect to={path} />
+      </Switch>
+    </>
   );
 };
 

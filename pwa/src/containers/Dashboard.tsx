@@ -1,5 +1,7 @@
 import React, { FunctionComponent } from 'react';
 
+import { Helmet } from 'react-helmet';
+
 import TopbarLayout, { TopbarLayoutProps } from '../components/TopbarLayout';
 import DashboardLayout from '../components/DashboardLayout';
 import CounterCard from '../components/CounterCard';
@@ -52,49 +54,58 @@ const Dashboard: FunctionComponent<TopbarLayoutProps> = (props) => {
   }
 
   return (
-    <TopbarLayout title="Dashboard" {...props}>
-      <DashboardLayout>
-        <Masonry container spacing={3}>
-          <Masonry item md={8}>
-            <SessionsChartCard data={sessionsData} />
-          </Masonry>
-          <Masonry item md={4}>
-            <CounterCard
-              title="Sessioni"
-              subtitle={
-                <>
-                  Totali <small>(dal {serviceStartDate})</small>
-                </>
-              }
-              value={totalSessionsData?.count}
-            />
-          </Masonry>
-          <Masonry item md={4}>
-            <GrowingLink to="/utenti">
-              <CounterCard title="Utenti" value={usersCountData?.count} />
-            </GrowingLink>
-          </Masonry>
-          <Masonry item md={4}>
-            <GrowingLink to="/canti">
-              <CounterCard title="Canti" value={songsCountData?.count} />
-            </GrowingLink>
-          </Masonry>
-          <Masonry item md={4}>
-            <GrowingLink to="/preghiere">
-              <CounterCard title="Preghiere" value={prayersCountData?.count} />
-            </GrowingLink>
-          </Masonry>
-          <Masonry item md={4}>
-            <GrowingLink to="/ancilla-domini">
+    <>
+      <Helmet>
+        <title>Dashboard</title>
+      </Helmet>
+
+      <TopbarLayout title="Dashboard" {...props}>
+        <DashboardLayout>
+          <Masonry container spacing={3}>
+            <Masonry item md={8}>
+              <SessionsChartCard data={sessionsData} />
+            </Masonry>
+            <Masonry item md={4}>
               <CounterCard
-                title="Ancilla Domini"
-                value={ancillasCountData?.count}
+                title="Sessioni"
+                subtitle={
+                  <>
+                    Totali <small>(dal {serviceStartDate})</small>
+                  </>
+                }
+                value={totalSessionsData?.count}
               />
-            </GrowingLink>
+            </Masonry>
+            <Masonry item md={4}>
+              <GrowingLink to="/utenti">
+                <CounterCard title="Utenti" value={usersCountData?.count} />
+              </GrowingLink>
+            </Masonry>
+            <Masonry item md={4}>
+              <GrowingLink to="/canti">
+                <CounterCard title="Canti" value={songsCountData?.count} />
+              </GrowingLink>
+            </Masonry>
+            <Masonry item md={4}>
+              <GrowingLink to="/preghiere">
+                <CounterCard
+                  title="Preghiere"
+                  value={prayersCountData?.count}
+                />
+              </GrowingLink>
+            </Masonry>
+            <Masonry item md={4}>
+              <GrowingLink to="/ancilla-domini">
+                <CounterCard
+                  title="Ancilla Domini"
+                  value={ancillasCountData?.count}
+                />
+              </GrowingLink>
+            </Masonry>
           </Masonry>
-        </Masonry>
-      </DashboardLayout>
-    </TopbarLayout>
+        </DashboardLayout>
+      </TopbarLayout>
+    </>
   );
 };
 

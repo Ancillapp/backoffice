@@ -1,5 +1,7 @@
 import React, { lazy, FunctionComponent } from 'react';
 
+import { Helmet } from 'react-helmet';
+
 import { useRouteMatch, Switch, Route, Redirect } from 'react-router-dom';
 
 import { TopbarLayoutProps } from '../components/TopbarLayout';
@@ -11,17 +13,24 @@ const UsersRouter: FunctionComponent<TopbarLayoutProps> = (props) => {
   const { path } = useRouteMatch();
 
   return (
-    <Switch>
-      <Route exact path={path}>
-        <UsersList {...props} />
-      </Route>
+    <>
+      <Helmet
+        defaultTitle="Ancillapp Backoffice - Utenti"
+        titleTemplate="Ancillapp Backoffice - Utenti - %s"
+      />
 
-      <Route exact path={`${path}/:id`}>
-        {/* <UserDetail /> */}
-      </Route>
+      <Switch>
+        <Route exact path={path}>
+          <UsersList {...props} />
+        </Route>
 
-      <Redirect to={path} />
-    </Switch>
+        <Route exact path={`${path}/:id`}>
+          {/* <UserDetail /> */}
+        </Route>
+
+        <Redirect to={path} />
+      </Switch>
+    </>
   );
 };
 

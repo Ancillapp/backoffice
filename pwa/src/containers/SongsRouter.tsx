@@ -1,5 +1,7 @@
 import React, { lazy, FunctionComponent } from 'react';
 
+import { Helmet } from 'react-helmet';
+
 import { useRouteMatch, Switch, Route, Redirect } from 'react-router-dom';
 
 import { TopbarLayoutProps } from '../components/TopbarLayout';
@@ -12,21 +14,28 @@ const SongsRouter: FunctionComponent<TopbarLayoutProps> = (props) => {
   const { path } = useRouteMatch();
 
   return (
-    <Switch>
-      <Route exact path={path}>
-        <SongsList {...props} />
-      </Route>
+    <>
+      <Helmet
+        defaultTitle="Ancillapp Backoffice - Canti"
+        titleTemplate="Ancillapp Backoffice - Canti - %s"
+      />
 
-      <Route exact path={`${path}/nuovo`}>
-        <NewSong />
-      </Route>
+      <Switch>
+        <Route exact path={path}>
+          <SongsList {...props} />
+        </Route>
 
-      <Route exact path={`${path}/:number`}>
-        <SongDetail />
-      </Route>
+        <Route exact path={`${path}/nuovo`}>
+          <NewSong />
+        </Route>
 
-      <Redirect to={path} />
-    </Switch>
+        <Route exact path={`${path}/:number`}>
+          <SongDetail />
+        </Route>
+
+        <Redirect to={path} />
+      </Switch>
+    </>
   );
 };
 

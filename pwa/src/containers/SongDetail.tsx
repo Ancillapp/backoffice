@@ -1,5 +1,7 @@
 import React, { FunctionComponent, useCallback, useState } from 'react';
 
+import { Helmet } from 'react-helmet';
+
 import { Link, LinkProps, useHistory, useRouteMatch } from 'react-router-dom';
 
 import {
@@ -120,6 +122,12 @@ const SongDetail: FunctionComponent<Omit<
     <PageSkeleton />
   ) : (
     <>
+      <Helmet>
+        <title>
+          {data.number.slice(2)}. {data.title}
+        </title>
+      </Helmet>
+
       <TopbarLayout
         title={`${data.number.slice(2)}. ${data.title}`}
         startAdornment={
