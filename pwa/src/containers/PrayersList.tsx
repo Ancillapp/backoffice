@@ -3,9 +3,12 @@ import React, {
   useCallback,
   useEffect,
   useState,
+  useMemo,
 } from 'react';
 
 import { Link } from 'react-router-dom';
+
+import Fuse from 'fuse.js';
 
 import {
   Box,
@@ -31,23 +34,31 @@ const PrayersList: FunctionComponent<TopbarLayoutProps> = (props) => {
 
   const { loading, data, error } = usePrayers();
 
+  const fuse = useMemo<Fuse<PrayerSummary> | null>(
+    () =>
+      data
+        ? new Fuse(data, {
+            keys: ['title.it', 'title.la', 'title.de', 'title.en', 'title.pt'],
+          })
+        : null,
+    [data],
+  );
+
   useEffect(() => {
     if (!data) {
       setDisplayedPrayers([]);
       return;
     }
 
-    const filteredPrayers = data.filter(({ title }) => {
-      const lowerCaseSearch = search.toLowerCase();
+    if (!fuse || !search) {
+      setDisplayedPrayers(data);
+      return;
+    }
 
-      return Object.values(title).some((localizedTitle) =>
-        localizedTitle?.toLowerCase().includes(lowerCaseSearch),
-      );
-    });
+    const searchResults = fuse.search(search);
 
-    // TODO: use fuzzy search (fuse.js)
-    setDisplayedPrayers(filteredPrayers);
-  }, [data, search]);
+    setDisplayedPrayers(searchResults.map(({ item }) => item));
+  }, [data, fuse, search]);
 
   const handleSearchInput = useCallback<NonNullable<TextFieldProps['onInput']>>(
     (event) => {
