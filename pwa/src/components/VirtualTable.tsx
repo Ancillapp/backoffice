@@ -141,37 +141,31 @@ const VirtualTable: VirtualTableComponent = ({
   const classes = useStyles({ columns });
 
   const VirtualTableRow = useCallback<FunctionComponent<VirtualTableRowProps>>(
-    ({ index, style }) => {
-      return (
-        <TableRow component="div" className={classes.row} style={style}>
-          {columns.map(({ key, justify, cellTemplate: CellTemplate }) => (
-            <Box justifyContent={justify} clone>
-              <TableCell
-                key={`${key}-${index}`}
-                component="div"
-                className={classes.cell}
-              >
-                {typeof CellTemplate === 'function' && (
-                  <CellTemplate
-                    index={index}
-                    data={items?.[index]}
-                    loading={loading}
-                  />
-                )}
+    ({ index, style }) => (
+      <TableRow component="div" className={classes.row} style={style}>
+        {columns.map(({ key, justify, cellTemplate: CellTemplate }) => (
+          <Box key={`${key}-${index}`} justifyContent={justify} clone>
+            <TableCell component="div" className={classes.cell}>
+              {typeof CellTemplate === 'function' && (
+                <CellTemplate
+                  index={index}
+                  data={items?.[index]}
+                  loading={loading}
+                />
+              )}
 
-                {typeof CellTemplate !== 'function' &&
-                  key &&
-                  (loading ? (
-                    <Skeleton variant="text" width={128} />
-                  ) : (
-                    `${items?.[index][key]}`
-                  ))}
-              </TableCell>
-            </Box>
-          ))}
-        </TableRow>
-      );
-    },
+              {typeof CellTemplate !== 'function' &&
+                key &&
+                (loading ? (
+                  <Skeleton variant="text" width={128} />
+                ) : (
+                  `${items?.[index][key]}`
+                ))}
+            </TableCell>
+          </Box>
+        ))}
+      </TableRow>
+    ),
     [classes.cell, classes.row, columns, items, loading],
   );
 
@@ -180,12 +174,8 @@ const VirtualTable: VirtualTableComponent = ({
       <TableHead component="div" className={classes.head}>
         <TableRow component="div" className={classes.row}>
           {columns.map(({ key, title = key, justify }) => (
-            <Box justifyContent={justify} clone>
-              <TableCell
-                key={`${key}`}
-                component="div"
-                className={classes.cell}
-              >
+            <Box key={`${key}`} justifyContent={justify} clone>
+              <TableCell component="div" className={classes.cell}>
                 {title}
               </TableCell>
             </Box>

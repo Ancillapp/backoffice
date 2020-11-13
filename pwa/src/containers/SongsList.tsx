@@ -3,10 +3,13 @@ import React, {
   FunctionComponent,
   useCallback,
   useEffect,
+  useMemo,
   useState,
 } from 'react';
 
 import { Link } from 'react-router-dom';
+
+import Fuse from 'fuse.js';
 
 import {
   Box,
@@ -41,28 +44,34 @@ const SongsList: FunctionComponent<TopbarLayoutProps> = (props) => {
 
   const { loading, data, error } = useSongs();
 
+  const filteredSongs = useMemo<SongSummary[] | null>(
+    () => data?.filter(({ number }) => number.startsWith(language)) ?? null,
+    [data, language],
+  );
+
+  const fuse = useMemo<Fuse<SongSummary> | null>(
+    () =>
+      filteredSongs
+        ? new Fuse(filteredSongs, { keys: ['number', 'title'] })
+        : null,
+    [filteredSongs],
+  );
+
   useEffect(() => {
-    if (!data) {
+    if (!filteredSongs) {
       setDisplayedSongs([]);
       return;
     }
 
-    const filteredSongs = data.filter(({ number, title }) => {
-      if (!number.startsWith(language)) {
-        return false;
-      }
+    if (!fuse || !search) {
+      setDisplayedSongs(filteredSongs);
+      return;
+    }
 
-      const lowerCaseSearch = search.toLowerCase();
+    const searchResults = fuse.search(search);
 
-      return (
-        number.toLowerCase().includes(lowerCaseSearch) ||
-        title.toLowerCase().includes(lowerCaseSearch)
-      );
-    });
-
-    // TODO: use fuzzy search (fuse.js)
-    setDisplayedSongs(filteredSongs);
-  }, [data, language, search]);
+    setDisplayedSongs(searchResults.map(({ item }) => item));
+  }, [filteredSongs, fuse, search]);
 
   const handleLanguageChange = useCallback(
     (_: ChangeEvent<{}>, value: string) => {
