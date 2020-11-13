@@ -19,6 +19,7 @@ import PeopleIcon from '@material-ui/icons/People';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import LibraryMusicIcon from '@material-ui/icons/LibraryMusic';
 
+import PrayersIcon from './icons/Prayers';
 import AncillaDominiIcon from './icons/AncillaDomini';
 
 const useStyles = makeStyles((theme) => ({
@@ -57,7 +58,7 @@ const MENU_ITEMS: MenuItem[] = [
   {
     key: 'preghiere',
     title: 'Preghiere',
-    icon: <LibraryMusicIcon />,
+    icon: <PrayersIcon />,
   },
   {
     key: 'ancilla-domini',
