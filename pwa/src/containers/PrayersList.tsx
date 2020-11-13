@@ -78,7 +78,7 @@ const PrayersList: FunctionComponent<TopbarLayoutProps> = (props) => {
   return (
     <>
       <TopbarLayout
-        title="Canti"
+        title="Preghiere"
         endAdornment={
           <Box width={192} clone>
             <TextField
