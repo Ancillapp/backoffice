@@ -1,24 +1,22 @@
 import React, { FunctionComponent } from 'react';
 
 import {
+  IconButton,
   makeStyles,
   Paper,
-  Table,
-  TableBody,
-  TableCell,
   TableContainer,
-  TableHead,
-  TableRow,
   Tooltip,
 } from '@material-ui/core';
 
 import { Skeleton } from '@material-ui/lab';
 
 import CloseIcon from '@material-ui/icons/Close';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 
 import { Role, User } from '../providers/ApiProvider';
 
 import ProviderIcon from './ProviderIcon';
+import VirtualTable from './VirtualTable';
 
 export interface UsersProps {
   items?: User[];
@@ -35,6 +33,14 @@ const dateTimeFormatter = new Intl.DateTimeFormat('it', {
 });
 
 const useStyles = makeStyles((theme) => ({
+  root: {
+    flex: '1 1 auto',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  table: {
+    flex: '1 1 auto',
+  },
   email: {
     display: 'inline-flex',
     alignItems: 'center',
@@ -54,78 +60,88 @@ const Users: FunctionComponent<UsersProps> = ({ items, loading }) => {
   const classes = useStyles();
 
   return (
-    <TableContainer component={Paper}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Email</TableCell>
-            <TableCell>Provider</TableCell>
-            <TableCell>Data creazione</TableCell>
-            <TableCell>Data ultimo accesso</TableCell>
-            <TableCell>Ruolo</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {loading
-            ? Array.from({ length: 20 }, (_, index) => (
-                <TableRow key={index}>
-                  <TableCell>
-                    <Skeleton variant="text" width={192} />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton variant="text" width={72} />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton variant="text" width={96} />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton variant="text" width={96} />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton variant="text" width={96} />
-                  </TableCell>
-                </TableRow>
-              ))
-            : items?.map(
-                ({
-                  id,
-                  email,
-                  verified,
-                  providers,
-                  createdAt,
-                  lastLoggedInAt,
-                  roles,
-                }) => (
-                  <TableRow key={id}>
-                    <TableCell>
-                      <span className={classes.email}>
-                        {email}
-                        {!verified && (
-                          <Tooltip title="Email non verificata">
-                            <CloseIcon className={classes.notVerifiedCheck} />
-                          </Tooltip>
-                        )}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      {providers.map((provider) => (
-                        <ProviderIcon key={provider} provider={provider} />
-                      ))}
-                    </TableCell>
-                    <TableCell>
-                      {dateTimeFormatter.format(new Date(createdAt))}
-                    </TableCell>
-                    <TableCell>
-                      {dateTimeFormatter.format(new Date(lastLoggedInAt))}
-                    </TableCell>
-                    <TableCell>
-                      {roles.map((role) => roleTranslationMap[role]).join(', ')}
-                    </TableCell>
-                  </TableRow>
-                ),
-              )}
-        </TableBody>
-      </Table>
+    <TableContainer component={Paper} className={classes.root}>
+      <VirtualTable
+        className={classes.table}
+        columns={[
+          {
+            key: 'email',
+            title: 'Email',
+            cellTemplate: ({ data: { email = '', verified = false } = {} }) =>
+              loading ? (
+                <Skeleton variant="text" width={192} />
+              ) : (
+                <span className={classes.email}>
+                  {email}
+                  {!verified && (
+                    <Tooltip title="Email non verificata">
+                      <CloseIcon className={classes.notVerifiedCheck} />
+                    </Tooltip>
+                  )}
+                </span>
+              ),
+          },
+          {
+            key: 'providers',
+            title: 'Provider',
+            cellTemplate: ({ data: { providers = [] } = {}, loading }) =>
+              loading ? (
+                <Skeleton variant="text" width={48} />
+              ) : (
+                <>
+                  {providers.map((provider) => (
+                    <ProviderIcon key={provider} provider={provider} />
+                  ))}
+                </>
+              ),
+          },
+          {
+            key: 'createdAt',
+            title: 'Data creazione',
+            cellTemplate: ({ data: { createdAt = '' } = {}, loading }) =>
+              loading ? (
+                <Skeleton variant="text" width={96} />
+              ) : (
+                <>{dateTimeFormatter.format(new Date(createdAt))}</>
+              ),
+          },
+          {
+            key: 'lastLoggedInAt',
+            title: 'Data ultimo accesso',
+            cellTemplate: ({ data: { lastLoggedInAt = '' } = {}, loading }) =>
+              loading ? (
+                <Skeleton variant="text" width={96} />
+              ) : (
+                <>{dateTimeFormatter.format(new Date(lastLoggedInAt))}</>
+              ),
+          },
+          {
+            key: 'roles',
+            title: 'Ruolo',
+            cellTemplate: ({ data: { roles = [] } = {}, loading }) =>
+              loading ? (
+                <Skeleton variant="text" width={96} />
+              ) : (
+                <>{roles.map((role) => roleTranslationMap[role]).join(', ')}</>
+              ),
+          },
+          {
+            title: 'Azioni',
+            cellTemplate: ({ loading }) =>
+              loading ? (
+                <Skeleton variant="text" width={32} />
+              ) : (
+                <IconButton>
+                  <MoreVertIcon />
+                </IconButton>
+              ),
+            width: 96,
+            justify: 'center',
+          },
+        ]}
+        items={items}
+        loading={loading}
+      />
     </TableContainer>
   );
 };
