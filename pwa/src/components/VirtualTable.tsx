@@ -3,6 +3,7 @@ import React, {
   FunctionComponent,
   HTMLAttributes,
   useCallback,
+  useRef,
 } from 'react';
 
 import AutoSizer from 'react-virtualized-auto-sizer';
@@ -17,8 +18,10 @@ import {
   makeStyles,
   Table,
   TableBody,
+  TableBodyProps,
   TableCell,
   TableHead,
+  TableHeadProps,
   TableRow,
   Theme,
 } from '@material-ui/core';
@@ -46,6 +49,8 @@ export interface VirtualTableColumn<
   key?: keyof I;
   title?: string;
   width?: number | string;
+  minWidth?: number | string;
+  maxWidth?: number | string;
   justify?: BoxProps['justifyContent'];
   cellTemplate?: VirtualTableCell<I>;
 }
@@ -60,7 +65,7 @@ export interface VirtualTableProps<
 }
 
 export interface VirtualTableStylesProps {
-  columns: Pick<VirtualTableColumn, 'width'>[];
+  columns: Pick<VirtualTableColumn, 'width' | 'minWidth' | 'maxWidth'>[];
 }
 
 export type VirtualTableRowProps = ListChildComponentProps;
@@ -104,6 +109,16 @@ const useStyles = makeStyles<Theme, VirtualTableStylesProps>((theme) => ({
     gridTemplateColumns: columns
       .map(({ width }) => formatColumnWidth(width))
       .join(' '),
+    ...Object.fromEntries(
+      columns.map(({ width, minWidth, maxWidth }, index) => [
+        `& > *:nth-child(${index + 1})`,
+        {
+          ...(width && { width: formatColumnWidth(width) }),
+          ...(minWidth && { minWidth: formatColumnWidth(minWidth) }),
+          ...(maxWidth && { maxWidth: formatColumnWidth(maxWidth) }),
+        },
+      ]),
+    ),
   }),
   cell: {
     display: 'flex',
@@ -117,6 +132,8 @@ const useStyles = makeStyles<Theme, VirtualTableStylesProps>((theme) => ({
   head: {
     position: 'relative',
     flex: '0 0 auto',
+    width: '100%',
+    overflow: 'auto',
   },
   body: {
     position: 'relative',
@@ -139,6 +156,9 @@ const VirtualTable: VirtualTableComponent = ({
   ...props
 }) => {
   const classes = useStyles({ columns });
+
+  const headRef = useRef<HTMLDivElement | null>(null);
+  const bodyRef = useRef<HTMLDivElement | null>(null);
 
   const VirtualTableRow = useCallback<FunctionComponent<VirtualTableRowProps>>(
     ({ index, style }) => (
@@ -169,34 +189,71 @@ const VirtualTable: VirtualTableComponent = ({
     [classes.cell, classes.row, columns, items, loading],
   );
 
+  const handleHeadScroll = useCallback<NonNullable<TableHeadProps['onScroll']>>(
+    (event) => {
+      if (!bodyRef.current?.firstElementChild) {
+        return;
+      }
+
+      bodyRef.current.firstElementChild.scrollLeft = (event.target as HTMLDivElement).scrollLeft;
+    },
+    [],
+  );
+
+  const handleBodyScroll = useCallback<NonNullable<TableBodyProps['onScroll']>>(
+    (event) => {
+      if (!headRef.current) {
+        return;
+      }
+
+      headRef.current.scrollLeft = (event.target as HTMLDivElement).scrollLeft;
+    },
+    [],
+  );
+
   return (
-    <Table component="div" className={clsx(classes.root, className)} {...props}>
-      <TableHead component="div" className={classes.head}>
-        <TableRow component="div" className={classes.row}>
-          {columns.map(({ key, title = key, justify }) => (
-            <Box key={`${key}`} justifyContent={justify} clone>
-              <TableCell component="div" className={classes.cell}>
-                {title}
-              </TableCell>
-            </Box>
-          ))}
-        </TableRow>
-      </TableHead>
-      <TableBody component="div" className={classes.body}>
-        <AutoSizer>
-          {({ width, height }) => (
+    <AutoSizer>
+      {({ width, height }) => (
+        <Table
+          component="div"
+          className={clsx(classes.root, className)}
+          style={{ width, height }}
+          {...props}
+        >
+          <TableHead
+            component="div"
+            className={classes.head}
+            onScroll={handleHeadScroll}
+            ref={headRef}
+          >
+            <TableRow component="div" className={classes.row}>
+              {columns.map(({ key, title = key, justify }) => (
+                <Box key={`${key}`} justifyContent={justify} clone>
+                  <TableCell component="div" className={classes.cell}>
+                    {title}
+                  </TableCell>
+                </Box>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody
+            component="div"
+            className={classes.body}
+            onScroll={handleBodyScroll}
+            ref={bodyRef}
+          >
             <FixedSizeList
               width={width}
               height={height}
-              itemCount={items?.length ?? estimatedRows}
+              itemCount={loading ? estimatedRows : items?.length || 0}
               itemSize={ROW_HEIGHT}
             >
               {VirtualTableRow}
             </FixedSizeList>
-          )}
-        </AutoSizer>
-      </TableBody>
-    </Table>
+          </TableBody>
+        </Table>
+      )}
+    </AutoSizer>
   );
 };
 

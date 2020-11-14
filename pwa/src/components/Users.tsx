@@ -80,6 +80,7 @@ const Users: FunctionComponent<UsersProps> = ({ items, loading }) => {
                   )}
                 </span>
               ),
+            minWidth: 224,
           },
           {
             key: 'providers',
@@ -94,6 +95,7 @@ const Users: FunctionComponent<UsersProps> = ({ items, loading }) => {
                   ))}
                 </>
               ),
+            minWidth: 92,
           },
           {
             key: 'createdAt',
@@ -104,6 +106,7 @@ const Users: FunctionComponent<UsersProps> = ({ items, loading }) => {
               ) : (
                 <>{dateTimeFormatter.format(new Date(createdAt))}</>
               ),
+            minWidth: 128,
           },
           {
             key: 'lastLoggedInAt',
@@ -114,6 +117,7 @@ const Users: FunctionComponent<UsersProps> = ({ items, loading }) => {
               ) : (
                 <>{dateTimeFormatter.format(new Date(lastLoggedInAt))}</>
               ),
+            minWidth: 128,
           },
           {
             key: 'roles',
@@ -124,6 +128,7 @@ const Users: FunctionComponent<UsersProps> = ({ items, loading }) => {
               ) : (
                 <>{roles.map((role) => roleTranslationMap[role]).join(', ')}</>
               ),
+            minWidth: 128,
           },
           {
             title: 'Azioni',
