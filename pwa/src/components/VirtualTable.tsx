@@ -49,6 +49,8 @@ export interface VirtualTableColumn<
   key?: keyof I;
   title?: string;
   width?: number | string;
+  minWidth?: number | string;
+  maxWidth?: number | string;
   justify?: BoxProps['justifyContent'];
   cellTemplate?: VirtualTableCell<I>;
 }
@@ -63,7 +65,7 @@ export interface VirtualTableProps<
 }
 
 export interface VirtualTableStylesProps {
-  columns: Pick<VirtualTableColumn, 'width'>[];
+  columns: Pick<VirtualTableColumn, 'width' | 'minWidth' | 'maxWidth'>[];
 }
 
 export type VirtualTableRowProps = ListChildComponentProps;
@@ -107,6 +109,16 @@ const useStyles = makeStyles<Theme, VirtualTableStylesProps>((theme) => ({
     gridTemplateColumns: columns
       .map(({ width }) => formatColumnWidth(width))
       .join(' '),
+    ...Object.fromEntries(
+      columns.map(({ width, minWidth, maxWidth }, index) => [
+        `& > *:nth-child(${index + 1})`,
+        {
+          ...(width && { width: formatColumnWidth(width) }),
+          ...(minWidth && { minWidth: formatColumnWidth(minWidth) }),
+          ...(maxWidth && { maxWidth: formatColumnWidth(maxWidth) }),
+        },
+      ]),
+    ),
   }),
   cell: {
     display: 'flex',
@@ -214,16 +226,16 @@ const VirtualTable: VirtualTableComponent = ({
             onScroll={handleHeadScroll}
             ref={headRef}
           >
-        <TableRow component="div" className={classes.row}>
-          {columns.map(({ key, title = key, justify }) => (
-            <Box key={`${key}`} justifyContent={justify} clone>
-              <TableCell component="div" className={classes.cell}>
-                {title}
-              </TableCell>
-            </Box>
-          ))}
-        </TableRow>
-      </TableHead>
+            <TableRow component="div" className={classes.row}>
+              {columns.map(({ key, title = key, justify }) => (
+                <Box key={`${key}`} justifyContent={justify} clone>
+                  <TableCell component="div" className={classes.cell}>
+                    {title}
+                  </TableCell>
+                </Box>
+              ))}
+            </TableRow>
+          </TableHead>
           <TableBody
             component="div"
             className={classes.body}
@@ -240,8 +252,8 @@ const VirtualTable: VirtualTableComponent = ({
             </FixedSizeList>
           </TableBody>
         </Table>
-          )}
-        </AutoSizer>
+      )}
+    </AutoSizer>
   );
 };
 
