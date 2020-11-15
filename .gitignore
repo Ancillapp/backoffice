@@ -7,3 +7,6 @@ functions/lib/
 .runtimeconfig.json
 sitemap.xml
 .firebase*
+cypress.env.json
+cypress/screenshots/
+cypress/videos/
