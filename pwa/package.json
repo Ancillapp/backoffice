@@ -49,12 +49,17 @@
     ]
   },
   "devDependencies": {
+    "@testing-library/cypress": "^7.0.1",
+    "@types/faker": "^5.1.4",
     "@types/masonry-layout": "^4.2.2",
     "@types/react-helmet": "^6.1.0",
     "@types/react-router-dom": "^5.1.5",
     "@types/react-virtualized-auto-sizer": "^1.0.0",
     "@types/react-window": "^1.8.2",
     "copy-webpack-plugin": "^6.0.3",
+    "cypress": "^5.6.0",
+    "eslint-plugin-cypress": "^2.11.2",
+    "faker": "^5.1.0",
     "react-app-rewired": "^2.1.6",
     "workbox-webpack-plugin": "^5.1.3"
   }
