@@ -13,19 +13,19 @@ import { Snackbar, Button } from '@material-ui/core';
 import { useServiceWorker } from '../providers/ServiceWorkerProvider';
 import { useToken } from '../providers/FirebaseProvider';
 
-import SidebarLayout from '../components/SidebarLayout';
-import SidebarMenu from '../components/SidebarMenu';
-import Loader from '../components/Loader';
-import PageSkeleton from '../components/PageSkeleton';
+import SidebarLayout from '../components/common/SidebarLayout';
+import SidebarMenu from '../components/common/SidebarMenu';
+import Loader from '../components/common/Loader';
+import PageSkeleton from '../components/common/PageSkeleton';
 import { Role } from '../providers/ApiProvider';
 
-const Dashboard = lazy(() => import('./Dashboard'));
-const UsersRouter = lazy(() => import('./UsersRouter'));
-const SongsRouter = lazy(() => import('./SongsRouter'));
-const PrayersRouter = lazy(() => import('./PrayersRouter'));
-const AncillasRouter = lazy(() => import('./AncillasRouter'));
-const Login = lazy(() => import('./Login'));
-const Logout = lazy(() => import('./Logout'));
+const Dashboard = lazy(() => import('./dashboard/Dashboard'));
+const UsersRouter = lazy(() => import('./users/UsersRouter'));
+const SongsRouter = lazy(() => import('./songs/SongsRouter'));
+const PrayersRouter = lazy(() => import('./prayers/PrayersRouter'));
+const AncillasRouter = lazy(() => import('./ancillas/AncillasRouter'));
+const Login = lazy(() => import('./auth/Login'));
+const Logout = lazy(() => import('./auth/Logout'));
 
 const Root: FunctionComponent = () => {
   const { assetsUpdateReady, updateAssets } = useServiceWorker();

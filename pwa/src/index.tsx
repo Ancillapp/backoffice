@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 
-import App from './App';
+import App from './containers/App';
 
 firebase.initializeApp({
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
