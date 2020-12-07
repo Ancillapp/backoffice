@@ -37,12 +37,12 @@ import Loader from '../../components/common/Loader';
 import { mergeSearchParams } from '../../helpers/search';
 
 const SongsList: FunctionComponent<TopbarLayoutProps> = (props) => {
-  const [language, setLanguage] = useState('IT');
   const [displayedSongs, setDisplayedSongs] = useState<SongSummary[]>([]);
   const history = useHistory();
   const { search } = useLocation();
   const searchParams = useMemo(() => new URLSearchParams(search), [search]);
   const searchKeyword = searchParams.get('ricerca') || '';
+  const language = searchParams.get('lingua') || 'IT';
 
   const theme = useTheme();
 
@@ -78,13 +78,6 @@ const SongsList: FunctionComponent<TopbarLayoutProps> = (props) => {
 
     setDisplayedSongs(searchResults.map(({ item }) => item));
   }, [filteredSongs, fuse, searchKeyword]);
-
-  const handleLanguageChange = useCallback(
-    (_: ChangeEvent<{}>, value: string) => {
-      setLanguage(value);
-    },
-    [],
-  );
 
   const handleSearchInput = useCallback<NonNullable<TextFieldProps['onInput']>>(
     (event) => {
@@ -142,8 +135,7 @@ const SongsList: FunctionComponent<TopbarLayoutProps> = (props) => {
         }
         topbarContent={
           <Tabs
-            value={searchParams.get('lingua') || 'IT'}
-            onChange={handleLanguageChange}
+            value={language}
             {...(isNarrow ? { centered: true } : { variant: 'fullWidth' })}
           >
             <Tab
