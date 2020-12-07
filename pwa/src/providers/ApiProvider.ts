@@ -235,3 +235,18 @@ export const useSessions = (days = 14) =>
 
 export const useTotalSessions = (from = '2020-05-01', to = 'today') =>
   useApi<{ count: number }>(`analytics/sessions/total?from=${from}&to=${to}`);
+
+export interface DailyHolyMassBookings {
+  date: string;
+  bookings: number;
+  fraternity: {
+    id: string;
+    location: string;
+    seats: number;
+  };
+}
+
+export const useNextDaysHolyMassesBookings = (days = 3) =>
+  useApi<DailyHolyMassBookings[]>(
+    `holy-masses/next-days-bookings?days=${days}`,
+  );

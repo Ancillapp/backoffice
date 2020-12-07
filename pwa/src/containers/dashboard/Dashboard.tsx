@@ -15,15 +15,30 @@ import {
   useSongsCount,
   useTotalSessions,
   useUsersCount,
+  useNextDaysHolyMassesBookings,
 } from '../../providers/ApiProvider';
 import Masonry from '../../components/common/Masonry';
 import SessionsChartCard from '../../components/dashboard/SessionsChartCard';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  List,
+  ListItem,
+  ListItemSecondaryAction,
+  ListItemText,
+  Typography,
+} from '@material-ui/core';
+import { Skeleton } from '@material-ui/lab';
+import {
+  dateFormatter,
+  dateTimeFormatter,
+  toLocalTimeZone,
+} from '../../helpers/dates';
 
-const serviceStartDate = new Intl.DateTimeFormat('it', {
-  year: 'numeric',
-  month: '2-digit',
-  day: '2-digit',
-}).format(new Date('2020-05-01T00:00:00.000+0200'));
+const serviceStartDate = dateFormatter.format(
+  new Date('2020-05-01T00:00:00.000+0200'),
+);
 
 const Dashboard: FunctionComponent<TopbarLayoutProps> = (props) => {
   const { data: sessionsData, error: sessionsError } = useSessions();
@@ -41,6 +56,10 @@ const Dashboard: FunctionComponent<TopbarLayoutProps> = (props) => {
     data: ancillasCountData,
     error: ancillasCountError,
   } = useAncillasCount();
+  const {
+    data: nextThreeDaysHolyMassesBookingsData,
+    error: nextThreeDaysHolyMassesBookingsError,
+  } = useNextDaysHolyMassesBookings();
 
   // TODO: improve error handling (handle it per API call)
   const error =
@@ -49,7 +68,8 @@ const Dashboard: FunctionComponent<TopbarLayoutProps> = (props) => {
     usersCountError ||
     songsCountError ||
     prayersCountError ||
-    ancillasCountError;
+    ancillasCountError ||
+    nextThreeDaysHolyMassesBookingsError;
 
   if (error) {
     return <span>{error.message}</span>;
@@ -103,6 +123,48 @@ const Dashboard: FunctionComponent<TopbarLayoutProps> = (props) => {
                   value={ancillasCountData?.count}
                 />
               </GrowingLink>
+            </Masonry>
+            <Masonry item md={8}>
+              <Card>
+                <CardHeader
+                  title="Prenotazioni Santa Messa"
+                  subheader="Prossimi tre giorni"
+                />
+                <CardContent>
+                  <List>
+                    {nextThreeDaysHolyMassesBookingsData?.map(
+                      ({ date, fraternity, bookings }) => (
+                        <ListItem key={`${fraternity.id}-${date}`}>
+                          <ListItemText
+                            primary={fraternity.location}
+                            secondary={dateTimeFormatter.format(
+                              toLocalTimeZone(new Date(date)),
+                            )}
+                          />
+                          <ListItemSecondaryAction>
+                            <Typography variant="h5">
+                              {bookings}/{fraternity.seats}
+                            </Typography>
+                          </ListItemSecondaryAction>
+                        </ListItem>
+                      ),
+                    ) ||
+                      Array.from({ length: 3 }, (_, index) => (
+                        <ListItem key={index}>
+                          <ListItemText
+                            primary={<Skeleton variant="text" width={72} />}
+                            secondary={<Skeleton variant="text" width={54} />}
+                          />
+                          <ListItemSecondaryAction>
+                            <Typography variant="h5">
+                              <Skeleton variant="text" width={40} />
+                            </Typography>
+                          </ListItemSecondaryAction>
+                        </ListItem>
+                      ))}
+                  </List>
+                </CardContent>
+              </Card>
             </Masonry>
           </Masonry>
         </DashboardLayout>
