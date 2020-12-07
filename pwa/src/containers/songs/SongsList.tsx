@@ -7,7 +7,7 @@ import React, {
   useState,
 } from 'react';
 
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useHistory } from 'react-router-dom';
 
 import Fuse from 'fuse.js';
 
@@ -34,11 +34,15 @@ import TopbarLayout, {
 import Songs from '../../components/songs/Songs';
 import AutosizedFab from '../../components/common/AutosizedFab';
 import Loader from '../../components/common/Loader';
+import { mergeSearchParams } from '../../helpers/search';
 
 const SongsList: FunctionComponent<TopbarLayoutProps> = (props) => {
-  const [search, setSearch] = useState('');
   const [language, setLanguage] = useState('IT');
   const [displayedSongs, setDisplayedSongs] = useState<SongSummary[]>([]);
+  const history = useHistory();
+  const { search } = useLocation();
+  const searchParams = useMemo(() => new URLSearchParams(search), [search]);
+  const searchKeyword = searchParams.get('ricerca') || '';
 
   const theme = useTheme();
 
@@ -65,15 +69,15 @@ const SongsList: FunctionComponent<TopbarLayoutProps> = (props) => {
       return;
     }
 
-    if (!fuse || !search) {
+    if (!fuse || !searchKeyword) {
       setDisplayedSongs(filteredSongs);
       return;
     }
 
-    const searchResults = fuse.search(search);
+    const searchResults = fuse.search(searchKeyword);
 
     setDisplayedSongs(searchResults.map(({ item }) => item));
-  }, [filteredSongs, fuse, search]);
+  }, [filteredSongs, fuse, searchKeyword]);
 
   const handleLanguageChange = useCallback(
     (_: ChangeEvent<{}>, value: string) => {
@@ -84,14 +88,24 @@ const SongsList: FunctionComponent<TopbarLayoutProps> = (props) => {
 
   const handleSearchInput = useCallback<NonNullable<TextFieldProps['onInput']>>(
     (event) => {
-      setSearch((event.target as HTMLInputElement).value);
+      history.push({
+        pathname: '/canti',
+        search: mergeSearchParams(searchParams, {
+          ricerca: (event.target as HTMLInputElement).value,
+        }).toString(),
+      });
     },
-    [],
+    [history, searchParams],
   );
 
   const clearSearch = useCallback(() => {
-    setSearch('');
-  }, []);
+    history.push({
+      pathname: '/canti',
+      search: mergeSearchParams(searchParams, {
+        ricerca: null,
+      }).toString(),
+    });
+  }, [history, searchParams]);
 
   if (error) {
     return <span>{error.message}</span>;
@@ -111,7 +125,7 @@ const SongsList: FunctionComponent<TopbarLayoutProps> = (props) => {
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    {search ? (
+                    {searchKeyword ? (
                       <IconButton size="small" edge="end" onClick={clearSearch}>
                         <ClearIcon />
                       </IconButton>
@@ -121,19 +135,39 @@ const SongsList: FunctionComponent<TopbarLayoutProps> = (props) => {
                   </InputAdornment>
                 ),
               }}
-              value={search}
+              value={searchKeyword}
               onInput={handleSearchInput}
             />
           </Box>
         }
         topbarContent={
           <Tabs
-            value={language}
+            value={searchParams.get('lingua') || 'IT'}
             onChange={handleLanguageChange}
             {...(isNarrow ? { centered: true } : { variant: 'fullWidth' })}
           >
-            <Tab label="Italiano" value="IT" />
-            <Tab label="Tedesco" value="DE" />
+            <Tab
+              component={Link}
+              to={{
+                pathname: '/canti',
+                search: mergeSearchParams(searchParams, {
+                  lingua: 'IT',
+                }).toString(),
+              }}
+              value="IT"
+              label="Italiano"
+            />
+            <Tab
+              component={Link}
+              to={{
+                pathname: '/canti',
+                search: mergeSearchParams(searchParams, {
+                  lingua: 'DE',
+                }).toString(),
+              }}
+              value="DE"
+              label="Tedesco"
+            />
           </Tabs>
         }
         {...props}
