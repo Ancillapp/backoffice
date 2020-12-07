@@ -21,6 +21,7 @@ import LibraryMusicIcon from '@material-ui/icons/LibraryMusic';
 
 import PrayersIcon from '../icons/Prayers';
 import AncillaDominiIcon from '../icons/AncillaDomini';
+import HolyMassIcon from '../icons/HolyMass';
 
 const useStyles = makeStyles((theme) => ({
   active: {
@@ -64,6 +65,11 @@ const MENU_ITEMS: MenuItem[] = [
     key: 'ancilla-domini',
     title: 'Ancilla Domini',
     icon: <AncillaDominiIcon />,
+  },
+  {
+    key: 'santa-messa',
+    title: 'Santa Messa',
+    icon: <HolyMassIcon />,
   },
 ];
 
