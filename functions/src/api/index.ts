@@ -48,6 +48,6 @@ app.get('/api/users', authorize, getUsers);
 app.get('/api/users/count', authorize, getUsersCount);
 app.get('/api/analytics/sessions', authorize, getSessionsReport);
 app.get('/api/analytics/sessions/total', authorize, getTotalSessions);
-app.get('/api/holy-masses/next-days-bookings', getNextDaysBookings);
+app.get('/api/holy-masses/next-days-bookings', authorize, getNextDaysBookings);
 
 export const api = functions.https.onRequest(app);
