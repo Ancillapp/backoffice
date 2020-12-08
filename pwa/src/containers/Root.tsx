@@ -13,19 +13,21 @@ import { Snackbar, Button } from '@material-ui/core';
 import { useServiceWorker } from '../providers/ServiceWorkerProvider';
 import { useToken } from '../providers/FirebaseProvider';
 
-import SidebarLayout from '../components/SidebarLayout';
-import SidebarMenu from '../components/SidebarMenu';
-import Loader from '../components/Loader';
-import PageSkeleton from '../components/PageSkeleton';
+import SidebarLayout from '../components/common/SidebarLayout';
+import SidebarMenu from '../components/common/SidebarMenu';
+import Loader from '../components/common/Loader';
+import PageSkeleton from '../components/common/PageSkeleton';
 import { Role } from '../providers/ApiProvider';
+import { TopbarLayoutProps } from '../components/common/TopbarLayout';
 
-const Dashboard = lazy(() => import('./Dashboard'));
-const UsersRouter = lazy(() => import('./UsersRouter'));
-const SongsRouter = lazy(() => import('./SongsRouter'));
-const PrayersRouter = lazy(() => import('./PrayersRouter'));
-const AncillasRouter = lazy(() => import('./AncillasRouter'));
-const Login = lazy(() => import('./Login'));
-const Logout = lazy(() => import('./Logout'));
+const Dashboard = lazy(() => import('./dashboard/Dashboard'));
+const UsersRouter = lazy(() => import('./users/UsersRouter'));
+const SongsRouter = lazy(() => import('./songs/SongsRouter'));
+const PrayersRouter = lazy(() => import('./prayers/PrayersRouter'));
+const AncillasRouter = lazy(() => import('./ancillas/AncillasRouter'));
+const HolyMassRouter = lazy(() => import('./holyMass/HolyMassRouter'));
+const Login = lazy(() => import('./auth/Login'));
+const Logout = lazy(() => import('./auth/Logout'));
 
 const Root: FunctionComponent = () => {
   const { assetsUpdateReady, updateAssets } = useServiceWorker();
@@ -56,6 +58,10 @@ const Root: FunctionComponent = () => {
     return <Loader />;
   }
 
+  const commonRouteProps: Partial<TopbarLayoutProps> = {
+    onMenuButtonClick: handleMenuButtonClick,
+  };
+
   return (
     <Suspense fallback={<Loader />}>
       {(token?.claims.roles || []).includes(Role.SUPERUSER) ? (
@@ -73,19 +79,22 @@ const Root: FunctionComponent = () => {
               <Suspense fallback={<PageSkeleton />}>
                 <Switch>
                   <Route exact path="/">
-                    <Dashboard onMenuButtonClick={handleMenuButtonClick} />
+                    <Dashboard {...commonRouteProps} />
                   </Route>
                   <Route path="/utenti">
-                    <UsersRouter onMenuButtonClick={handleMenuButtonClick} />
+                    <UsersRouter {...commonRouteProps} />
                   </Route>
                   <Route path="/canti">
-                    <SongsRouter onMenuButtonClick={handleMenuButtonClick} />
+                    <SongsRouter {...commonRouteProps} />
                   </Route>
                   <Route path="/preghiere">
-                    <PrayersRouter onMenuButtonClick={handleMenuButtonClick} />
+                    <PrayersRouter {...commonRouteProps} />
                   </Route>
                   <Route path="/ancilla-domini">
-                    <AncillasRouter onMenuButtonClick={handleMenuButtonClick} />
+                    <AncillasRouter {...commonRouteProps} />
+                  </Route>
+                  <Route path="/santa-messa">
+                    <HolyMassRouter {...commonRouteProps} />
                   </Route>
 
                   <Redirect to="/" />
