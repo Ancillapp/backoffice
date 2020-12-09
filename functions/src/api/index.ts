@@ -24,6 +24,7 @@ import {
   getTotalSessions,
 } from './handlers/analytics/sessions';
 import { getNextDaysBookings } from './handlers/holy-masses/next-days-bookings';
+import { getTimetables } from './handlers/holy-masses/timetables';
 import { authorize } from './middlewares/authorize';
 
 const app = express();
@@ -49,5 +50,6 @@ app.get('/api/users/count', authorize, getUsersCount);
 app.get('/api/analytics/sessions', authorize, getSessionsReport);
 app.get('/api/analytics/sessions/total', authorize, getTotalSessions);
 app.get('/api/holy-masses/next-days-bookings', authorize, getNextDaysBookings);
+app.get('/api/holy-masses/timetables', authorize, getTimetables);
 
 export const api = functions.https.onRequest(app);
