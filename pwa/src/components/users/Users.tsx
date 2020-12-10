@@ -1,5 +1,3 @@
-
-
 import React, { FunctionComponent } from 'react';
 
 import {
@@ -8,9 +6,8 @@ import {
   Paper,
   TableContainer,
   Tooltip,
+  Skeleton,
 } from '@material-ui/core';
-
-import { Skeleton } from '@material-ui/lab';
 
 import CloseIcon from '@material-ui/icons/Close';
 import MoreVertIcon from '@material-ui/icons/MoreVert';

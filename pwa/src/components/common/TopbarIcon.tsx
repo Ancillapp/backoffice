@@ -8,7 +8,7 @@ const TopbarIcon: FunctionComponent<BoxProps> = (props) => {
   return (
     <Box
       color={
-        theme.palette.type === 'dark' ? 'text.primary' : 'primary.contrastText'
+        theme.palette.mode === 'dark' ? 'text.primary' : 'primary.contrastText'
       }
       clone
       {...props}

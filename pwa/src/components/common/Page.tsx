@@ -18,7 +18,7 @@ const useStyles = makeStyles<Theme, PageProps>((theme) => ({
     [theme.breakpoints.up('md')]: {
       flex: '0 0 auto',
       margin: theme.spacing(3),
-      width: `calc(100% - ${theme.spacing(6)}px)`,
+      width: `calc(100% - ${theme.spacing(6)})`,
     },
 
     '& > *': {

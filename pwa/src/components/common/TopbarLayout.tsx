@@ -33,7 +33,7 @@ const tweakedDarkTheme = createMuiTheme({
 
 const tweakedLightTheme = createMuiTheme({
   ...lightTheme,
-  palette: { ...lightTheme.palette, type: 'dark', text: { primary: '#fff' } },
+  palette: { ...lightTheme.palette, mode: 'dark', text: { primary: '#fff' } },
 });
 
 const useStyles = makeStyles((theme) => ({

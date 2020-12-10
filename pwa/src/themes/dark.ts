@@ -14,7 +14,7 @@ const darkTheme = createMuiTheme(
       h6: { fontFamily: "'Vesper Libre', serif" },
     },
     palette: {
-      type: 'dark',
+      mode: 'dark',
       primary: {
         main: '#73b5e6',
       },

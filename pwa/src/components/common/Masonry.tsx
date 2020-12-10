@@ -112,7 +112,7 @@ const useItemStyles = makeStyles<
           {
             width: `calc(${(size / 12) * 100}% - ${theme.spacing(
               spacing * 2,
-            )}px)`,
+            )})`,
           },
         ]),
     ),

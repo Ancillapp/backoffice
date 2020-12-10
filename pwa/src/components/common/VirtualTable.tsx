@@ -14,7 +14,6 @@ import clsx from 'clsx';
 
 import {
   Box,
-  BoxProps,
   makeStyles,
   Table,
   TableBody,
@@ -24,8 +23,8 @@ import {
   TableHeadProps,
   TableRow,
   Theme,
+  Skeleton,
 } from '@material-ui/core';
-import { Skeleton } from '@material-ui/lab';
 
 const ROW_HEIGHT = 56;
 
@@ -51,7 +50,24 @@ export interface VirtualTableColumn<
   width?: number | string;
   minWidth?: number | string;
   maxWidth?: number | string;
-  justify?: BoxProps['justifyContent'];
+  justify?:
+    | 'center'
+    | 'start'
+    | 'end'
+    | 'flex-start'
+    | 'flex-end'
+    | 'left'
+    | 'right'
+    | 'normal'
+    | 'space-between'
+    | 'space-around'
+    | 'space-evenly'
+    | 'stretch'
+    | 'safe center'
+    | 'unsafe center'
+    | 'inherit'
+    | 'initial'
+    | 'unset';
   cellTemplate?: VirtualTableCell<I>;
 }
 
@@ -123,7 +139,7 @@ const useStyles = makeStyles<Theme, VirtualTableStylesProps>((theme) => ({
   cell: {
     display: 'flex',
     alignItems: 'center',
-    padding: `0 ${theme.spacing(2)}px`,
+    padding: `0 ${theme.spacing(2)}`,
     height: ROW_HEIGHT,
     overflow: 'hidden',
     whiteSpace: 'nowrap',
@@ -164,7 +180,7 @@ const VirtualTable: VirtualTableComponent = ({
     ({ index, style }) => (
       <TableRow component="div" className={classes.row} style={style}>
         {columns.map(({ key, justify, cellTemplate: CellTemplate }) => (
-          <Box key={`${key}-${index}`} justifyContent={justify} clone>
+          <Box key={`${key}-${index}`} sx={{ justifyContent: justify }} clone>
             <TableCell component="div" className={classes.cell}>
               {typeof CellTemplate === 'function' && (
                 <CellTemplate
@@ -228,7 +244,7 @@ const VirtualTable: VirtualTableComponent = ({
           >
             <TableRow component="div" className={classes.row}>
               {columns.map(({ key, title = key, justify }) => (
-                <Box key={`${key}`} justifyContent={justify} clone>
+                <Box key={`${key}`} sx={{ justifyContent: justify }} clone>
                   <TableCell component="div" className={classes.cell}>
                     {title}
                   </TableCell>

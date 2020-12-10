@@ -9,9 +9,8 @@ import {
   CardHeader,
   CardProps,
   Typography,
+  Skeleton,
 } from '@material-ui/core';
-
-import { Skeleton } from '@material-ui/lab';
 
 export interface CounterCardProps
   extends Omit<CardProps, 'title' | 'placeholder'> {
@@ -35,7 +34,7 @@ const CounterCard: FunctionComponent<CounterCardProps> = ({
         {typeof value === 'number' ? (
           <CountUp end={value} />
         ) : (
-          <Box margin="0 auto" clone>
+          <Box sx={{ margin: '0 auto' }} clone>
             {placeholder}
           </Box>
         )}
