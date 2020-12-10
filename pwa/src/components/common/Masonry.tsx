@@ -74,7 +74,7 @@ const MasonryContainer: FunctionComponent<MasonryContainerProps> = ({
           ...masonryOptions,
           itemSelector: `.${itemClassName}`,
           columnWidth: `.${classes.sizer}`,
-          gutter: theme.spacing(spacing),
+          gutter: Number(theme.spacing(spacing).slice(0, -2)),
         }),
       );
 
