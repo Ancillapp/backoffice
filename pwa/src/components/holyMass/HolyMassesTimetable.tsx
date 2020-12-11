@@ -17,7 +17,6 @@ import {
 } from '@material-ui/core';
 
 import EditIcon from '@material-ui/icons/Edit';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
 import CloseIcon from '@material-ui/icons/Close';
 import DoneIcon from '@material-ui/icons/Done';
 
@@ -25,49 +24,39 @@ import { Timetable } from '../../providers/ApiProvider';
 
 import Loader from '../common/Loader';
 
+import DaySelect, { DaySelectOption, formatDay } from './DaySelect';
+import AddTimeButton from './AddTimeButton';
+
 export interface HolyMassesTimetableProps {
   fraternityId: string;
   masses: Timetable['masses'];
 }
 
-const daysTranslationMap: Record<string, string> = {
-  default: 'Default',
-  monday: 'Lunedì',
-  tuesday: 'Martedì',
-  wednesday: 'Mercoledì',
-  thursday: 'Giovedì',
-  friday: 'Venerdì',
-  saturday: 'Sabato',
-  sunday: 'Domenica',
-};
+const weekdays: Exclude<
+  keyof HolyMassesTimetableProps['masses'],
+  'default' | 'overrides'
+>[] = [
+  'monday',
+  'tuesday',
+  'wednesday',
+  'thursday',
+  'friday',
+  'saturday',
+  'sunday',
+];
 
-const shortDateFormatter = new Intl.DateTimeFormat('it', {
-  month: 'short',
-  day: 'numeric',
-});
-
-const fullDateFormatter = new Intl.DateTimeFormat('it', {
-  year: 'numeric',
-  month: 'short',
-  day: 'numeric',
-});
-
-const formatDay = (day: string) => {
-  if (day in daysTranslationMap) {
-    return daysTranslationMap[day];
-  }
-
-  if (/^\d{2}-\d{2}$/.test(day)) {
-    return shortDateFormatter.format(
-      new Date(`${new Date().getFullYear()}-${day}`),
-    );
-  }
-
-  return fullDateFormatter.format(new Date(day));
-};
-
-const useStyles = makeStyles(() => ({
-  actions: {
+const useStyles = makeStyles((theme) => ({
+  chip: {
+    margin: theme.spacing(0.5, 0.5, 0.5, 0),
+    maxWidth: 'calc(100% - 4px)',
+  },
+  row: {
+    height: 70,
+  },
+  dayColumn: {
+    width: 188,
+  },
+  actionsColumn: {
     width: 96,
     textAlign: 'center',
   },
@@ -114,14 +103,18 @@ const HolyMassesTimetable: FunctionComponent<HolyMassesTimetableProps> = ({
     ],
   );
 
-  const [editingRow, setEditingRow] = useState<{
-    id: string;
-    times: string[];
-  }>();
+  const [editingRow, setEditingRow] = useState<
+    | {
+        id: string;
+        day: string;
+        times: string[];
+      }
+    | undefined
+  >();
 
   const toggleEditMode = useCallback(
-    (id: string, times: string[]) => () => {
-      setEditingRow({ id, times });
+    (id: string, day: string, times: string[]) => () => {
+      setEditingRow({ id, day, times });
     },
     [],
   );
@@ -130,13 +123,43 @@ const HolyMassesTimetable: FunctionComponent<HolyMassesTimetableProps> = ({
     setEditingRow(undefined);
   }, []);
 
+  const removeTime = useCallback(
+    (time: string) => () => {
+      setEditingRow(({ id, day, times } = { id: '', day: '', times: [] }) => ({
+        id,
+        day,
+        times: times.filter((t) => t !== time),
+      }));
+    },
+    [],
+  );
+
+  const addTime = useCallback((time: string) => {
+    setEditingRow(({ id, day, times } = { id: '', day: '', times: [] }) => ({
+      id,
+      day,
+      times: [...times, time],
+    }));
+  }, []);
+
+  const updateDay = useCallback((day: string) => {
+    setEditingRow((previousEditingRow = { id: '', day: '', times: [] }) => ({
+      ...previousEditingRow,
+      day,
+    }));
+  }, []);
+
+  const missingWeekdays = weekdays.filter(
+    (weekday) => !(weekday in flattenedMasses),
+  );
+
   return (
     <Table>
       <TableHead>
-        <TableRow>
-          <TableCell>Giorno</TableCell>
+        <TableRow className={classes.row}>
+          <TableCell className={classes.dayColumn}>Giorno</TableCell>
           <TableCell>Orari</TableCell>
-          <TableCell className={classes.actions}>Azioni</TableCell>
+          <TableCell className={classes.actionsColumn}>Azioni</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
@@ -144,33 +167,44 @@ const HolyMassesTimetable: FunctionComponent<HolyMassesTimetableProps> = ({
           const rowId = `${fraternityId}-${day}`;
 
           return (
-            <TableRow key={rowId}>
-              <TableCell>{formatDay(day)}</TableCell>
+            <TableRow key={rowId} className={classes.row}>
+              <TableCell className={classes.dayColumn}>
+                {editingRow?.id === rowId ? (
+                  <DaySelect
+                    options={
+                      [
+                        ...(flattenedMasses.default ? [] : ['default']),
+                        ...missingWeekdays,
+                        'recurring',
+                        'specific',
+                      ] as DaySelectOption[]
+                    }
+                    value={editingRow.day}
+                    onChange={updateDay}
+                  />
+                ) : (
+                  formatDay(day)
+                )}
+              </TableCell>
               <TableCell>
                 {editingRow?.id === rowId ? (
                   <>
-                    {timetable.map((time) => (
+                    {editingRow.times.map((time) => (
                       <Chip
-                        style={{
-                          marginRight: 4,
-                          maxWidth: 'calc(100% - 4px)',
-                        }}
+                        className={classes.chip}
                         key={time}
                         label={time}
                         size="small"
-                        onDelete={console.log}
+                        onDelete={removeTime(time)}
                       />
                     ))}
-
-                    <IconButton size="small">
-                      <AddCircleIcon style={{ fontSize: 16 }} />
-                    </IconButton>
+                    <AddTimeButton onConfirm={addTime} />
                   </>
                 ) : (
                   timetable.join(' - ')
                 )}
               </TableCell>
-              <TableCell className={classes.actions}>
+              <TableCell className={classes.actionsColumn}>
                 {editingRow?.id === rowId ? (
                   <>
                     <IconButton
@@ -202,7 +236,7 @@ const HolyMassesTimetable: FunctionComponent<HolyMassesTimetableProps> = ({
                     size="small"
                     edge="end"
                     aria-label="modifica"
-                    onClick={toggleEditMode(rowId, timetable)}
+                    onClick={toggleEditMode(rowId, day, timetable)}
                     disabled={Boolean(editingRow)}
                     key="edit-time-button"
                   >
