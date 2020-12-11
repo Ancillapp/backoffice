@@ -12,8 +12,8 @@ import {
   Button,
   ListSubheader,
   makeStyles,
-  Menu,
   MenuItem,
+  Popover,
   TextField,
 } from '@material-ui/core';
 
@@ -83,7 +83,7 @@ export const formatDay = (day: string) => {
 const useStyles = makeStyles((theme) => ({
   actions: {
     width: 320,
-    padding: theme.spacing(1, 1, 0),
+    padding: theme.spacing(0, 1, 1),
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-end',
@@ -199,7 +199,7 @@ const DaySelect: FunctionComponent<DaySelectProps> = ({
         onClick={openMenu}
       />
 
-      <Menu
+      <Popover
         open={menuOpen}
         anchorEl={textFieldRef.current}
         onClose={closeMenu}
@@ -270,7 +270,7 @@ const DaySelect: FunctionComponent<DaySelectProps> = ({
             Conferma
           </Button>
         </div>
-      </Menu>
+      </Popover>
     </>
   );
 };
