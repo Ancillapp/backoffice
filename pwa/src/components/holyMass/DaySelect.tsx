@@ -81,6 +81,9 @@ export const formatDay = (day: string) => {
 };
 
 const useStyles = makeStyles((theme) => ({
+  select: {
+    cursor: 'pointer',
+  },
   actions: {
     width: 320,
     padding: theme.spacing(0, 1, 1),
@@ -195,6 +198,7 @@ const DaySelect: FunctionComponent<DaySelectProps> = ({
         variant="outlined"
         size="small"
         InputProps={{ readOnly: true }}
+        inputProps={{ className: classes.select }}
         value={formatDay(value)}
         onClick={openMenu}
       />
