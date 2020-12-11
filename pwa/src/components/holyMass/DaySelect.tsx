@@ -203,6 +203,10 @@ const DaySelect: FunctionComponent<DaySelectProps> = ({
         open={menuOpen}
         anchorEl={textFieldRef.current}
         onClose={closeMenu}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
         transformOrigin={{
           vertical: 'top',
           horizontal: 'left',
