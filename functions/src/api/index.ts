@@ -29,7 +29,8 @@ import { authorize } from './middlewares/authorize';
 
 const app = express();
 
-app.use(cors());
+// FIXME: discover why cors library is giving a type error
+app.use(cors() as any);
 
 app.use(ssr);
 
