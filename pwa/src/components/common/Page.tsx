@@ -1,5 +1,7 @@
 import React, { FunctionComponent } from 'react';
 
+import clsx from 'clsx';
+
 import { Box, BoxProps, makeStyles, Theme } from '@material-ui/core';
 import { Breakpoint } from '@material-ui/core/styles/createBreakpoints';
 
@@ -37,11 +39,15 @@ const useStyles = makeStyles<Theme, PageProps>((theme) => ({
   }),
 }));
 
-const Page: FunctionComponent<PageProps> = ({ children, ...props }) => {
+const Page: FunctionComponent<PageProps> = ({
+  children,
+  className,
+  ...props
+}) => {
   const classes = useStyles(props);
 
   return (
-    <Box className={classes.root} {...props}>
+    <Box className={clsx(classes.root, className)} {...props}>
       <Box component="section">{children}</Box>
     </Box>
   );

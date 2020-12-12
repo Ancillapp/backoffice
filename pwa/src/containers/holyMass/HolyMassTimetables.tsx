@@ -3,6 +3,7 @@ import React, { FunctionComponent, useCallback, useState } from 'react';
 import { AccordionProps } from '@material-ui/core';
 
 import Loader from '../../components/common/Loader';
+import CenteredLayout from '../../components/common/CenteredLayout';
 import { useTimetables } from '../../providers/ApiProvider';
 
 import FraternityTimetable from './FraternityTimetable';
@@ -31,7 +32,7 @@ const HolyMassTimetables: FunctionComponent = () => {
   return loading ? (
     <Loader />
   ) : (
-    <>
+    <CenteredLayout>
       {data?.map((timetable) => (
         <FraternityTimetable
           key={timetable.fraternityId}
@@ -41,7 +42,7 @@ const HolyMassTimetables: FunctionComponent = () => {
           onUpdate={refetch}
         />
       ))}
-    </>
+    </CenteredLayout>
   );
 };
 
