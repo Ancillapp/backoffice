@@ -115,7 +115,7 @@ const Root: FunctionComponent = () => {
 
       <Snackbar
         open={assetsUpdateReady}
-        message="Update available!"
+        message="Aggiornamento disponibile!"
         action={
           <Button
             color="inherit"
@@ -124,7 +124,7 @@ const Root: FunctionComponent = () => {
             onClick={handleUpdate}
           >
             {isUpdating && <Loader size={18} color="secondary" />}
-            Update now
+            Aggiorna ora
           </Button>
         }
       />
