@@ -138,7 +138,7 @@ const HolyMassesTimetable: FunctionComponent<HolyMassesTimetableProps> = ({
     setEditingRow(({ id, day, times } = { id: '', day: '', times: [] }) => ({
       id,
       day,
-      times: [...times, time],
+      times: [...times, time].sort((a, b) => (a < b ? -1 : 1)),
     }));
   }, []);
 
