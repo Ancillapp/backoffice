@@ -1,21 +1,14 @@
 import React, { FunctionComponent, useCallback, useState } from 'react';
 
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionProps,
-  AccordionSummary,
-  Typography,
-} from '@material-ui/core';
-
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { AccordionProps } from '@material-ui/core';
 
 import Loader from '../../components/common/Loader';
-import HolyMassesTimetable from '../../components/holyMass/HolyMassesTimetable';
 import { useTimetables } from '../../providers/ApiProvider';
 
+import FraternityTimetable from './FraternityTimetable';
+
 const HolyMassTimetables: FunctionComponent = () => {
-  const { loading, data, error } = useTimetables();
+  const { loading, data, error, refetch } = useTimetables();
 
   const [expandedFraternity, setExpandedFraternity] = useState<
     string | undefined
@@ -39,19 +32,14 @@ const HolyMassTimetables: FunctionComponent = () => {
     <Loader />
   ) : (
     <>
-      {data?.map(({ fraternityId, location, masses }) => (
-        <Accordion
-          key={fraternityId}
-          expanded={expandedFraternity === fraternityId}
-          onChange={handleChange(fraternityId)}
-        >
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography>{location}</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <HolyMassesTimetable fraternityId={fraternityId} masses={masses} />
-          </AccordionDetails>
-        </Accordion>
+      {data?.map((timetable) => (
+        <FraternityTimetable
+          key={timetable.fraternityId}
+          timetable={timetable}
+          expanded={expandedFraternity === timetable.fraternityId}
+          onChange={handleChange(timetable.fraternityId)}
+          onUpdate={refetch}
+        />
       ))}
     </>
   );

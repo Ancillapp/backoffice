@@ -269,3 +269,11 @@ export interface Timetable {
 
 export const useTimetables = () =>
   useApi<Timetable[]>('holy-masses/timetables');
+
+export const useTimetableUpdate = (fraternityId: string) =>
+  useMutation<Timetable['masses'], Partial<Timetable['masses']>>(
+    `holy-masses/timetables/${fraternityId}`,
+    {
+      method: 'PATCH',
+    },
+  );

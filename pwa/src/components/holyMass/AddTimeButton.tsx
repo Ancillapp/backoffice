@@ -52,10 +52,10 @@ const AddTimeButton: FunctionComponent<AddTimeButtonProps> = ({
     }
 
     onConfirm?.(
-      `${`${selectedTime.getHours()}`.padStart(
+      `${selectedTime.getHours()}:${`${selectedTime.getMinutes()}`.padStart(
         2,
         '0',
-      )}:${`${selectedTime.getMinutes()}`.padStart(2, '0')}`,
+      )}`,
     );
     setTimePickerOpen(false);
   }, [onConfirm, selectedTime]);
