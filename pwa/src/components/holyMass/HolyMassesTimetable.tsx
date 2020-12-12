@@ -6,8 +6,7 @@ import React, {
 } from 'react';
 
 import {
-  Chip,
-  IconButton,
+  Button,
   makeStyles,
   Table,
   TableBody,
@@ -16,16 +15,12 @@ import {
   TableRow,
 } from '@material-ui/core';
 
-import EditIcon from '@material-ui/icons/Edit';
-import CloseIcon from '@material-ui/icons/Close';
-import DoneIcon from '@material-ui/icons/Done';
+import AddIcon from '@material-ui/icons/Add';
 
 import { Timetable } from '../../providers/ApiProvider';
 
-import Loader from '../common/Loader';
-
-import DaySelect, { DaySelectOption, formatDay } from './DaySelect';
-import AddTimeButton from './AddTimeButton';
+import { DaySelectOption } from './DaySelect';
+import TimetableRow, { TimetableRowProps } from './TimetableRow';
 
 export interface HolyMassesTimetableProps {
   fraternityId: string;
@@ -47,10 +42,6 @@ const weekdays: Exclude<
 ];
 
 const useStyles = makeStyles((theme) => ({
-  chip: {
-    margin: theme.spacing(0.5, 0.5, 0.5, 0),
-    maxWidth: 'calc(100% - 4px)',
-  },
   row: {
     height: 70,
   },
@@ -59,6 +50,9 @@ const useStyles = makeStyles((theme) => ({
   },
   actionsColumn: {
     width: 96,
+    textAlign: 'center',
+  },
+  add: {
     textAlign: 'center',
   },
 }));
@@ -116,6 +110,18 @@ const HolyMassesTimetable: FunctionComponent<HolyMassesTimetableProps> = ({
 
   const [isUpdating, setIsUpdating] = useState(false);
 
+  const [isAdding, setIsAdding] = useState(false);
+
+  const handleRowChange = useCallback<
+    NonNullable<TimetableRowProps['onChange']>
+  >((day, times) => {
+    setEditingRow(({ id } = { id: '', day: '', times: [] }) => ({
+      id,
+      day,
+      times,
+    }));
+  }, []);
+
   const toggleEditMode = useCallback(
     (id: string, day: string, times: string[]) => () => {
       setEditingRow({ id, day, times });
@@ -142,32 +148,8 @@ const HolyMassesTimetable: FunctionComponent<HolyMassesTimetableProps> = ({
     setEditingRow(undefined);
   }, [editingRow, onRowUpdate]);
 
-  const removeTime = useCallback(
-    (time: string) => () => {
-      setEditingRow(({ id, day, times } = { id: '', day: '', times: [] }) => ({
-        id,
-        day,
-        times: times.filter((t) => t !== time),
-      }));
-    },
-    [],
-  );
-
-  const addTime = useCallback((time: string) => {
-    setEditingRow(({ id, day, times } = { id: '', day: '', times: [] }) => ({
-      id,
-      day,
-      times: [...times, time].sort((a, b) =>
-        a.padStart(5, '0') < b.padStart(5, '0') ? -1 : 1,
-      ),
-    }));
-  }, []);
-
-  const updateDay = useCallback((day: string) => {
-    setEditingRow((previousEditingRow = { id: '', day: '', times: [] }) => ({
-      ...previousEditingRow,
-      day,
-    }));
+  const addRow = useCallback(() => {
+    setIsAdding(true);
   }, []);
 
   const missingWeekdays = weekdays.filter(
@@ -185,86 +167,36 @@ const HolyMassesTimetable: FunctionComponent<HolyMassesTimetableProps> = ({
       </TableHead>
       <TableBody>
         {Object.entries(flattenedMasses).map(([day, timetable]) => (
-          <TableRow key={`${fraternityId}-${day}`} className={classes.row}>
-            <TableCell className={classes.dayColumn}>
-              {editingRow?.id === day ? (
-                <DaySelect
-                  options={
-                    [
-                      ...(flattenedMasses.default ? [] : ['default']),
-                      ...missingWeekdays,
-                      'recurring',
-                      'specific',
-                    ] as DaySelectOption[]
-                  }
-                  value={editingRow.day}
-                  onChange={updateDay}
-                />
-              ) : (
-                formatDay(day)
-              )}
-            </TableCell>
-            <TableCell>
-              {editingRow?.id === day ? (
-                <>
-                  {editingRow.times.map((time) => (
-                    <Chip
-                      className={classes.chip}
-                      key={time}
-                      label={time}
-                      size="small"
-                      onDelete={removeTime(time)}
-                    />
-                  ))}
-                  <AddTimeButton onConfirm={addTime} />
-                </>
-              ) : (
-                timetable.join(' - ')
-              )}
-            </TableCell>
-            <TableCell className={classes.actionsColumn}>
-              {editingRow?.id === day ? (
-                <>
-                  <IconButton
-                    size="small"
-                    aria-label="annulla"
-                    type="reset"
-                    form="edit-time-form"
-                    key="cancel-editing-time-button"
-                    onClick={cancelEditing}
-                    disabled={isUpdating}
-                  >
-                    <CloseIcon />
-                  </IconButton>
-                  <IconButton
-                    size="small"
-                    edge="end"
-                    aria-label="conferma"
-                    type="submit"
-                    form="edit-time-form"
-                    key="save-time-button"
-                    onClick={updateRow}
-                    disabled={isUpdating}
-                  >
-                    {isUpdating && <Loader size={24} />}
-                    <DoneIcon />
-                  </IconButton>
-                </>
-              ) : (
-                <IconButton
-                  size="small"
-                  edge="end"
-                  aria-label="modifica"
-                  onClick={toggleEditMode(day, day, timetable)}
-                  disabled={Boolean(editingRow)}
-                  key="edit-time-button"
-                >
-                  <EditIcon />
-                </IconButton>
-              )}
-            </TableCell>
-          </TableRow>
+          <TimetableRow
+            key={`${fraternityId}-${day}`}
+            editMode={editingRow?.id === day}
+            daySelectOptions={
+              [
+                ...(flattenedMasses.default ? [] : ['default']),
+                ...missingWeekdays,
+                'recurring',
+                'specific',
+              ] as DaySelectOption[]
+            }
+            day={editingRow?.id === day ? editingRow.day : day}
+            times={editingRow?.id === day ? editingRow.times : timetable}
+            loading={isUpdating}
+            disabled={Boolean(editingRow)}
+            onChange={handleRowChange}
+            onCancelUpdateClick={cancelEditing}
+            onAcceptUpdateClick={updateRow}
+            onEditClick={toggleEditMode(day, day, timetable)}
+          />
         ))}
+        <TableRow className={classes.row}>
+          {isAdding ? null : (
+            <TableCell colSpan={3} className={classes.add}>
+              <Button color="inherit" startIcon={<AddIcon />} onClick={addRow}>
+                Aggiungi
+              </Button>
+            </TableCell>
+          )}
+        </TableRow>
       </TableBody>
     </Table>
   );
