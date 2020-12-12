@@ -101,6 +101,34 @@ const FraternityTimetable: FunctionComponent<FraternityTimetableProps> = ({
     [onUpdate, updateTimetable],
   );
 
+  const handleRowDelete = useCallback(
+    ({
+      masses,
+    }: Timetable): NonNullable<
+      HolyMassesTimetableProps['onRowDelete']
+    > => async (id) => {
+      let strippedMasses: Timetable['masses'];
+
+      if (isDefaultOrWeekDay(id)) {
+        const { [id]: _, ...stripped } = masses;
+        strippedMasses = stripped;
+      } else {
+        const {
+          overrides: { [id]: _, ...strippedOverrides } = {},
+          ...rest
+        } = masses;
+        strippedMasses = {
+          ...rest,
+          overrides: strippedOverrides,
+        };
+      }
+
+      await updateTimetable(strippedMasses);
+      await onUpdate?.(strippedMasses);
+    },
+    [onUpdate, updateTimetable],
+  );
+
   return (
     <Accordion {...accordionProps}>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -112,6 +140,7 @@ const FraternityTimetable: FunctionComponent<FraternityTimetableProps> = ({
           masses={timetable.masses}
           onRowUpdate={handleRowUpdate(timetable)}
           onRowCreate={handleRowCreate(timetable)}
+          onRowDelete={handleRowDelete(timetable)}
         />
       </AccordionDetails>
     </Accordion>

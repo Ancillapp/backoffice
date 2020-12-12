@@ -9,6 +9,7 @@ import {
 } from '@material-ui/core';
 
 import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
 import CloseIcon from '@material-ui/icons/Close';
 import DoneIcon from '@material-ui/icons/Done';
 
@@ -31,6 +32,7 @@ export interface TimetableRowProps {
   onChange?(data: TimetableRowChangeEventData): any;
   onCancelUpdateClick?(): any;
   onAcceptUpdateClick?(): any;
+  onDeleteClick?(): any;
   onEditClick?(): any;
 }
 
@@ -51,6 +53,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+// TODO: split this component into two separate components for view mode and edit mode
 const TimetableRow: FunctionComponent<TimetableRowProps> = ({
   editMode,
   daySelectOptions,
@@ -61,6 +64,7 @@ const TimetableRow: FunctionComponent<TimetableRowProps> = ({
   onChange,
   onCancelUpdateClick,
   onAcceptUpdateClick,
+  onDeleteClick,
   onEditClick,
 }) => {
   const classes = useStyles();
@@ -101,6 +105,10 @@ const TimetableRow: FunctionComponent<TimetableRowProps> = ({
   const handleAcceptUpdateClick = useCallback(() => {
     onAcceptUpdateClick?.();
   }, [onAcceptUpdateClick]);
+
+  const handleDeleteClick = useCallback(() => {
+    onDeleteClick?.();
+  }, [onDeleteClick]);
 
   const handleEditClick = useCallback(() => {
     onEditClick?.();
@@ -161,21 +169,32 @@ const TimetableRow: FunctionComponent<TimetableRowProps> = ({
               onClick={handleAcceptUpdateClick}
               disabled={loading}
             >
-              {loading && <Loader size={24} />}
+              {loading && <Loader size={18} />}
               <DoneIcon />
             </IconButton>
           </>
         ) : (
-          <IconButton
-            size="small"
-            edge="end"
-            aria-label="modifica"
-            onClick={handleEditClick}
-            disabled={disabled}
-            key="edit-time-button"
-          >
-            <EditIcon />
-          </IconButton>
+          <>
+            <IconButton
+              size="small"
+              aria-label="elimina"
+              onClick={handleDeleteClick}
+              disabled={disabled}
+              key="delete-time-button"
+            >
+              <DeleteIcon />
+            </IconButton>
+            <IconButton
+              size="small"
+              edge="end"
+              aria-label="modifica"
+              onClick={handleEditClick}
+              disabled={disabled}
+              key="edit-time-button"
+            >
+              <EditIcon />
+            </IconButton>
+          </>
         )}
       </TableCell>
     </TableRow>

@@ -13,13 +13,16 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  Typography,
 } from '@material-ui/core';
 
 import AddIcon from '@material-ui/icons/Add';
 
 import { Timetable } from '../../providers/ApiProvider';
 
-import { DaySelectOption } from './DaySelect';
+import Loader from '../common/Loader';
+
+import { DaySelectOption, formatDay } from './DaySelect';
 import TimetableRow, { TimetableRowProps } from './TimetableRow';
 
 export interface HolyMassesTimetableProps {
@@ -27,6 +30,7 @@ export interface HolyMassesTimetableProps {
   masses: Timetable['masses'];
   onRowUpdate?(id: string, day: string, times: string[]): any;
   onRowCreate?(day: string, times: string[]): any;
+  onRowDelete?(id: string): any;
 }
 
 const weekdays: Exclude<
@@ -56,6 +60,14 @@ const useStyles = makeStyles((theme) => ({
   add: {
     textAlign: 'center',
   },
+  deletionConfirmationRow: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  deletionConfirmationActions: {
+    textAlign: 'right',
+  },
 }));
 
 const HolyMassesTimetable: FunctionComponent<HolyMassesTimetableProps> = ({
@@ -73,6 +85,7 @@ const HolyMassesTimetable: FunctionComponent<HolyMassesTimetableProps> = ({
   },
   onRowUpdate,
   onRowCreate,
+  onRowDelete,
 }) => {
   const classes = useStyles();
 
@@ -101,6 +114,8 @@ const HolyMassesTimetable: FunctionComponent<HolyMassesTimetableProps> = ({
     ],
   );
 
+  const [deletingRow, setDeletingRow] = useState<string | undefined>();
+
   const [editingRow, setEditingRow] = useState<
     | {
         id: string;
@@ -122,6 +137,13 @@ const HolyMassesTimetable: FunctionComponent<HolyMassesTimetableProps> = ({
     }));
   }, []);
 
+  const showDeleteConfirmation = useCallback(
+    (id: string) => () => {
+      setDeletingRow(id);
+    },
+    [],
+  );
+
   const toggleEditMode = useCallback(
     (id: string, day: string, times: string[]) => () => {
       setEditingRow({ id, day, times });
@@ -129,9 +151,26 @@ const HolyMassesTimetable: FunctionComponent<HolyMassesTimetableProps> = ({
     [],
   );
 
+  const cancelDeletion = useCallback(() => {
+    setDeletingRow(undefined);
+  }, []);
+
   const cancelEditing = useCallback(() => {
     setEditingRow(undefined);
   }, []);
+
+  const deleteRow = useCallback(async () => {
+    if (!deletingRow) {
+      return;
+    }
+
+    setIsUpdating(true);
+
+    await onRowDelete?.(deletingRow);
+
+    setIsUpdating(false);
+    setDeletingRow(undefined);
+  }, [deletingRow, onRowDelete]);
 
   const updateRow = useCallback(async () => {
     if (!editingRow) {
@@ -188,21 +227,55 @@ const HolyMassesTimetable: FunctionComponent<HolyMassesTimetableProps> = ({
         </TableRow>
       </TableHead>
       <TableBody>
-        {Object.entries(flattenedMasses).map(([day, timetable]) => (
-          <TimetableRow
-            key={`${fraternityId}-${day}`}
-            editMode={editingRow?.id === day}
-            daySelectOptions={daySelectOptions}
-            day={editingRow?.id === day ? editingRow.day : day}
-            times={editingRow?.id === day ? editingRow.times : timetable}
-            loading={isUpdating}
-            disabled={Boolean(editingRow)}
-            onChange={handleRowChange}
-            onCancelUpdateClick={cancelEditing}
-            onAcceptUpdateClick={updateRow}
-            onEditClick={toggleEditMode(day, day, timetable)}
-          />
-        ))}
+        {Object.entries(flattenedMasses).map(([day, timetable]) =>
+          deletingRow === day ? (
+            <TableRow key={`${fraternityId}-${day}`} className={classes.row}>
+              <TableCell colSpan={3}>
+                <div className={classes.deletionConfirmationRow}>
+                  <Typography>
+                    Eliminare gli orari per la messa
+                    {/^\d{2}-\d{2}$/.test(day) ? ' del giorno ' : ' di '}
+                    <strong>{formatDay(day)}</strong>?
+                  </Typography>
+                  <div className={classes.deletionConfirmationActions}>
+                    <Button
+                      size="small"
+                      color="inherit"
+                      onClick={cancelDeletion}
+                      disabled={isUpdating}
+                    >
+                      Annulla
+                    </Button>
+                    <Button
+                      size="small"
+                      color="secondary"
+                      onClick={deleteRow}
+                      disabled={isUpdating}
+                    >
+                      Elimina
+                      {isUpdating && <Loader size={18} />}
+                    </Button>
+                  </div>
+                </div>
+              </TableCell>
+            </TableRow>
+          ) : (
+            <TimetableRow
+              key={`${fraternityId}-${day}`}
+              editMode={editingRow?.id === day}
+              daySelectOptions={daySelectOptions}
+              day={editingRow?.id === day ? editingRow.day : day}
+              times={editingRow?.id === day ? editingRow.times : timetable}
+              loading={isUpdating}
+              disabled={Boolean(editingRow) || Boolean(deletingRow)}
+              onChange={handleRowChange}
+              onCancelUpdateClick={cancelEditing}
+              onAcceptUpdateClick={updateRow}
+              onDeleteClick={showDeleteConfirmation(day)}
+              onEditClick={toggleEditMode(day, day, timetable)}
+            />
+          ),
+        )}
         {editingRow?.id === 'new' ? (
           <TimetableRow
             editMode
@@ -217,7 +290,12 @@ const HolyMassesTimetable: FunctionComponent<HolyMassesTimetableProps> = ({
         ) : (
           <TableRow className={classes.row}>
             <TableCell colSpan={3} className={classes.add}>
-              <Button color="inherit" startIcon={<AddIcon />} onClick={addRow}>
+              <Button
+                color="inherit"
+                startIcon={<AddIcon />}
+                onClick={addRow}
+                disabled={Boolean(editingRow) || Boolean(deletingRow)}
+              >
                 Aggiungi
               </Button>
             </TableCell>
