@@ -24,11 +24,14 @@ import {
   getTotalSessions,
 } from './handlers/analytics/sessions';
 import { getNextDaysBookings } from './handlers/holy-masses/next-days-bookings';
+import { getTimetables } from './handlers/holy-masses/timetables/list';
+import { updateTimetable } from './handlers/holy-masses/timetables/update';
 import { authorize } from './middlewares/authorize';
 
 const app = express();
 
-app.use(cors());
+// FIXME: discover why cors library is giving a type error
+app.use(cors() as any);
 
 app.use(ssr);
 
@@ -48,6 +51,13 @@ app.get('/api/users', authorize, getUsers);
 app.get('/api/users/count', authorize, getUsersCount);
 app.get('/api/analytics/sessions', authorize, getSessionsReport);
 app.get('/api/analytics/sessions/total', authorize, getTotalSessions);
-app.get('/api/holy-masses/next-days-bookings', getNextDaysBookings);
+app.get('/api/holy-masses/next-days-bookings', authorize, getNextDaysBookings);
+app.get('/api/holy-masses/timetables', authorize, getTimetables);
+app.patch(
+  '/api/holy-masses/timetables/:fraternityId',
+  authorize,
+  bodyParser.json(),
+  updateTimetable,
+);
 
 export const api = functions.https.onRequest(app);

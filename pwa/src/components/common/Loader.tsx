@@ -29,7 +29,7 @@ const useStyles = makeStyles<Theme, { size?: number }>((theme) => ({
     ...(typeof size === 'undefined'
       ? {
           left: theme.spacing(2),
-          width: `calc(100% - ${theme.spacing(4)}px)`,
+          width: `calc(100% - ${theme.spacing(4)})`,
           marginTop: theme.spacing(0.25),
         }
       : {

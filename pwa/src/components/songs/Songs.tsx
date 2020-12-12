@@ -1,5 +1,3 @@
-
-
 import React, { FunctionComponent, useCallback } from 'react';
 
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
@@ -90,8 +88,8 @@ const Songs: FunctionComponent<SongsProps> = ({ items }) => {
                   key={number}
                   className={classes.songLink}
                   style={{
-                    width: width - theme.spacing(2),
-                    height: height - theme.spacing(2),
+                    width: width - Number(theme.spacing(2).slice(0, -2)),
+                    height: height - Number(theme.spacing(2).slice(0, -2)),
                   }}
                 >
                   <Card className={classes.song}>

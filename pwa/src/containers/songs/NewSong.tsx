@@ -58,7 +58,7 @@ const NewSong: FunctionComponent<Omit<TopbarLayoutProps, 'startAdornment'>> = (
     <TopbarLayout
       title="Nuovo canto"
       startAdornment={
-        <TopbarIcon mr={0.5}>
+        <TopbarIcon sx={{ mr: 0.5 }}>
           <Link to="/canti" onClick={handleBackClick}>
             <IconButton
               color="inherit"

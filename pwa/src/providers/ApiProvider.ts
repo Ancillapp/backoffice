@@ -250,3 +250,30 @@ export const useNextDaysHolyMassesBookings = (days = 3) =>
   useApi<DailyHolyMassBookings[]>(
     `holy-masses/next-days-bookings?days=${days}`,
   );
+
+export interface Timetable {
+  fraternityId: string;
+  location: string;
+  masses: {
+    sunday?: string[];
+    monday?: string[];
+    tuesday?: string[];
+    wednesday?: string[];
+    thursday?: string[];
+    friday?: string[];
+    saturday?: string[];
+    default?: string[];
+    overrides?: Record<string, string[]>;
+  };
+}
+
+export const useTimetables = () =>
+  useApi<Timetable[]>('holy-masses/timetables');
+
+export const useTimetableUpdate = (fraternityId: string) =>
+  useMutation<Timetable['masses'], Partial<Timetable['masses']>>(
+    `holy-masses/timetables/${fraternityId}`,
+    {
+      method: 'PATCH',
+    },
+  );

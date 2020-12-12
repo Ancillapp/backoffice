@@ -14,6 +14,7 @@ const lightTheme = createMuiTheme(
       h6: { fontFamily: "'Vesper Libre', serif" },
     },
     palette: {
+      mode: 'light',
       primary: {
         main: '#557892',
       },

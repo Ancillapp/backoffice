@@ -15,6 +15,9 @@ import Root from './Root';
 import FirebaseProvider from '../providers/FirebaseProvider';
 import ServiceWorkerProvider from '../providers/ServiceWorkerProvider';
 import { useThemeName } from '../providers/ThemeNameProvider';
+import AdapterDateFns from '@material-ui/lab/AdapterDateFns';
+import LocalizationProvider from '@material-ui/lab/LocalizationProvider';
+import itLocale from 'date-fns/locale/it';
 
 export interface AppProps {
   firebase: typeof Firebase;
@@ -26,16 +29,18 @@ const App: FunctionComponent<AppProps> = ({ firebase }) => {
   return (
     <FirebaseProvider firebase={firebase}>
       <ThemeProvider theme={themeName === 'dark' ? darkTheme : lightTheme}>
-        <Helmet
-          defaultTitle="Ancillapp Backoffice"
-          titleTemplate="Ancillapp Backoffice - %s"
-        />
-        <CssBaseline />
-        <ServiceWorkerProvider>
-          <BrowserRouter>
-            <Root />
-          </BrowserRouter>
-        </ServiceWorkerProvider>
+        <LocalizationProvider dateAdapter={AdapterDateFns} locale={itLocale}>
+          <Helmet
+            defaultTitle="Ancillapp Backoffice"
+            titleTemplate="Ancillapp Backoffice - %s"
+          />
+          <CssBaseline />
+          <ServiceWorkerProvider>
+            <BrowserRouter>
+              <Root />
+            </BrowserRouter>
+          </ServiceWorkerProvider>
+        </LocalizationProvider>
       </ThemeProvider>
     </FirebaseProvider>
   );

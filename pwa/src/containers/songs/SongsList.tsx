@@ -108,7 +108,7 @@ const SongsList: FunctionComponent<TopbarLayoutProps> = (props) => {
       <TopbarLayout
         title="Canti"
         endAdornment={
-          <Box width={192} clone>
+          <Box sx={{ width: 192 }} clone>
             <TextField
               type="search"
               size="small"

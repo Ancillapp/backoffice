@@ -1,10 +1,12 @@
-import React, { FunctionComponent } from 'react';
+import React, { lazy, FunctionComponent } from 'react';
 
 import { Helmet } from 'react-helmet';
 
 import { useRouteMatch, Switch, Route, Redirect } from 'react-router-dom';
 
 import { TopbarLayoutProps } from '../../components/common/TopbarLayout';
+
+const HolyMassDashboard = lazy(() => import('./HolyMassDashboard'));
 
 const HolyMassRouter: FunctionComponent<TopbarLayoutProps> = (props) => {
   const { path } = useRouteMatch();
@@ -17,8 +19,8 @@ const HolyMassRouter: FunctionComponent<TopbarLayoutProps> = (props) => {
       />
 
       <Switch>
-        <Route exact path={path}>
-          <h1>Santa Messa</h1>
+        <Route exact path={`${path}/:section?`}>
+          <HolyMassDashboard {...props} />
         </Route>
 
         <Redirect to={path} />

@@ -135,7 +135,7 @@ const SongDetail: FunctionComponent<
       <TopbarLayout
         title={`${data.number.slice(2)}. ${data.title}`}
         startAdornment={
-          <TopbarIcon mr={0.5}>
+          <TopbarIcon sx={{ mr: 0.5 }}>
             <Link to="/canti" onClick={handleBackClick}>
               <IconButton
                 color="inherit"

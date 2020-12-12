@@ -24,6 +24,7 @@ import TopbarLayout, {
   TopbarLayoutProps,
 } from '../../components/common/TopbarLayout';
 import Users from '../../components/users/Users';
+import CenteredLayout from '../../components/common/CenteredLayout';
 
 const UsersList: FunctionComponent<TopbarLayoutProps> = (props) => {
   const [search, setSearch] = useState('');
@@ -82,7 +83,7 @@ const UsersList: FunctionComponent<TopbarLayoutProps> = (props) => {
     <TopbarLayout
       title="Utenti"
       endAdornment={
-        <Box width={192} clone>
+        <Box sx={{ width: 192 }} clone>
           <TextField
             type="search"
             size="small"
@@ -108,7 +109,9 @@ const UsersList: FunctionComponent<TopbarLayoutProps> = (props) => {
       }
       {...props}
     >
-      <Users items={displayedUsers} loading={loading} />
+      <CenteredLayout>
+        <Users items={displayedUsers} loading={loading} />
+      </CenteredLayout>
     </TopbarLayout>
   );
 };
