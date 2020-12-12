@@ -16,14 +16,19 @@ import DaySelect, { DaySelectOption, formatDay } from './DaySelect';
 import AddTimeButton from './AddTimeButton';
 import Loader from '../common/Loader';
 
+export interface TimetableRowChangeEventData {
+  day?: string;
+  times?: string[];
+}
+
 export interface TimetableRowProps {
   editMode?: boolean;
   daySelectOptions: DaySelectOption[];
-  day: string;
-  times: string[];
+  day?: string;
+  times?: string[];
   loading?: boolean;
   disabled?: boolean;
-  onChange?(day: string, times: string[]): any;
+  onChange?(data: TimetableRowChangeEventData): any;
   onCancelUpdateClick?(): any;
   onAcceptUpdateClick?(): any;
   onEditClick?(): any;
@@ -50,7 +55,7 @@ const TimetableRow: FunctionComponent<TimetableRowProps> = ({
   editMode,
   daySelectOptions,
   day,
-  times,
+  times = [],
   loading,
   disabled,
   onChange,
@@ -62,29 +67,29 @@ const TimetableRow: FunctionComponent<TimetableRowProps> = ({
 
   const updateDay = useCallback(
     (newDay: string) => {
-      onChange?.(newDay, times);
+      onChange?.({ day: newDay, times });
     },
     [onChange, times],
   );
 
   const removeTime = useCallback(
     (time: string) => () => {
-      onChange?.(
+      onChange?.({
         day,
-        times.filter((t) => t !== time),
-      );
+        times: times.filter((t) => t !== time),
+      });
     },
     [day, onChange, times],
   );
 
   const addTime = useCallback(
     (time: string) => {
-      onChange?.(
+      onChange?.({
         day,
-        [...times, time].sort((a, b) =>
+        times: [...times, time].sort((a, b) =>
           a.padStart(5, '0') < b.padStart(5, '0') ? -1 : 1,
         ),
-      );
+      });
     },
     [day, onChange, times],
   );

@@ -64,7 +64,11 @@ const daysTranslationMap: Record<
   sunday: 'Domenica',
 };
 
-export const formatDay = (day: string) => {
+export const formatDay = (day?: string) => {
+  if (!day) {
+    return '-';
+  }
+
   if (day in daysTranslationMap) {
     return daysTranslationMap[
       day as Exclude<DaySelectOption, 'recurring' | 'specific'>
@@ -110,7 +114,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const mapValueToOption = (value: string): DaySelectOption => {
+const mapValueToOption = (value?: string): DaySelectOption | undefined => {
+  if (!value) {
+    return;
+  }
+
   if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
     return 'specific';
   }
@@ -122,7 +130,11 @@ const mapValueToOption = (value: string): DaySelectOption => {
   return value as DaySelectOption;
 };
 
-const mapValueToDate = (value: string): Date => {
+const mapValueToDate = (value?: string): Date | undefined => {
+  if (!value) {
+    return;
+  }
+
   if (value === 'default' || value === 'recurring' || value === 'specific') {
     return new Date();
   }
@@ -136,7 +148,7 @@ const mapValueToDate = (value: string): Date => {
 
 const DaySelect: FunctionComponent<DaySelectProps> = ({
   options,
-  value = 'default',
+  value,
   onChange,
 }) => {
   const classes = useStyles();
@@ -180,11 +192,11 @@ const DaySelect: FunctionComponent<DaySelectProps> = ({
   }, []);
 
   const confirmUpdate = useCallback(() => {
-    if (selectedOption === 'recurring') {
+    if (selectedOption === 'recurring' && selectedDate) {
       onChange?.(toIsoDate(selectedDate).slice(5));
-    } else if (selectedOption === 'specific') {
+    } else if (selectedOption === 'specific' && selectedDate) {
       onChange?.(toIsoDate(selectedDate));
-    } else {
+    } else if (selectedOption) {
       onChange?.(selectedOption);
     }
 

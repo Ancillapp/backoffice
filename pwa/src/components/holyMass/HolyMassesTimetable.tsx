@@ -26,6 +26,7 @@ export interface HolyMassesTimetableProps {
   fraternityId: string;
   masses: Timetable['masses'];
   onRowUpdate?(id: string, day: string, times: string[]): any;
+  onRowCreate?(day: string, times: string[]): any;
 }
 
 const weekdays: Exclude<
@@ -71,6 +72,7 @@ const HolyMassesTimetable: FunctionComponent<HolyMassesTimetableProps> = ({
     sunday,
   },
   onRowUpdate,
+  onRowCreate,
 }) => {
   const classes = useStyles();
 
@@ -102,19 +104,17 @@ const HolyMassesTimetable: FunctionComponent<HolyMassesTimetableProps> = ({
   const [editingRow, setEditingRow] = useState<
     | {
         id: string;
-        day: string;
-        times: string[];
+        day?: string;
+        times?: string[];
       }
     | undefined
   >();
 
   const [isUpdating, setIsUpdating] = useState(false);
 
-  const [isAdding, setIsAdding] = useState(false);
-
   const handleRowChange = useCallback<
     NonNullable<TimetableRowProps['onChange']>
-  >((day, times) => {
+  >(({ day = '', times = [] }) => {
     setEditingRow(({ id } = { id: '', day: '', times: [] }) => ({
       id,
       day,
@@ -140,7 +140,7 @@ const HolyMassesTimetable: FunctionComponent<HolyMassesTimetableProps> = ({
 
     setIsUpdating(true);
 
-    const { id, day, times } = editingRow;
+    const { id, day = '', times = [] } = editingRow;
 
     await onRowUpdate?.(id, day, times);
 
@@ -148,13 +148,35 @@ const HolyMassesTimetable: FunctionComponent<HolyMassesTimetableProps> = ({
     setEditingRow(undefined);
   }, [editingRow, onRowUpdate]);
 
+  const createRow = useCallback(async () => {
+    if (!editingRow) {
+      return;
+    }
+
+    setIsUpdating(true);
+
+    const { day = '', times = [] } = editingRow;
+
+    await onRowCreate?.(day, times);
+
+    setIsUpdating(false);
+    setEditingRow(undefined);
+  }, [editingRow, onRowCreate]);
+
   const addRow = useCallback(() => {
-    setIsAdding(true);
+    setEditingRow({ id: 'new' });
   }, []);
 
   const missingWeekdays = weekdays.filter(
     (weekday) => !(weekday in flattenedMasses),
   );
+
+  const daySelectOptions = [
+    ...(flattenedMasses.default ? [] : ['default']),
+    ...missingWeekdays,
+    'recurring',
+    'specific',
+  ] as DaySelectOption[];
 
   return (
     <Table>
@@ -170,14 +192,7 @@ const HolyMassesTimetable: FunctionComponent<HolyMassesTimetableProps> = ({
           <TimetableRow
             key={`${fraternityId}-${day}`}
             editMode={editingRow?.id === day}
-            daySelectOptions={
-              [
-                ...(flattenedMasses.default ? [] : ['default']),
-                ...missingWeekdays,
-                'recurring',
-                'specific',
-              ] as DaySelectOption[]
-            }
+            daySelectOptions={daySelectOptions}
             day={editingRow?.id === day ? editingRow.day : day}
             times={editingRow?.id === day ? editingRow.times : timetable}
             loading={isUpdating}
@@ -188,15 +203,26 @@ const HolyMassesTimetable: FunctionComponent<HolyMassesTimetableProps> = ({
             onEditClick={toggleEditMode(day, day, timetable)}
           />
         ))}
-        <TableRow className={classes.row}>
-          {isAdding ? null : (
+        {editingRow?.id === 'new' ? (
+          <TimetableRow
+            editMode
+            daySelectOptions={daySelectOptions}
+            day={editingRow?.id === 'new' ? editingRow.day : undefined}
+            times={editingRow?.id === 'new' ? editingRow.times : undefined}
+            loading={isUpdating}
+            onChange={handleRowChange}
+            onCancelUpdateClick={cancelEditing}
+            onAcceptUpdateClick={createRow}
+          />
+        ) : (
+          <TableRow className={classes.row}>
             <TableCell colSpan={3} className={classes.add}>
               <Button color="inherit" startIcon={<AddIcon />} onClick={addRow}>
                 Aggiungi
               </Button>
             </TableCell>
-          )}
-        </TableRow>
+          </TableRow>
+        )}
       </TableBody>
     </Table>
   );

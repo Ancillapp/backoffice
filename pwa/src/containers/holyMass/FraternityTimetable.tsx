@@ -75,6 +75,32 @@ const FraternityTimetable: FunctionComponent<FraternityTimetableProps> = ({
     [onUpdate, updateTimetable],
   );
 
+  const handleRowCreate = useCallback(
+    ({
+      masses,
+    }: Timetable): NonNullable<
+      HolyMassesTimetableProps['onRowCreate']
+    > => async (day, times) => {
+      const newMasses: Timetable['masses'] = {
+        ...masses,
+        ...(isDefaultOrWeekDay(day)
+          ? {
+              [day]: times,
+            }
+          : {
+              overrides: {
+                ...masses.overrides,
+                [day]: times,
+              },
+            }),
+      };
+
+      await updateTimetable(newMasses);
+      await onUpdate?.(newMasses);
+    },
+    [onUpdate, updateTimetable],
+  );
+
   return (
     <Accordion {...accordionProps}>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -85,6 +111,7 @@ const FraternityTimetable: FunctionComponent<FraternityTimetableProps> = ({
           fraternityId={timetable.fraternityId}
           masses={timetable.masses}
           onRowUpdate={handleRowUpdate(timetable)}
+          onRowCreate={handleRowCreate(timetable)}
         />
       </AccordionDetails>
     </Accordion>
