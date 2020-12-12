@@ -32,7 +32,7 @@ const HolyMassTimetables: FunctionComponent = () => {
   return loading ? (
     <Loader />
   ) : (
-    <CenteredLayout>
+    <CenteredLayout size="sm">
       {data?.map((timetable) => (
         <FraternityTimetable
           key={timetable.fraternityId}
