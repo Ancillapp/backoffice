@@ -19,23 +19,9 @@ import {
 } from '../../providers/ApiProvider';
 import Masonry from '../../components/common/Masonry';
 import SessionsChartCard from '../../components/dashboard/SessionsChartCard';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  List,
-  ListItem,
-  ListItemSecondaryAction,
-  ListItemText,
-  Typography,
-  Skeleton,
-} from '@material-ui/core';
 
-import {
-  dateFormatter,
-  dateTimeFormatter,
-  toLocalTimeZone,
-} from '../../helpers/dates';
+import { dateFormatter } from '../../helpers/dates';
+import HolyMassBookingsCard from '../../components/dashboard/HolyMassBookingsCard';
 
 const serviceStartDate = dateFormatter.format(
   new Date('2020-05-01T00:00:00.000+0200'),
@@ -126,46 +112,9 @@ const Dashboard: FunctionComponent<TopbarLayoutProps> = (props) => {
               </GrowingLink>
             </Masonry>
             <Masonry item md={8}>
-              <Card>
-                <CardHeader
-                  title="Prenotazioni Santa Messa"
-                  subheader="Prossimi tre giorni"
-                />
-                <CardContent>
-                  <List>
-                    {nextThreeDaysHolyMassesBookingsData?.map(
-                      ({ date, fraternity, bookings }) => (
-                        <ListItem key={`${fraternity.id}-${date}`}>
-                          <ListItemText
-                            primary={fraternity.location}
-                            secondary={dateTimeFormatter.format(
-                              toLocalTimeZone(new Date(date)),
-                            )}
-                          />
-                          <ListItemSecondaryAction>
-                            <Typography variant="h5">
-                              {bookings}/{fraternity.seats}
-                            </Typography>
-                          </ListItemSecondaryAction>
-                        </ListItem>
-                      ),
-                    ) ||
-                      Array.from({ length: 3 }, (_, index) => (
-                        <ListItem key={index}>
-                          <ListItemText
-                            primary={<Skeleton variant="text" width={72} />}
-                            secondary={<Skeleton variant="text" width={54} />}
-                          />
-                          <ListItemSecondaryAction>
-                            <Typography variant="h5">
-                              <Skeleton variant="text" width={40} />
-                            </Typography>
-                          </ListItemSecondaryAction>
-                        </ListItem>
-                      ))}
-                  </List>
-                </CardContent>
-              </Card>
+              <HolyMassBookingsCard
+                data={nextThreeDaysHolyMassesBookingsData}
+              />
             </Masonry>
           </Masonry>
         </DashboardLayout>
