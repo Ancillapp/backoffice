@@ -259,11 +259,14 @@ const PrayerDetail: FunctionComponent<
               onChange={handleLanguageChange}
               {...(isNarrow ? { centered: true } : { variant: 'fullWidth' })}
             >
-              {formData.map(({ language }) => (
+              {formData.map(({ language: tabLanguage }) => (
                 <Tab
-                  key={language}
-                  label={languageTranslationsMap[language]}
-                  value={language}
+                  key={tabLanguage}
+                  label={languageTranslationsMap[tabLanguage]}
+                  value={tabLanguage}
+                  disabled={
+                    (editMode || updatingPrayer) && language !== tabLanguage
+                  }
                 />
               ))}
             </Tabs>
