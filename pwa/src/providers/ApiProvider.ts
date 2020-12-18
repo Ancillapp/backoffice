@@ -172,23 +172,13 @@ export const useSongCreation = () =>
     method: 'POST',
   });
 
+export type PrayerLanguage = 'it' | 'la' | 'de' | 'en' | 'pt';
+
 export interface Prayer {
   slug: string;
-  title: {
-    it?: string;
-    la?: string;
-    de?: string;
-    en?: string;
-    pt?: string;
-  };
+  title: Record<PrayerLanguage, string | undefined>;
   image: string;
-  content: {
-    it?: string;
-    la?: string;
-    de?: string;
-    en?: string;
-    pt?: string;
-  };
+  content: Record<PrayerLanguage, string | undefined>;
 }
 
 export type PrayerSummary = Pick<Prayer, 'slug' | 'title' | 'image'>;
@@ -198,6 +188,16 @@ export const usePrayers = () => useApi<PrayerSummary[]>('prayers');
 export const usePrayersCount = () => useApi<{ count: number }>('prayers/count');
 
 export const usePrayer = (slug: string) => useApi<Prayer>(`prayers/${slug}`);
+
+export const usePrayerUpdate = (slug: string) =>
+  useMutation<Prayer, Partial<Prayer>>(`prayers/${slug}`, {
+    method: 'PATCH',
+  });
+
+export const usePrayerDeletion = (slug: string) =>
+  useMutation<Prayer, void>(`prayers/${slug}`, {
+    method: 'DELETE',
+  });
 
 export interface Ancilla {
   code: string;

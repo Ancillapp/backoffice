@@ -8,7 +8,7 @@ import { TopbarLayoutProps } from '../../components/common/TopbarLayout';
 
 const PrayersList = lazy(() => import('./PrayersList'));
 // const NewPrayer = lazy(() => import('./NewPrayer'));
-// const PrayerDetail = lazy(() => import('./PrayerDetail'));
+const PrayerDetail = lazy(() => import('./PrayerDetail'));
 
 const PrayersRouter: FunctionComponent<TopbarLayoutProps> = (props) => {
   const { path } = useRouteMatch();
@@ -30,7 +30,7 @@ const PrayersRouter: FunctionComponent<TopbarLayoutProps> = (props) => {
         </Route>
 
         <Route exact path={`${path}/:slug`}>
-          {/* <PrayerDetail /> */}
+          <PrayerDetail />
         </Route>
 
         <Redirect to={path} />
