@@ -54,3 +54,35 @@ export const count = async () => {
 
   return count;
 };
+
+export const update = async (
+  slug: string,
+  { slug: newSlug, title, subtitle, content }: Partial<PrayerData>,
+) => {
+  const prayersCollection = await getPrayersCollection();
+
+  const response = await prayersCollection.findOneAndUpdate(
+    { slug },
+    {
+      $set: {
+        ...(newSlug && { slug: newSlug }),
+        ...(title && { title }),
+        ...(subtitle && { subtitle }),
+        ...(content && { content }),
+      },
+    },
+    {
+      returnOriginal: false,
+    },
+  );
+
+  return response.value || null;
+};
+
+export const remove = async (slug: string) => {
+  const prayersCollection = await getPrayersCollection();
+
+  const response = await prayersCollection.findOneAndDelete({ slug });
+
+  return response.value || null;
+};
