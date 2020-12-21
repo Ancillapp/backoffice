@@ -86,3 +86,21 @@ export const remove = async (slug: string) => {
 
   return response.value || null;
 };
+
+export const create = async (prayer: PrayerData) => {
+  const existingPrayer = await get(prayer.slug);
+
+  if (existingPrayer) {
+    return null;
+  }
+
+  const prayersCollection = await getPrayersCollection();
+
+  const response = await prayersCollection.insertOne(prayer);
+
+  if (response.insertedCount !== 1) {
+    return null;
+  }
+
+  return prayer;
+};

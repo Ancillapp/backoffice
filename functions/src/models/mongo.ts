@@ -63,7 +63,7 @@ export interface Prayer extends MongoDBRecord {
   title: PrayerLocalizedField;
   subtitle?: PrayerLocalizedField;
   content: PrayerLocalizedField;
-  image: string;
+  image?: string;
 }
 
 export interface Song extends MongoDBRecord {
