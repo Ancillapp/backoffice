@@ -199,6 +199,11 @@ export const usePrayerDeletion = (slug: string) =>
     method: 'DELETE',
   });
 
+export const usePrayerCreation = () =>
+  useMutation<Prayer, Prayer>('prayers', {
+    method: 'POST',
+  });
+
 export interface Ancilla {
   code: string;
   name: {

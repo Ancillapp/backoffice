@@ -111,7 +111,7 @@ const PrayersList: FunctionComponent<TopbarLayoutProps> = (props) => {
         {loading ? <Loader /> : <Prayers items={displayedPrayers} />}
       </TopbarLayout>
 
-      <Link to="/canti/nuovo">
+      <Link to="/preghiere/nuova">
         <AutosizedFab>
           <AddIcon />
         </AutosizedFab>
