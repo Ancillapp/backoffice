@@ -48,7 +48,9 @@ import PrayerForm, {
   PrayerFormProps,
 } from '../../components/prayers/PrayerForm';
 
-const languageTranslationsMap: Record<string, string> = {
+const supportedLanguages: PrayerLanguage[] = ['it', 'la', 'de', 'en', 'pt'];
+
+const languageTranslationsMap: Record<PrayerLanguage, string> = {
   it: 'Italiano',
   la: 'Latino',
   en: 'Inglese',
@@ -185,7 +187,11 @@ const PrayerDetail: FunctionComponent<
   ) : (
     <>
       <TopbarLayout
-        title={language && data.title[language]}
+        title={
+          language && data.title[language]
+            ? data.title[language]
+            : Object.values(data.title)[0]
+        }
         startAdornment={
           <TopbarIcon sx={{ mr: 0.5 }}>
             <Link to="/preghiere" onClick={handleBackClick}>
@@ -259,13 +265,14 @@ const PrayerDetail: FunctionComponent<
               onChange={handleLanguageChange}
               {...(isNarrow ? { centered: true } : { variant: 'fullWidth' })}
             >
-              {formData.map(({ language: tabLanguage }) => (
+              {supportedLanguages.map((supportedLanguage) => (
                 <Tab
-                  key={tabLanguage}
-                  label={languageTranslationsMap[tabLanguage]}
-                  value={tabLanguage}
+                  key={supportedLanguage}
+                  label={languageTranslationsMap[supportedLanguage]}
+                  value={supportedLanguage}
                   disabled={
-                    (editMode || updatingPrayer) && language !== tabLanguage
+                    (editMode || updatingPrayer) &&
+                    language !== supportedLanguage
                   }
                 />
               ))}
