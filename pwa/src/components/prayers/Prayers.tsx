@@ -1,4 +1,3 @@
-
 import React, { FunctionComponent } from 'react';
 
 import { Link, makeStyles, Typography } from '@material-ui/core';
@@ -78,7 +77,7 @@ const Prayers: FunctionComponent<PrayersProps> = ({ items }) => {
           >
             <div
               className={classes.prayerImage}
-              dangerouslySetInnerHTML={{ __html: image }}
+              {...(image && { dangerouslySetInnerHTML: { __html: image } })}
             />
             <Typography variant="subtitle1" align="center">
               {title}

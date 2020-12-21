@@ -177,7 +177,7 @@ export type PrayerLanguage = 'it' | 'la' | 'de' | 'en' | 'pt';
 export interface Prayer {
   slug: string;
   title: Record<PrayerLanguage, string | undefined>;
-  image: string;
+  image?: string;
   content: Record<PrayerLanguage, string | undefined>;
 }
 
