@@ -127,11 +127,7 @@ const PrayerDetail: FunctionComponent<
       }
 
       const computedSlug =
-        language === 'it'
-          ? slugify(title, {
-              lower: true,
-            })
-          : data.slug;
+        language === 'it' ? slugify(title, { lower: true }) : data.slug;
 
       const payload = {
         ...(data.slug !== computedSlug && {
