@@ -145,6 +145,7 @@ const Users: FunctionComponent<UsersProps> = ({ items, loading }) => {
         ]}
         items={items}
         loading={loading}
+        estimatedRows={600}
       />
     </TableContainer>
   );

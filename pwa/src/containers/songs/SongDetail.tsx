@@ -228,7 +228,11 @@ const SongDetail: FunctionComponent<
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={hideDeletionConfirmationDialog}>
+          <Button
+            autoFocus
+            color="inherit"
+            onClick={hideDeletionConfirmationDialog}
+          >
             Annulla
           </Button>
           <Button

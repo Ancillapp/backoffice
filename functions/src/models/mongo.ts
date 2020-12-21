@@ -50,30 +50,20 @@ export interface HolyMass extends MongoDBRecord {
   participants: HolyMassParticipant[];
 }
 
+export interface PrayerLocalizedField {
+  it?: string;
+  la?: string;
+  de?: string;
+  en?: string;
+  pt?: string;
+}
+
 export interface Prayer extends MongoDBRecord {
   slug: string;
-  title: {
-    it?: string;
-    la?: string;
-    de?: string;
-    en?: string;
-    pt?: string;
-  };
-  subtitle?: {
-    it?: string;
-    la?: string;
-    de?: string;
-    en?: string;
-    pt?: string;
-  };
-  content: {
-    it?: string;
-    la?: string;
-    de?: string;
-    en?: string;
-    pt?: string;
-  };
-  image: string;
+  title: PrayerLocalizedField;
+  subtitle?: PrayerLocalizedField;
+  content: PrayerLocalizedField;
+  image?: string;
 }
 
 export interface Song extends MongoDBRecord {
