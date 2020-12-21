@@ -85,9 +85,9 @@ const PrayerDetail: FunctionComponent<
 
   useEffect(() => {
     if (!language) {
-      setLanguage(formData[0]?.language);
+      setLanguage(data?.title?.it ? 'it' : formData[0]?.language);
     }
-  }, [formData, language]);
+  }, [data?.title?.it, formData, language]);
 
   const [updatePrayer, { loading: updatingPrayer }] = usePrayerUpdate(slug);
   const [deletePrayer, { loading: deletingPrayer }] = usePrayerDeletion(slug);
