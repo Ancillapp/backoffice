@@ -17,7 +17,7 @@ import { Timetable, useTimetableUpdate } from '../../providers/ApiProvider';
 
 export interface FraternityTimetableProps
   extends Omit<AccordionProps, 'children'> {
-  timetable: Timetable;
+  data: Timetable;
   onUpdate?(updatedMasses: Timetable['masses']): any;
 }
 
@@ -27,11 +27,11 @@ const isDefaultOrWeekDay = (
   !/\d{2}-\d{2}/.test(day);
 
 const FraternityTimetable: FunctionComponent<FraternityTimetableProps> = ({
-  timetable,
+  data,
   onUpdate,
   ...accordionProps
 }) => {
-  const [updateTimetable] = useTimetableUpdate(timetable.fraternityId);
+  const [updateTimetable] = useTimetableUpdate(data.fraternityId);
 
   const handleRowUpdate = useCallback(
     ({
@@ -132,15 +132,15 @@ const FraternityTimetable: FunctionComponent<FraternityTimetableProps> = ({
   return (
     <Accordion {...accordionProps}>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography>{timetable.location}</Typography>
+        <Typography>{data.location}</Typography>
       </AccordionSummary>
       <AccordionDetails>
         <HolyMassesTimetable
-          fraternityId={timetable.fraternityId}
-          masses={timetable.masses}
-          onRowUpdate={handleRowUpdate(timetable)}
-          onRowCreate={handleRowCreate(timetable)}
-          onRowDelete={handleRowDelete(timetable)}
+          fraternityId={data.fraternityId}
+          masses={data.masses}
+          onRowUpdate={handleRowUpdate(data)}
+          onRowCreate={handleRowCreate(data)}
+          onRowDelete={handleRowDelete(data)}
         />
       </AccordionDetails>
     </Accordion>

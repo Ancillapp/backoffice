@@ -36,7 +36,7 @@ const HolyMassTimetables: FunctionComponent = () => {
       {data?.map((timetable) => (
         <FraternityTimetable
           key={timetable.fraternityId}
-          timetable={timetable}
+          data={timetable}
           expanded={expandedFraternity === timetable.fraternityId}
           onChange={handleChange(timetable.fraternityId)}
           onUpdate={refetch}
