@@ -50,13 +50,6 @@ const useStyles = makeStyles((theme) => ({
   row: {
     height: 70,
   },
-  dayColumn: {
-    width: 188,
-  },
-  actionsColumn: {
-    width: 96,
-    textAlign: 'center',
-  },
   add: {
     textAlign: 'center',
   },
@@ -221,9 +214,11 @@ const HolyMassesTimetable: FunctionComponent<HolyMassesTimetableProps> = ({
     <Table>
       <TableHead>
         <TableRow className={classes.row}>
-          <TableCell className={classes.dayColumn}>Giorno</TableCell>
+          <TableCell width={188}>Giorno</TableCell>
           <TableCell>Orari</TableCell>
-          <TableCell className={classes.actionsColumn}>Azioni</TableCell>
+          <TableCell width={96} align="center">
+            Azioni
+          </TableCell>
         </TableRow>
       </TableHead>
       <TableBody>

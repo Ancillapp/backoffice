@@ -63,7 +63,7 @@ const HolyMassBookingsTable: FunctionComponent<HolyMassBookingsTableProps> = ({
           <TableHead>
             <TableRow>
               <TableCell>Utente</TableCell>
-              <TableCell align="right" className={classes.seatsColumn}>
+              <TableCell align="right" width={96}>
                 Posti
               </TableCell>
             </TableRow>
@@ -72,7 +72,7 @@ const HolyMassBookingsTable: FunctionComponent<HolyMassBookingsTableProps> = ({
             {bookings.map(({ user: { id, email }, seats }) => (
               <TableRow key={id}>
                 <TableCell>{email}</TableCell>
-                <TableCell align="right" className={classes.seatsColumn}>
+                <TableCell align="right" width={96}>
                   {seats}
                 </TableCell>
               </TableRow>

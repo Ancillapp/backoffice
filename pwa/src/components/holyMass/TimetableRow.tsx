@@ -40,9 +40,6 @@ const useStyles = makeStyles((theme) => ({
   root: {
     height: 70,
   },
-  dayColumn: {
-    width: 188,
-  },
   actionsColumn: {
     width: 96,
     textAlign: 'center',
@@ -116,7 +113,7 @@ const TimetableRow: FunctionComponent<TimetableRowProps> = ({
 
   return (
     <TableRow className={classes.root}>
-      <TableCell className={classes.dayColumn}>
+      <TableCell width={188}>
         {editMode ? (
           <DaySelect
             options={daySelectOptions}
@@ -145,7 +142,7 @@ const TimetableRow: FunctionComponent<TimetableRowProps> = ({
           times.join(' - ')
         )}
       </TableCell>
-      <TableCell className={classes.actionsColumn}>
+      <TableCell width={96} align="center">
         {editMode ? (
           <>
             <IconButton
