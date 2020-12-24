@@ -251,9 +251,25 @@ export interface DailyHolyMassBookings {
   };
 }
 
-export const useNextDaysHolyMassesBookings = (days = 3) =>
-  useApi<DailyHolyMassBookings[]>(
-    `holy-masses/next-days-bookings?days=${days}`,
+export interface FullDataDailyHolyMassBookings
+  extends Omit<DailyHolyMassBookings, 'bookings'> {
+  bookings: {
+    user: {
+      id: string;
+      email: string;
+    };
+    seats: number;
+  }[];
+}
+
+export const useNextDaysHolyMassesBookings = <F extends boolean = false>(
+  days = 3,
+  fullData: F = false as F,
+) =>
+  useApi<
+    F extends false ? DailyHolyMassBookings[] : FullDataDailyHolyMassBookings[]
+  >(
+    `holy-masses/next-days-bookings?days=${days}${fullData ? '&fullData' : ''}`,
   );
 
 export interface Timetable {

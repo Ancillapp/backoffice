@@ -1,10 +1,11 @@
 import type { RequestHandler } from 'express';
 
-import { mongoDb } from '../../../helpers/mongo';
+import { mongoDb, ObjectId } from '../../../helpers/mongo';
+import { firebase } from '../../../helpers/firebase';
 import type { HolyMass } from '../../../models/mongo';
 
 export const getNextDaysBookings: RequestHandler = async (
-  { query: { days = '3' } },
+  { query: { days = '3', fullData } },
   res,
 ) => {
   const db = await mongoDb;
@@ -19,7 +20,19 @@ export const getNextDaysBookings: RequestHandler = async (
   endDate.setDate(endDate.getDate() + Number(days));
 
   const result = await holyMassesCollection
-    .aggregate([
+    .aggregate<{
+      date: Date;
+      fraternity: {
+        id: ObjectId;
+        location: string;
+        seats: number;
+      };
+      bookings: {
+        userId: string;
+        seats: number;
+        bookingId: string;
+      }[];
+    }>([
       {
         $match: {
           date: {
@@ -50,9 +63,18 @@ export const getNextDaysBookings: RequestHandler = async (
           fraternity: {
             $first: '$fraternity',
           },
+          unflattenedBookings: {
+            $push: '$filteredParticipants',
+          },
+        },
+      },
+      {
+        $addFields: {
           bookings: {
-            $sum: {
-              $size: '$filteredParticipants',
+            $reduce: {
+              input: '$unflattenedBookings',
+              initialValue: [],
+              in: { $concatArrays: ['$$value', '$$this'] },
             },
           },
         },
@@ -65,8 +87,38 @@ export const getNextDaysBookings: RequestHandler = async (
           bookings: 1,
         },
       },
+      {
+        $sort: {
+          date: 1,
+        },
+      },
     ])
     .toArray();
 
-  res.json(result);
+  const response =
+    typeof fullData === 'undefined'
+      ? result.map(({ bookings, ...rest }) => ({
+          bookings: bookings.reduce((sum, { seats }) => sum + seats, 0),
+          ...rest,
+        }))
+      : await Promise.all(
+          result.map(async ({ bookings, ...rest }) => {
+            const { users } = await firebase
+              .auth()
+              .getUsers(bookings.map(({ userId }) => ({ uid: userId })));
+
+            return {
+              bookings: bookings.map(({ seats }, index) => ({
+                user: {
+                  id: users[index].uid,
+                  email: users[index].email,
+                },
+                seats,
+              })),
+              ...rest,
+            };
+          }),
+        );
+
+  res.json(response);
 };
