@@ -1,5 +1,54 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useState } from 'react';
 
-const HolyMassBookings: FunctionComponent = () => <h1>Prenotazioni</h1>;
+import CenteredLayout from '../../components/common/CenteredLayout';
+import Loader from '../../components/common/Loader';
+import HolyMassBookingsHeader from '../../components/holyMass/HolyMassBookingsHeader';
+import HolyMassBookingsTable, {
+  HolyMassBookingsTableProps,
+} from '../../components/holyMass/HolyMassBookingsTable';
+
+import { useNextDaysHolyMassesBookings } from '../../providers/ApiProvider';
+
+const HolyMassBookings: FunctionComponent = () => {
+  const [days, setDays] = useState(3);
+
+  const { loading, data, error } = useNextDaysHolyMassesBookings(days, true);
+
+  const [expandedHolyMass, setExpandedHolyMass] = useState<
+    string | undefined
+  >();
+
+  const handleChange = (
+    holyMassId: string,
+  ): NonNullable<HolyMassBookingsTableProps['onChange']> => (_, expanded) => {
+    setExpandedHolyMass(expanded ? holyMassId : undefined);
+  };
+
+  if (error) {
+    return <span>{error.message}</span>;
+  }
+
+  return (
+    <CenteredLayout size="sm">
+      <HolyMassBookingsHeader value={days} onChange={setDays} />
+      {loading ? (
+        <Loader />
+      ) : (
+        data?.map((bookings) => {
+          const id = `${bookings.fraternity.id}-${bookings.date}`;
+
+          return (
+            <HolyMassBookingsTable
+              key={id}
+              data={bookings}
+              expanded={expandedHolyMass === id}
+              onChange={handleChange(id)}
+            />
+          );
+        })
+      )}
+    </CenteredLayout>
+  );
+};
 
 export default HolyMassBookings;
