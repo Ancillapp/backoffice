@@ -33,9 +33,6 @@ const useStyles = makeStyles((theme) => ({
     fontSize: theme.typography.pxToRem(14),
     color: theme.palette.text.secondary,
   },
-  seatsColumn: {
-    width: 96,
-  },
 }));
 
 const HolyMassBookingsTable: FunctionComponent<HolyMassBookingsTableProps> = ({
