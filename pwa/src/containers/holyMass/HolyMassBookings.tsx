@@ -1,5 +1,7 @@
 import React, { FunctionComponent, useState } from 'react';
 
+import { Typography } from '@material-ui/core';
+
 import CenteredLayout from '../../components/common/CenteredLayout';
 import Loader from '../../components/common/Loader';
 import HolyMassBookingsHeader from '../../components/holyMass/HolyMassBookingsHeader';
@@ -33,7 +35,7 @@ const HolyMassBookings: FunctionComponent = () => {
       <HolyMassBookingsHeader value={days} onChange={setDays} />
       {loading ? (
         <Loader />
-      ) : (
+      ) : (data?.length || 0) > 0 ? (
         data?.map((bookings) => {
           const id = `${bookings.fraternity.id}-${bookings.date}`;
 
@@ -46,6 +48,10 @@ const HolyMassBookings: FunctionComponent = () => {
             />
           );
         })
+      ) : (
+        <Typography variant="h6" align="center">
+          Nessuna prenotazione
+        </Typography>
       )}
     </CenteredLayout>
   );

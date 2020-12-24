@@ -14,9 +14,13 @@ export interface HolyMassBookingsHeaderProps {
   onChange?(value: number): void;
 }
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   root: {
-    marginBottom: 16,
+    margin: 16,
+
+    [theme.breakpoints.up('md')]: {
+      marginTop: 0,
+    },
   },
   select: {
     width: 54,
