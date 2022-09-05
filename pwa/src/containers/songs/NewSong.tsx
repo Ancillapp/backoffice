@@ -19,18 +19,26 @@ import SongForm, {
 import Loader from '../../components/common/Loader';
 import TopbarIcon from '../../components/common/TopbarIcon';
 
-const mapLanguageToSongNumberPrefix = (language: SongLanguage): string =>
-  language === SongLanguage.GERMAN ? 'DE' : 'IT';
+const mapLanguageToSongNumberPrefix = (language: SongLanguage): string => {
+  switch (language) {
+    case SongLanguage.GERMAN:
+      return 'DE';
+    case SongLanguage.PORTUGUESE:
+      return 'PT';
+    default:
+      return 'IT';
+  }
+};
 
-const NewSong: FunctionComponent<Omit<TopbarLayoutProps, 'startAdornment'>> = (
-  props,
-) => {
+const NewSong: FunctionComponent<
+  Omit<TopbarLayoutProps, 'startAdornment'>
+> = props => {
   const [createSong, { loading: creatingSong }] = useSongCreation();
 
   const history = useHistory();
 
   const handleBackClick = useCallback<NonNullable<LinkProps['onClick']>>(
-    (event) => {
+    event => {
       if (creatingSong) {
         event.preventDefault();
       }

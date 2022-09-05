@@ -37,15 +37,30 @@ import SongForm, {
 import PageSkeleton from '../../components/common/PageSkeleton';
 import TopbarIcon from '../../components/common/TopbarIcon';
 
-const mapSongNumberToLanguage = (number: string): SongLanguage =>
-  number.startsWith('DE') ? SongLanguage.GERMAN : SongLanguage.ITALIAN;
+const mapSongNumberToLanguage = (number: string): SongLanguage => {
+  if (number.startsWith('DE')) {
+    return SongLanguage.GERMAN;
+  }
+  if (number.startsWith('PT')) {
+    return SongLanguage.PORTUGUESE;
+  }
+  return SongLanguage.ITALIAN;
+};
 
-const mapLanguageToSongNumberPrefix = (language: SongLanguage): string =>
-  language === SongLanguage.GERMAN ? 'DE' : 'IT';
+const mapLanguageToSongNumberPrefix = (language: SongLanguage): string => {
+  switch (language) {
+    case SongLanguage.GERMAN:
+      return 'DE';
+    case SongLanguage.PORTUGUESE:
+      return 'PT';
+    default:
+      return 'IT';
+  }
+};
 
 const SongDetail: FunctionComponent<
   Omit<TopbarLayoutProps, 'startAdornment'>
-> = (props) => {
+> = props => {
   const [editMode, setEditMode] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
@@ -69,11 +84,11 @@ const SongDetail: FunctionComponent<
   }, []);
 
   const toggleEditMode = useCallback(() => {
-    setEditMode((oldEditMode) => !oldEditMode);
+    setEditMode(oldEditMode => !oldEditMode);
   }, []);
 
   const handleBackClick = useCallback<NonNullable<LinkProps['onClick']>>(
-    (event) => {
+    event => {
       if (updatingSong) {
         event.preventDefault();
       }

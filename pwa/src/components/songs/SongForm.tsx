@@ -1,5 +1,3 @@
-
-
 import React, {
   FunctionComponent,
   HTMLAttributes,
@@ -27,6 +25,7 @@ import SongPreview from './SongPreview';
 export enum SongLanguage {
   ITALIAN = 'IT',
   GERMAN = 'DE',
+  PORTUGUESE = 'PT',
 }
 
 export interface SongFormValue {
@@ -49,7 +48,7 @@ export interface InitSongFormAction {
 }
 
 export interface SetFieldSongFormAction<
-  F extends keyof SongFormState = keyof SongFormState
+  F extends keyof SongFormState = keyof SongFormState,
 > {
   type: SongFormActionType.SET_FIELD;
   field: F;
@@ -91,7 +90,7 @@ const defaultState: SongFormState = {
   language: SongLanguage.ITALIAN,
 };
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   disabled: {
     color: theme.palette.text.primary,
   },
@@ -123,20 +122,21 @@ const SongForm: FunctionComponent<SongFormProps> = ({
 
   const createTextFieldInputHandler = useCallback(
     <F extends keyof SongFormState>(
-      field: F,
-    ): NonNullable<TextFieldProps['onInput']> => (event) => {
-      dispatch({
-        type: SongFormActionType.SET_FIELD,
-        field,
-        value: (event.target as HTMLTextAreaElement | HTMLInputElement).value,
-      });
-    },
+        field: F,
+      ): NonNullable<TextFieldProps['onInput']> =>
+      event => {
+        dispatch({
+          type: SongFormActionType.SET_FIELD,
+          field,
+          value: (event.target as HTMLTextAreaElement | HTMLInputElement).value,
+        });
+      },
     [],
   );
 
   const handleLanguageChange = useCallback<
     NonNullable<SelectProps['onChange']>
-  >((event) => {
+  >(event => {
     dispatch({
       type: SongFormActionType.SET_FIELD,
       field: 'language',
@@ -147,7 +147,7 @@ const SongForm: FunctionComponent<SongFormProps> = ({
   const handleSubmit = useCallback<
     NonNullable<HTMLAttributes<HTMLFormElement>['onSubmit']>
   >(
-    (event) => {
+    event => {
       event.preventDefault();
 
       onSubmit?.(state);
@@ -158,7 +158,7 @@ const SongForm: FunctionComponent<SongFormProps> = ({
   const handleReset = useCallback<
     NonNullable<HTMLAttributes<HTMLFormElement>['onReset']>
   >(
-    (event) => {
+    event => {
       dispatch({
         type: SongFormActionType.INIT,
         value: initialState,
@@ -240,6 +240,7 @@ const SongForm: FunctionComponent<SongFormProps> = ({
             >
               <option value={SongLanguage.ITALIAN}>Italiano</option>
               <option value={SongLanguage.GERMAN}>Tedesco</option>
+              <option value={SongLanguage.PORTUGUESE}>Portoghese</option>
             </Select>
           </FormControl>
         </Grid>

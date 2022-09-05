@@ -35,7 +35,7 @@ import AutosizedFab from '../../components/common/AutosizedFab';
 import Loader from '../../components/common/Loader';
 import { mergeSearchParams } from '../../helpers/search';
 
-const SongsList: FunctionComponent<TopbarLayoutProps> = (props) => {
+const SongsList: FunctionComponent<TopbarLayoutProps> = props => {
   const [displayedSongs, setDisplayedSongs] = useState<SongSummary[]>([]);
   const history = useHistory();
   const { search } = useLocation();
@@ -79,7 +79,7 @@ const SongsList: FunctionComponent<TopbarLayoutProps> = (props) => {
   }, [filteredSongs, fuse, searchKeyword]);
 
   const handleSearchInput = useCallback<NonNullable<TextFieldProps['onInput']>>(
-    (event) => {
+    event => {
       history.push({
         pathname: '/canti',
         search: mergeSearchParams(searchParams, {
@@ -158,6 +158,17 @@ const SongsList: FunctionComponent<TopbarLayoutProps> = (props) => {
               }}
               value="DE"
               label="Tedesco"
+            />
+            <Tab
+              component={Link}
+              to={{
+                pathname: '/canti',
+                search: mergeSearchParams(searchParams, {
+                  lingua: 'PT',
+                }).toString(),
+              }}
+              value="PT"
+              label="Portoghese"
             />
           </Tabs>
         }
