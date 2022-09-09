@@ -142,27 +142,79 @@ export const useMutation = <T, B>(
   return [mutate, { loading, data, error }];
 };
 
+export enum SongLanguage {
+  ITALIAN = 'it',
+  GERMAN = 'de',
+  PORTUGUESE = 'pt',
+}
+
+export enum SongCategory {
+  KYRIE = 'kyrie',
+  GLORY = 'glory',
+  HALLELUJAH = 'hallelujah',
+  CREED = 'creed',
+  OFFERTORY = 'offertory',
+  HOLY = 'holy',
+  ANAMNESIS = 'anamnesis',
+  AMEN = 'amen',
+  OUR_FATHER = 'our-father',
+  LAMB_OF_GOD = 'lamb-of-god',
+  CANONS_AND_REFRAINS = 'canons-and-refrains',
+  FRANCISCANS = 'franciscans',
+  PRAISE_AND_FAREWELL = 'praise-and-farewell',
+  ENTRANCE = 'entrance',
+  HOLY_SPIRIT = 'holy-spirit',
+  WORSHIP = 'worship',
+  EUCHARIST = 'eucharist',
+  OTHER_SONGS = 'other-songs',
+  BENEDICTUS = 'benedictus',
+  MAGNIFICAT = 'magnificat',
+  CANTICLES = 'canticles',
+  HYMNS = 'hymns',
+  SIMPLE_PRAYER = 'simple-prayer',
+  MARIANS = 'marians',
+  ANIMATION = 'animation',
+  GREGORIANS = 'gregorians',
+  ADVENT = 'advent',
+  CHRISTMAS = 'christmas',
+  LENT = 'lent',
+}
+
 export interface Song {
+  language: SongLanguage;
+  category: SongCategory;
   number: string;
   title: string;
   content: string;
 }
 
-export type SongSummary = Pick<Song, 'number' | 'title'>;
+export type SongSummary = Omit<Song, 'content'>;
 
 export const useSongs = () => useApi<SongSummary[]>('songs');
 
 export const useSongsCount = () => useApi<{ count: number }>('songs/count');
 
-export const useSong = (number: string) => useApi<Song>(`songs/${number}`);
+export const useSong = (
+  language: SongLanguage,
+  category: SongCategory,
+  number: string,
+) => useApi<Song>(`songs/${language}/${category}/${number}`);
 
-export const useSongUpdate = (number: string) =>
-  useMutation<Song, Partial<Song>>(`songs/${number}`, {
+export const useSongUpdate = (
+  language: SongLanguage,
+  category: SongCategory,
+  number: string,
+) =>
+  useMutation<Song, Partial<Song>>(`songs/${language}/${category}/${number}`, {
     method: 'PATCH',
   });
 
-export const useSongDeletion = (number: string) =>
-  useMutation<Song, void>(`songs/${number}`, {
+export const useSongDeletion = (
+  language: SongLanguage,
+  category: SongCategory,
+  number: string,
+) =>
+  useMutation<Song, void>(`songs/${language}/${category}/${number}`, {
     method: 'DELETE',
   });
 

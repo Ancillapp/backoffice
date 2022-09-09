@@ -1,5 +1,7 @@
 import { mongoDb } from '../helpers/mongo';
-import { Song } from '../models/mongo';
+import { Song, SongSummary } from '../models/mongo';
+
+export type SongIdFields = Pick<Song, 'language' | 'category' | 'number'>;
 
 const getSongsCollection = async () => {
   const db = await mongoDb;
@@ -7,11 +9,11 @@ const getSongsCollection = async () => {
   return db.collection<Song>('songs');
 };
 
-export const get = async (number: string) => {
+export const get = async ({ language, category, number }: SongIdFields) => {
   const songsCollection = await getSongsCollection();
 
   const song = await songsCollection.findOne(
-    { number },
+    { language, category, number },
     {
       projection: {
         _id: 0,
@@ -25,23 +27,26 @@ export const get = async (number: string) => {
 export const list = async (fullData?: boolean) => {
   const songsCollection = await getSongsCollection();
 
-  const songs = (await songsCollection
-    .find(
-      {},
-      {
-        projection: {
-          _id: 0,
-          number: 1,
-          title: 1,
-          ...(fullData && { content: 1 }),
+  const songs: typeof fullData extends string ? Song[] : SongSummary[] =
+    await songsCollection
+      .find(
+        {},
+        {
+          projection: {
+            _id: 0,
+            language: 1,
+            category: 1,
+            number: 1,
+            title: 1,
+            ...(fullData && { content: 1 }),
+          },
         },
-      },
-    )
-    .toArray()) as Song[] | Omit<Song, 'content'>[];
+      )
+      .toArray();
 
   return songs.sort(({ number: a }, { number: b }) => {
-    const normalizedA = a.slice(2).replace('bis', '').padStart(4, '0');
-    const normalizedB = b.slice(2).replace('bis', '').padStart(4, '0');
+    const normalizedA = a.replace('bis', '').padStart(4, '0');
+    const normalizedB = b.replace('bis', '').padStart(4, '0');
 
     if (normalizedA === normalizedB) {
       return b.endsWith('bis') ? -1 : 1;
@@ -60,15 +65,23 @@ export const count = async () => {
 };
 
 export const update = async (
-  number: string,
-  { number: newNumber, title, content }: Partial<Song>,
+  { language, category, number }: SongIdFields,
+  {
+    language: newLanguage,
+    category: newCategory,
+    number: newNumber,
+    title,
+    content,
+  }: Partial<Song>,
 ) => {
   const songsCollection = await getSongsCollection();
 
   const response = await songsCollection.findOneAndUpdate(
-    { number },
+    { language, category, number },
     {
       $set: {
+        ...(newLanguage && { language: newLanguage }),
+        ...(newCategory && { category: newCategory }),
         ...(newNumber && { number: newNumber }),
         ...(title && { title }),
         ...(content && { content }),
@@ -82,16 +95,20 @@ export const update = async (
   return response.value || null;
 };
 
-export const remove = async (number: string) => {
+export const remove = async ({ language, category, number }: SongIdFields) => {
   const songsCollection = await getSongsCollection();
 
-  const response = await songsCollection.findOneAndDelete({ number });
+  const response = await songsCollection.findOneAndDelete({
+    language,
+    category,
+    number,
+  });
 
   return response.value || null;
 };
 
 export const create = async (song: Song) => {
-  const existingSong = await get(song.number);
+  const existingSong = await get(song);
 
   if (existingSong) {
     return null;

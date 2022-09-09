@@ -10,7 +10,7 @@ const SongsList = lazy(() => import('./SongsList'));
 const NewSong = lazy(() => import('./NewSong'));
 const SongDetail = lazy(() => import('./SongDetail'));
 
-const SongsRouter: FunctionComponent<TopbarLayoutProps> = (props) => {
+const SongsRouter: FunctionComponent<TopbarLayoutProps> = props => {
   const { path } = useRouteMatch();
 
   return (
@@ -29,7 +29,7 @@ const SongsRouter: FunctionComponent<TopbarLayoutProps> = (props) => {
           <NewSong />
         </Route>
 
-        <Route exact path={`${path}/:number`}>
+        <Route exact path={`${path}/:language/:category/:number`}>
           <SongDetail />
         </Route>
 

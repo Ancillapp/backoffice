@@ -24,6 +24,8 @@ import {
 } from '@mui/icons-material';
 
 import {
+  SongLanguage,
+  SongCategory,
   useSong,
   useSongDeletion,
   useSongUpdate,
@@ -33,33 +35,9 @@ import TopbarLayout, {
   TopbarLayoutProps,
 } from '../../components/common/TopbarLayout';
 import Loader from '../../components/common/Loader';
-import SongForm, {
-  SongFormProps,
-  SongLanguage,
-} from '../../components/songs/SongForm';
+import SongForm, { SongFormProps } from '../../components/songs/SongForm';
 import PageSkeleton from '../../components/common/PageSkeleton';
 import TopbarIcon from '../../components/common/TopbarIcon';
-
-const mapSongNumberToLanguage = (number: string): SongLanguage => {
-  if (number.startsWith('DE')) {
-    return SongLanguage.GERMAN;
-  }
-  if (number.startsWith('PT')) {
-    return SongLanguage.PORTUGUESE;
-  }
-  return SongLanguage.ITALIAN;
-};
-
-const mapLanguageToSongNumberPrefix = (language: SongLanguage): string => {
-  switch (language) {
-    case SongLanguage.GERMAN:
-      return 'DE';
-    case SongLanguage.PORTUGUESE:
-      return 'PT';
-    default:
-      return 'IT';
-  }
-};
 
 const BackButton = styled(TopbarIcon)(({ theme }) => ({
   marginRight: theme.spacing(0.5),
@@ -72,15 +50,27 @@ const SongDetail: FunctionComponent<
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const {
-    params: { number },
-  } = useRouteMatch<{ number: string }>();
+    params: { language, category, number },
+  } = useRouteMatch<{
+    language: SongLanguage;
+    category: SongCategory;
+    number: string;
+  }>();
 
   const history = useHistory();
 
-  const { loading, data, error, refetch } = useSong(number);
+  const { loading, data, error, refetch } = useSong(language, category, number);
 
-  const [updateSong, { loading: updatingSong }] = useSongUpdate(number);
-  const [deleteSong, { loading: deletingSong }] = useSongDeletion(number);
+  const [updateSong, { loading: updatingSong }] = useSongUpdate(
+    language,
+    category,
+    number,
+  );
+  const [deleteSong, { loading: deletingSong }] = useSongDeletion(
+    language,
+    category,
+    number,
+  );
 
   const showDeletionConfirmationDialog = useCallback(() => {
     setDeleteDialogOpen(true);
@@ -104,13 +94,11 @@ const SongDetail: FunctionComponent<
   );
 
   const handleSubmit = useCallback<NonNullable<SongFormProps['onSubmit']>>(
-    async ({ number, title, content, language }) => {
-      const computedNumber = `${mapLanguageToSongNumberPrefix(
-        language,
-      )}${number}`;
-
+    async ({ language, category, number, title, content }) => {
       const payload = {
-        ...(data?.number !== computedNumber && { number: computedNumber }),
+        ...(data?.language !== language && { language }),
+        ...(data?.category !== category && { category }),
+        ...(data?.number !== number && { number }),
         ...(data?.title !== title && { title }),
         ...(data?.content !== content && { content }),
       };
@@ -118,8 +106,12 @@ const SongDetail: FunctionComponent<
       if (Object.keys(payload).length > 0) {
         await updateSong(payload);
 
-        if (data?.number !== computedNumber) {
-          history.replace(`/canti/${computedNumber}`);
+        if (
+          data?.language !== language ||
+          data?.category !== category ||
+          data?.number !== number
+        ) {
+          history.replace(`/canti/${language}/${category}/${number}`);
         } else {
           await refetch();
         }
@@ -227,11 +219,7 @@ const SongDetail: FunctionComponent<
         <SongForm
           id="edit-song-form"
           disabled={!editMode || updatingSong}
-          defaultValue={{
-            ...data,
-            number: data.number.slice(2),
-            language: mapSongNumberToLanguage(data.number),
-          }}
+          defaultValue={data}
           onSubmit={handleSubmit}
           onReset={handleReset}
         />

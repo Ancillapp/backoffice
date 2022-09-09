@@ -14,23 +14,9 @@ import { useSongCreation } from '../../providers/ApiProvider';
 import TopbarLayout, {
   TopbarLayoutProps,
 } from '../../components/common/TopbarLayout';
-import SongForm, {
-  SongFormProps,
-  SongLanguage,
-} from '../../components/songs/SongForm';
+import SongForm, { SongFormProps } from '../../components/songs/SongForm';
 import Loader from '../../components/common/Loader';
 import TopbarIcon from '../../components/common/TopbarIcon';
-
-const mapLanguageToSongNumberPrefix = (language: SongLanguage): string => {
-  switch (language) {
-    case SongLanguage.GERMAN:
-      return 'DE';
-    case SongLanguage.PORTUGUESE:
-      return 'PT';
-    default:
-      return 'IT';
-  }
-};
 
 const BackButton = styled(TopbarIcon)(({ theme }) => ({
   marginRight: theme.spacing(0.5),
@@ -53,17 +39,12 @@ const NewSong: FunctionComponent<
   );
 
   const handleSubmit = useCallback<NonNullable<SongFormProps['onSubmit']>>(
-    async ({ language, number, ...rest }) => {
-      const computedNumber = `${mapLanguageToSongNumberPrefix(
-        language,
-      )}${number}`;
+    async data => {
+      await createSong(data);
 
-      await createSong({
-        number: computedNumber,
-        ...rest,
-      });
-
-      history.replace(`/canti/${computedNumber}`);
+      history.replace(
+        `/canti/${data.language}/${data.category}/${data.number}`,
+      );
     },
     [createSong, history],
   );

@@ -21,18 +21,14 @@ import { makeStyles } from '@mui/styles';
 
 import Page from '../common/Page';
 import SongPreview from './SongPreview';
-
-export enum SongLanguage {
-  ITALIAN = 'IT',
-  GERMAN = 'DE',
-  PORTUGUESE = 'PT',
-}
+import { SongCategory, SongLanguage } from '../../providers/ApiProvider';
 
 export interface SongFormValue {
+  language: SongLanguage;
+  category: SongCategory;
   number: string;
   title: string;
   content: string;
-  language: SongLanguage;
 }
 
 export type SongFormState = SongFormValue;
@@ -84,10 +80,11 @@ const reduceSongForm: Reducer<SongFormState, SongFormAction> = (
 };
 
 const defaultState: SongFormState = {
+  language: SongLanguage.ITALIAN,
+  category: SongCategory.OTHER_SONGS,
   number: '',
   title: '',
   content: '',
-  language: SongLanguage.ITALIAN,
 };
 
 const useStyles = makeStyles(theme => ({
@@ -141,6 +138,16 @@ const SongForm: FunctionComponent<SongFormProps> = ({
       type: SongFormActionType.SET_FIELD,
       field: 'language',
       value: event.target.value as SongLanguage,
+    });
+  }, []);
+
+  const handleCategoryChange = useCallback<
+    NonNullable<SelectProps['onChange']>
+  >(event => {
+    dispatch({
+      type: SongFormActionType.SET_FIELD,
+      field: 'category',
+      value: event.target.value as SongCategory,
     });
   }, []);
 
@@ -213,7 +220,7 @@ const SongForm: FunctionComponent<SongFormProps> = ({
         onReset={handleReset}
         {...props}
       >
-        <Grid item xs={6} sm={3} lg={2}>
+        <Grid item xs={6} lg={4}>
           <SongFormTextField
             label="Numero"
             onInput={createTextFieldInputHandler('number')}
@@ -221,7 +228,7 @@ const SongForm: FunctionComponent<SongFormProps> = ({
             disabled={disabled}
           />
         </Grid>
-        <Grid item xs={6} sm={3} lg={2}>
+        <Grid item xs={6} lg={4}>
           <FormControl fullWidth>
             <InputLabel htmlFor="song-language">Lingua *</InputLabel>
             <Select
@@ -243,7 +250,61 @@ const SongForm: FunctionComponent<SongFormProps> = ({
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={12} sm={6} lg={8}>
+        <Grid item xs={12} lg={4}>
+          <FormControl fullWidth>
+            <InputLabel htmlFor="song-category">Categoria *</InputLabel>
+            <Select
+              native
+              label="Categoria *"
+              inputProps={{
+                name: 'category',
+                id: 'song-category',
+              }}
+              classes={{ disabled: classes.disabled }}
+              onChange={handleCategoryChange}
+              value={state.category}
+              disabled={disabled}
+              required
+            >
+              <option value={SongCategory.KYRIE}>Kyrie</option>
+              <option value={SongCategory.GLORY}>Gloria</option>
+              <option value={SongCategory.HALLELUJAH}>Alleluia</option>
+              <option value={SongCategory.CREED}>Credo</option>
+              <option value={SongCategory.OFFERTORY}>Offertorio</option>
+              <option value={SongCategory.HOLY}>Santo</option>
+              <option value={SongCategory.ANAMNESIS}>Anamnesi</option>
+              <option value={SongCategory.AMEN}>Amen</option>
+              <option value={SongCategory.OUR_FATHER}>Padre Nostro</option>
+              <option value={SongCategory.LAMB_OF_GOD}>Agnello di Dio</option>
+              <option value={SongCategory.CANONS_AND_REFRAINS}>
+                Canoni e Ritornelli
+              </option>
+              <option value={SongCategory.FRANCISCANS}>Francescani</option>
+              <option value={SongCategory.PRAISE_AND_FAREWELL}>
+                Lode e Congedo
+              </option>
+              <option value={SongCategory.ENTRANCE}>Ingresso</option>
+              <option value={SongCategory.HOLY_SPIRIT}>Spirito Santo</option>
+              <option value={SongCategory.WORSHIP}>Adorazione</option>
+              <option value={SongCategory.EUCHARIST}>Comunione</option>
+              <option value={SongCategory.BENEDICTUS}>Benedictus</option>
+              <option value={SongCategory.MAGNIFICAT}>Magnificat</option>
+              <option value={SongCategory.CANTICLES}>Cantici</option>
+              <option value={SongCategory.HYMNS}>Inni</option>
+              <option value={SongCategory.SIMPLE_PRAYER}>
+                Preghiera Semplice
+              </option>
+              <option value={SongCategory.MARIANS}>Mariani</option>
+              <option value={SongCategory.ANIMATION}>Animazione</option>
+              <option value={SongCategory.GREGORIANS}>Gregoriani</option>
+              <option value={SongCategory.ADVENT}>Avvento</option>
+              <option value={SongCategory.CHRISTMAS}>Natale</option>
+              <option value={SongCategory.LENT}>Quaresima</option>
+              <option value={SongCategory.OTHER_SONGS}>Altri Canti</option>
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item xs={12} lg={12}>
           <SongFormTextField
             label="Titolo"
             onInput={createTextFieldInputHandler('title')}
