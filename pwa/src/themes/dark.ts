@@ -22,6 +22,13 @@ const darkTheme = createTheme(
         main: '#ff8f82',
       },
     },
+    components: {
+      MuiLink: {
+        defaultProps: {
+          underline: 'hover',
+        },
+      },
+    },
   },
   itIT,
 );
