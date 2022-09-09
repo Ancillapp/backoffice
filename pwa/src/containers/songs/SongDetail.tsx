@@ -119,7 +119,17 @@ const SongDetail: FunctionComponent<
 
       setEditMode(false);
     },
-    [data?.content, data?.number, data?.title, history, refetch, updateSong],
+    [
+      data?.category,
+      data?.content,
+      data?.language,
+      data?.number,
+      data?.title,
+      ,
+      history,
+      refetch,
+      updateSong,
+    ],
   );
 
   const handleReset = useCallback<NonNullable<SongFormProps['onReset']>>(() => {
