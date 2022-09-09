@@ -70,16 +70,20 @@ const Songs: FunctionComponent<SongsProps> = ({ items }) => {
           {[...Array(5)].map((_, subindex) => {
             const {
               [index * 5 + subindex]: {
+                language = undefined,
+                category = undefined,
                 number = undefined,
                 title = undefined,
               } = {},
             } = items;
 
             return (
+              language &&
+              category &&
               number &&
               title && (
                 <Link
-                  to={`/canti/${number}`}
+                  to={`/canti/${language}/${category}/${number}`}
                   key={number}
                   className={classes.songLink}
                   style={{
@@ -92,9 +96,7 @@ const Songs: FunctionComponent<SongsProps> = ({ items }) => {
                       variant={isDesktop ? 'h2' : 'h4'}
                       align="center"
                     >
-                      {number.endsWith('bis')
-                        ? number.slice(2, -2)
-                        : number.slice(2)}
+                      {number.endsWith('bis') ? number.slice(0, -2) : number}
                     </Typography>
                     {isDesktop && (
                       <Typography variant="h6" align="center" color="secondary">

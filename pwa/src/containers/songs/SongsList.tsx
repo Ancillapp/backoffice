@@ -51,14 +51,16 @@ const SongsList: FunctionComponent<TopbarLayoutProps> = props => {
   const { loading, data, error } = useSongs();
 
   const filteredSongs = useMemo<SongSummary[] | null>(
-    () => data?.filter(({ number }) => number.startsWith(language)) ?? null,
+    () => data?.filter(song => song.language === language) ?? null,
     [data, language],
   );
 
   const fuse = useMemo<Fuse<SongSummary> | null>(
     () =>
       filteredSongs
-        ? new Fuse(filteredSongs, { keys: ['number', 'title'] })
+        ? new Fuse(filteredSongs, {
+            keys: ['language', 'category', 'number', 'title'],
+          })
         : null,
     [filteredSongs],
   );
@@ -141,10 +143,10 @@ const SongsList: FunctionComponent<TopbarLayoutProps> = props => {
               to={{
                 pathname: '/canti',
                 search: mergeSearchParams(searchParams, {
-                  lingua: 'IT',
+                  lingua: 'it',
                 }).toString(),
               }}
-              value="IT"
+              value="it"
               label="Italiano"
             />
             <Tab
@@ -152,10 +154,10 @@ const SongsList: FunctionComponent<TopbarLayoutProps> = props => {
               to={{
                 pathname: '/canti',
                 search: mergeSearchParams(searchParams, {
-                  lingua: 'DE',
+                  lingua: 'de',
                 }).toString(),
               }}
-              value="DE"
+              value="de"
               label="Tedesco"
             />
             <Tab
@@ -163,10 +165,10 @@ const SongsList: FunctionComponent<TopbarLayoutProps> = props => {
               to={{
                 pathname: '/canti',
                 search: mergeSearchParams(searchParams, {
-                  lingua: 'PT',
+                  lingua: 'pt',
                 }).toString(),
               }}
-              value="PT"
+              value="pt"
               label="Portoghese"
             />
           </Tabs>

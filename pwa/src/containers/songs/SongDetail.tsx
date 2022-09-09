@@ -151,12 +151,12 @@ const SongDetail: FunctionComponent<
     <>
       <Helmet>
         <title>
-          {data.number.slice(2)}. {data.title}
+          {data.number}. {data.title}
         </title>
       </Helmet>
 
       <TopbarLayout
-        title={`${data.number.slice(2)}. ${data.title}`}
+        title={`${data.number}. ${data.title}`}
         startAdornment={
           <BackButton>
             <Link to="/canti" onClick={handleBackClick}>
