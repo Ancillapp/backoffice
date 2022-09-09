@@ -42,7 +42,7 @@ const SongsList: FunctionComponent<TopbarLayoutProps> = props => {
   const { search } = useLocation();
   const searchParams = useMemo(() => new URLSearchParams(search), [search]);
   const searchKeyword = searchParams.get('ricerca') || '';
-  const language = searchParams.get('lingua') || 'IT';
+  const language = searchParams.get('lingua') || 'it';
 
   const theme = useTheme();
 
