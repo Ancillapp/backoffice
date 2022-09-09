@@ -16,7 +16,7 @@ jobs:
         with:
           node-version: 16
       - name: Install deps
-        run: yarn install
+        run: yarn install --immutable
       - name: Build
         run: yarn build
         env:

@@ -69,5 +69,6 @@
     "faker": "^6.6.6",
     "react-app-rewired": "^2.2.1",
     "workbox-webpack-plugin": "^6.5.4"
-  }
+  },
+  "packageManager": "yarn@3.2.3"
 }
