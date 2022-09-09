@@ -125,7 +125,6 @@ const SongDetail: FunctionComponent<
       data?.language,
       data?.number,
       data?.title,
-      ,
       history,
       refetch,
       updateSong,
