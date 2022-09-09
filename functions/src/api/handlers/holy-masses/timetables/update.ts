@@ -54,7 +54,7 @@ export const updateTimetable: RequestHandler = async (
       $set: { masses },
     },
     {
-      returnOriginal: false,
+      returnDocument: 'after',
     },
   );
 

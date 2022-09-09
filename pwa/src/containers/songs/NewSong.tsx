@@ -2,10 +2,12 @@ import React, { FunctionComponent, useCallback } from 'react';
 
 import { Link, LinkProps, useHistory } from 'react-router-dom';
 
-import { IconButton } from '@material-ui/core';
+import { IconButton, styled } from '@mui/material';
 
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import SaveIcon from '@material-ui/icons/Save';
+import {
+  ArrowBack as ArrowBackIcon,
+  Save as SaveIcon,
+} from '@mui/icons-material';
 
 import { useSongCreation } from '../../providers/ApiProvider';
 
@@ -29,6 +31,10 @@ const mapLanguageToSongNumberPrefix = (language: SongLanguage): string => {
       return 'IT';
   }
 };
+
+const BackButton = styled(TopbarIcon)(({ theme }) => ({
+  marginRight: theme.spacing(0.5),
+}));
 
 const NewSong: FunctionComponent<
   Omit<TopbarLayoutProps, 'startAdornment'>
@@ -66,7 +72,7 @@ const NewSong: FunctionComponent<
     <TopbarLayout
       title="Nuovo canto"
       startAdornment={
-        <TopbarIcon sx={{ mr: 0.5 }}>
+        <BackButton>
           <Link to="/canti" onClick={handleBackClick}>
             <IconButton
               color="inherit"
@@ -77,7 +83,7 @@ const NewSong: FunctionComponent<
               <ArrowBackIcon />
             </IconButton>
           </Link>
-        </TopbarIcon>
+        </BackButton>
       }
       endAdornment={
         <IconButton

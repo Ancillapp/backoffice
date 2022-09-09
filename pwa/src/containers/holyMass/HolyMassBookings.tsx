@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useState } from 'react';
 
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 
 import CenteredLayout from '../../components/common/CenteredLayout';
 import Loader from '../../components/common/Loader';
@@ -20,11 +20,11 @@ const HolyMassBookings: FunctionComponent = () => {
     string | undefined
   >();
 
-  const handleChange = (
-    holyMassId: string,
-  ): NonNullable<HolyMassBookingsTableProps['onChange']> => (_, expanded) => {
-    setExpandedHolyMass(expanded ? holyMassId : undefined);
-  };
+  const handleChange =
+    (holyMassId: string): NonNullable<HolyMassBookingsTableProps['onChange']> =>
+    (_, expanded) => {
+      setExpandedHolyMass(expanded ? holyMassId : undefined);
+    };
 
   if (error) {
     return <span>{error.message}</span>;
@@ -36,7 +36,7 @@ const HolyMassBookings: FunctionComponent = () => {
       {loading ? (
         <Loader />
       ) : (data?.length || 0) > 0 ? (
-        data?.map((bookings) => {
+        data?.map(bookings => {
           const id = `${bookings.fraternity.id}-${bookings.date}`;
 
           return (

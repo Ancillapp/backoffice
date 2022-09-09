@@ -11,7 +11,7 @@ import {
   ListItemText,
   Skeleton,
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import { DailyHolyMassBookings } from '../../providers/ApiProvider';
 import { dateTimeFormatter, toLocalTimeZone } from '../../helpers/dates';

@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 
-import { Skeleton } from '@material-ui/core';
+import { Skeleton } from '@mui/material';
 
 import TopbarLayout from './TopbarLayout';
 import Loader from './Loader';

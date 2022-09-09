@@ -5,11 +5,11 @@ import { useFirebase } from '../../providers/FirebaseProvider';
 import Loader from '../../components/common/Loader';
 
 const Logout: FunctionComponent = () => {
-  const firebase = useFirebase();
+  const { auth } = useFirebase();
 
   useEffect(() => {
-    firebase.auth().signOut();
-  }, [firebase]);
+    auth.signOut();
+  }, [auth]);
 
   return <Loader />;
 };

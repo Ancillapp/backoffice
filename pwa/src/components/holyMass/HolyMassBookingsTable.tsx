@@ -5,16 +5,16 @@ import {
   AccordionDetails,
   AccordionProps,
   AccordionSummary,
-  makeStyles,
   Table,
   TableHead,
   TableBody,
   TableRow,
   TableCell,
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 
 import { FullDataDailyHolyMassBookings } from '../../providers/ApiProvider';
 import { dateTimeFormatter, toLocalTimeZone } from '../../helpers/dates';
@@ -24,7 +24,7 @@ export interface HolyMassBookingsTableProps
   data: FullDataDailyHolyMassBookings;
 }
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   header: {
     display: 'flex',
     flexDirection: 'column',

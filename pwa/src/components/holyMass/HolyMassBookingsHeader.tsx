@@ -2,19 +2,19 @@ import React, { FunctionComponent } from 'react';
 
 import {
   Divider,
-  makeStyles,
   MenuItem,
   Select,
   SelectProps,
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
 export interface HolyMassBookingsHeaderProps {
   value?: number;
   onChange?(value: number): void;
 }
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     margin: 16,
 
@@ -37,13 +37,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const HolyMassBookingsHeader: FunctionComponent<HolyMassBookingsHeaderProps> = ({
-  value = 3,
-  onChange,
-}) => {
+const HolyMassBookingsHeader: FunctionComponent<
+  HolyMassBookingsHeaderProps
+> = ({ value = 3, onChange }) => {
   const classes = useStyles();
 
-  const handleChange: SelectProps['onChange'] = (event) => {
+  const handleChange: SelectProps['onChange'] = event => {
     onChange?.(event.target.value as number);
   };
 
@@ -53,7 +52,6 @@ const HolyMassBookingsHeader: FunctionComponent<HolyMassBookingsHeaderProps> = (
         Visualizza le prenotazioni dei prossimi{' '}
         <Select
           className={classes.select}
-          variant="outlined"
           required
           value={value}
           onChange={handleChange}

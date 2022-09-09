@@ -1,8 +1,8 @@
 import React, { FunctionComponent } from 'react';
 
-import { SvgIcon, SvgIconProps } from '@material-ui/core';
+import { SvgIcon, SvgIconProps } from '@mui/material';
 
-const FacebookIcon: FunctionComponent<SvgIconProps> = (props) => (
+const FacebookIcon: FunctionComponent<SvgIconProps> = props => (
   <SvgIcon viewBox="0 0 256 256" {...props}>
     <path
       fill="#1977f3"

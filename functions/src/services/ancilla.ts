@@ -18,18 +18,16 @@ export const get = async (code: string) => {
     name: 1,
   };
 
-  const data = (code === 'latest'
-    ? (
-        await ancillasCollection
-          .find({}, { projection })
-          .sort({ date: -1 })
-          .limit(1)
-          .toArray()
-      )[0]
-    : await ancillasCollection.findOne({ code }, { projection })) as Pick<
-    Ancilla,
-    '_id' | 'code' | 'name'
-  > | null;
+  const data =
+    code === 'latest'
+      ? (
+          await ancillasCollection
+            .find({}, { projection })
+            .sort({ date: -1 })
+            .limit(1)
+            .toArray()
+        )[0]
+      : await ancillasCollection.findOne({ code }, { projection });
 
   if (!data) {
     return null;
@@ -49,7 +47,7 @@ export const get = async (code: string) => {
 export const list = async () => {
   const ancillasCollection = await getAncillasCollection();
 
-  const ancillas = (await ancillasCollection
+  const ancillas = await ancillasCollection
     .find(
       {},
       {
@@ -61,7 +59,7 @@ export const list = async () => {
       },
     )
     .sort({ date: -1 })
-    .toArray()) as Pick<Ancilla, '_id' | 'code' | 'name'>[];
+    .toArray();
 
   return ancillas.map(({ code, name: { it: name }, ...rest }) => ({
     ...rest,

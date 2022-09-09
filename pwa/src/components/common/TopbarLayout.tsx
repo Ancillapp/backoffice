@@ -1,18 +1,23 @@
-import React, { FunctionComponent, useCallback, ReactNode } from 'react';
+import React, {
+  FunctionComponent,
+  useCallback,
+  ReactNode,
+  PropsWithChildren,
+} from 'react';
 
 import {
   AppBar,
   Toolbar,
   IconButton,
   Typography,
-  makeStyles,
   useMediaQuery,
   useTheme,
   ThemeProvider,
-  createMuiTheme,
-} from '@material-ui/core';
+  createTheme,
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
-import MenuIcon from '@material-ui/icons/Menu';
+import { Menu as MenuIcon } from '@mui/icons-material';
 
 import darkTheme from '../../themes/dark';
 import lightTheme from '../../themes/light';
@@ -26,17 +31,17 @@ export interface TopbarLayoutProps {
   onMenuButtonClick?(): void;
 }
 
-const tweakedDarkTheme = createMuiTheme({
+const tweakedDarkTheme = createTheme({
   ...darkTheme,
   palette: { ...darkTheme.palette, primary: { main: '#424242' } },
 });
 
-const tweakedLightTheme = createMuiTheme({
+const tweakedLightTheme = createTheme({
   ...lightTheme,
   palette: { ...lightTheme.palette, mode: 'dark', text: { primary: '#fff' } },
 });
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
@@ -67,7 +72,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const TopbarLayoutTemplate: FunctionComponent<TopbarLayoutProps> = ({
+const TopbarLayoutTemplate: FunctionComponent<
+  PropsWithChildren<TopbarLayoutProps>
+> = ({
   title = 'Ancillapp',
   startAdornment,
   endAdornment,
@@ -119,7 +126,9 @@ const TopbarLayoutTemplate: FunctionComponent<TopbarLayoutProps> = ({
   );
 };
 
-const TopbarLayout: FunctionComponent<TopbarLayoutProps> = (props) => {
+const TopbarLayout: FunctionComponent<
+  PropsWithChildren<TopbarLayoutProps>
+> = props => {
   const themeName = useThemeName();
 
   return (

@@ -4,9 +4,14 @@ import { Helmet } from 'react-helmet';
 
 import { BrowserRouter } from 'react-router-dom';
 
-import { ThemeProvider, CssBaseline } from '@material-ui/core';
+import {
+  StyledEngineProvider,
+  ThemeProvider,
+  CssBaseline,
+} from '@mui/material';
 
-import type Firebase from 'firebase';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import type { Auth } from 'firebase/auth';
 
 import lightTheme from '../themes/light';
 import darkTheme from '../themes/dark';
@@ -15,34 +20,42 @@ import Root from './Root';
 import FirebaseProvider from '../providers/FirebaseProvider';
 import ServiceWorkerProvider from '../providers/ServiceWorkerProvider';
 import { useThemeName } from '../providers/ThemeNameProvider';
-import AdapterDateFns from '@material-ui/lab/AdapterDateFns';
-import LocalizationProvider from '@material-ui/lab/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers';
 import itLocale from 'date-fns/locale/it';
 
 export interface AppProps {
-  firebase: typeof Firebase;
+  queryClient: QueryClient;
+  firebaseAuth: Auth;
 }
 
-const App: FunctionComponent<AppProps> = ({ firebase }) => {
+const App: FunctionComponent<AppProps> = ({ queryClient, firebaseAuth }) => {
   const themeName = useThemeName();
 
   return (
-    <FirebaseProvider firebase={firebase}>
-      <ThemeProvider theme={themeName === 'dark' ? darkTheme : lightTheme}>
-        <LocalizationProvider dateAdapter={AdapterDateFns} locale={itLocale}>
-          <Helmet
-            defaultTitle="Ancillapp Backoffice"
-            titleTemplate="Ancillapp Backoffice - %s"
-          />
-          <CssBaseline />
-          <ServiceWorkerProvider>
-            <BrowserRouter>
-              <Root />
-            </BrowserRouter>
-          </ServiceWorkerProvider>
-        </LocalizationProvider>
-      </ThemeProvider>
-    </FirebaseProvider>
+    <QueryClientProvider client={queryClient}>
+      <FirebaseProvider auth={firebaseAuth}>
+        <StyledEngineProvider injectFirst>
+          <ThemeProvider theme={themeName === 'dark' ? darkTheme : lightTheme}>
+            <LocalizationProvider
+              dateAdapter={AdapterDateFns}
+              adapterLocale={itLocale}
+            >
+              <Helmet
+                defaultTitle="Ancillapp Backoffice"
+                titleTemplate="Ancillapp Backoffice - %s"
+              />
+              <CssBaseline />
+              <ServiceWorkerProvider>
+                <BrowserRouter>
+                  <Root />
+                </BrowserRouter>
+              </ServiceWorkerProvider>
+            </LocalizationProvider>
+          </ThemeProvider>
+        </StyledEngineProvider>
+      </FirebaseProvider>
+    </QueryClientProvider>
   );
 };
 

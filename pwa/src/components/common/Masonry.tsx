@@ -6,13 +6,16 @@ import React, {
   isValidElement,
   cloneElement,
   useState,
+  PropsWithChildren,
+  ReactElement,
 } from 'react';
 
 import clsx from 'clsx';
 
 import MasonryLayout, { Options as MasonryLayoutOptions } from 'masonry-layout';
 
-import { makeStyles, Theme, useTheme } from '@material-ui/core';
+import { Theme, useTheme } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
 export interface MasonryContainerProps
   extends Omit<MasonryLayoutOptions, 'gutter' | 'itemSelector'> {
@@ -40,7 +43,7 @@ export type MasonryProps = MasonryContainerProps | MasonryItemProps;
 const useContainerStyles = makeStyles<
   Theme,
   Pick<MasonryContainerProps, 'spacing'>
->((theme) => ({
+>(theme => ({
   root: ({ spacing = 0 }) => ({
     marginBottom: theme.spacing(-spacing),
   }),
@@ -52,12 +55,9 @@ const useContainerStyles = makeStyles<
   }),
 }));
 
-const MasonryContainer: FunctionComponent<MasonryContainerProps> = ({
-  className,
-  children,
-  spacing = 0,
-  ...masonryOptions
-}) => {
+const MasonryContainer: FunctionComponent<
+  PropsWithChildren<MasonryContainerProps>
+> = ({ className, children, spacing = 0, ...masonryOptions }) => {
   const theme = useTheme();
   const classes = useContainerStyles({ spacing });
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -85,9 +85,9 @@ const MasonryContainer: FunctionComponent<MasonryContainerProps> = ({
   return (
     <div className={clsx(classes.root, className)} ref={containerRef}>
       <div className={classes.sizer} />
-      {Children.map(children, (child) => {
+      {Children.map(children, child => {
         if (isValidElement(child)) {
-          return cloneElement(child, {
+          return cloneElement(child as ReactElement, {
             className: clsx(classes.item, itemClassName, child.props.className),
             spacing,
           });
@@ -102,7 +102,7 @@ const MasonryContainer: FunctionComponent<MasonryContainerProps> = ({
 const useItemStyles = makeStyles<
   Theme,
   Pick<MasonryItemProps, 'xs' | 'sm' | 'md' | 'lg' | 'xl'> & { spacing: number }
->((theme) => ({
+>(theme => ({
   root: ({ spacing, ...breakpoints }) =>
     Object.fromEntries(
       Object.entries(breakpoints)
@@ -118,7 +118,7 @@ const useItemStyles = makeStyles<
     ),
 }));
 
-const MasonryItem: FunctionComponent<MasonryItemProps> = ({
+const MasonryItem: FunctionComponent<PropsWithChildren<MasonryItemProps>> = ({
   item,
   children,
   xs,
@@ -139,7 +139,7 @@ const MasonryItem: FunctionComponent<MasonryItemProps> = ({
   });
 
   return isValidElement(children) ? (
-    cloneElement(children, {
+    cloneElement(children as ReactElement, {
       ...childProps,
       className: clsx(classes.root, childProps.className as string | undefined),
     })
@@ -148,7 +148,7 @@ const MasonryItem: FunctionComponent<MasonryItemProps> = ({
   );
 };
 
-const Masonry: FunctionComponent<MasonryProps> = (props) =>
+const Masonry: FunctionComponent<PropsWithChildren<MasonryProps>> = props =>
   props.container ? (
     <MasonryContainer {...props} />
   ) : (

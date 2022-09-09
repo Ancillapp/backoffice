@@ -20,7 +20,7 @@ oauth2Client.setCredentials({
   refresh_token: refreshToken,
 });
 
-const { v1alpha: analyticsData } = google.analyticsdata('v1alpha');
+const analyticsData = google.analyticsdata('v1beta');
 
 export const getSessionsReport: RequestHandler = async (
   { query: { days: rawDays = '14' } },
@@ -37,10 +37,10 @@ export const getSessionsReport: RequestHandler = async (
 
   const {
     data: { reports = [] },
-  } = await analyticsData.batchRunReports({
+  } = await analyticsData.properties.batchRunReports({
     access_token: token,
+    property: propertyId,
     requestBody: {
-      entity: { propertyId },
       requests: getDateRange(days, 'sessions'),
     },
   });
@@ -81,10 +81,10 @@ export const getTotalSessions: RequestHandler = async (
 
   const {
     data: { rows: [{ metricValues: [{ value = '0' }] = [] }] = [] },
-  } = await analyticsData.runReport({
+  } = await analyticsData.properties.runReport({
     access_token: token,
+    property: propertyId,
     requestBody: {
-      entity: { propertyId },
       metrics: [{ name: 'sessions' }],
       dateRanges: [
         {

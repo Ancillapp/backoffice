@@ -6,9 +6,9 @@ import {
   AccordionProps,
   AccordionSummary,
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 
 import HolyMassesTimetable, {
   HolyMassesTimetableProps,
@@ -35,97 +35,90 @@ const FraternityTimetable: FunctionComponent<FraternityTimetableProps> = ({
 
   const handleRowUpdate = useCallback(
     ({
-      masses,
-    }: Timetable): NonNullable<
-      HolyMassesTimetableProps['onRowUpdate']
-    > => async (id, day, times) => {
-      let strippedMasses: Timetable['masses'];
+        masses,
+      }: Timetable): NonNullable<HolyMassesTimetableProps['onRowUpdate']> =>
+      async (id, day, times) => {
+        let strippedMasses: Timetable['masses'];
 
-      if (isDefaultOrWeekDay(id)) {
-        const { [id]: _, ...stripped } = masses;
-        strippedMasses = stripped;
-      } else {
-        const {
-          overrides: { [id]: _, ...strippedOverrides } = {},
-          ...rest
-        } = masses;
-        strippedMasses = {
-          ...rest,
-          overrides: strippedOverrides,
-        };
-      }
+        if (isDefaultOrWeekDay(id)) {
+          const { [id]: _, ...stripped } = masses;
+          strippedMasses = stripped;
+        } else {
+          const { overrides: { [id]: _, ...strippedOverrides } = {}, ...rest } =
+            masses;
+          strippedMasses = {
+            ...rest,
+            overrides: strippedOverrides,
+          };
+        }
 
-      const newMasses: Timetable['masses'] = {
-        ...strippedMasses,
-        ...(isDefaultOrWeekDay(day)
-          ? {
-              [day]: times,
-            }
-          : {
-              overrides: {
-                ...strippedMasses.overrides,
+        const newMasses: Timetable['masses'] = {
+          ...strippedMasses,
+          ...(isDefaultOrWeekDay(day)
+            ? {
                 [day]: times,
-              },
-            }),
-      };
+              }
+            : {
+                overrides: {
+                  ...strippedMasses.overrides,
+                  [day]: times,
+                },
+              }),
+        };
 
-      await updateTimetable(newMasses);
-      await onUpdate?.(newMasses);
-    },
+        await updateTimetable(newMasses);
+        await onUpdate?.(newMasses);
+      },
     [onUpdate, updateTimetable],
   );
 
   const handleRowCreate = useCallback(
     ({
-      masses,
-    }: Timetable): NonNullable<
-      HolyMassesTimetableProps['onRowCreate']
-    > => async (day, times) => {
-      const newMasses: Timetable['masses'] = {
-        ...masses,
-        ...(isDefaultOrWeekDay(day)
-          ? {
-              [day]: times,
-            }
-          : {
-              overrides: {
-                ...masses.overrides,
+        masses,
+      }: Timetable): NonNullable<HolyMassesTimetableProps['onRowCreate']> =>
+      async (day, times) => {
+        const newMasses: Timetable['masses'] = {
+          ...masses,
+          ...(isDefaultOrWeekDay(day)
+            ? {
                 [day]: times,
-              },
-            }),
-      };
+              }
+            : {
+                overrides: {
+                  ...masses.overrides,
+                  [day]: times,
+                },
+              }),
+        };
 
-      await updateTimetable(newMasses);
-      await onUpdate?.(newMasses);
-    },
+        await updateTimetable(newMasses);
+        await onUpdate?.(newMasses);
+      },
     [onUpdate, updateTimetable],
   );
 
   const handleRowDelete = useCallback(
     ({
-      masses,
-    }: Timetable): NonNullable<
-      HolyMassesTimetableProps['onRowDelete']
-    > => async (id) => {
-      let strippedMasses: Timetable['masses'];
+        masses,
+      }: Timetable): NonNullable<HolyMassesTimetableProps['onRowDelete']> =>
+      async id => {
+        let strippedMasses: Timetable['masses'];
 
-      if (isDefaultOrWeekDay(id)) {
-        const { [id]: _, ...stripped } = masses;
-        strippedMasses = stripped;
-      } else {
-        const {
-          overrides: { [id]: _, ...strippedOverrides } = {},
-          ...rest
-        } = masses;
-        strippedMasses = {
-          ...rest,
-          overrides: strippedOverrides,
-        };
-      }
+        if (isDefaultOrWeekDay(id)) {
+          const { [id]: _, ...stripped } = masses;
+          strippedMasses = stripped;
+        } else {
+          const { overrides: { [id]: _, ...strippedOverrides } = {}, ...rest } =
+            masses;
+          strippedMasses = {
+            ...rest,
+            overrides: strippedOverrides,
+          };
+        }
 
-      await updateTimetable(strippedMasses);
-      await onUpdate?.(strippedMasses);
-    },
+        await updateTimetable(strippedMasses);
+        await onUpdate?.(strippedMasses);
+      },
     [onUpdate, updateTimetable],
   );
 

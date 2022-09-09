@@ -1,15 +1,15 @@
-import React, { FunctionComponent, useCallback, useState } from 'react';
+import React, {
+  FunctionComponent,
+  HTMLAttributes,
+  PropsWithChildren,
+  useCallback,
+  useState,
+} from 'react';
 
-import {
-  makeStyles,
-  Paper,
-  PaperProps,
-  TextField,
-  TextFieldProps,
-  Typography,
-} from '@material-ui/core';
+import { Paper, TextField, TextFieldProps, Typography } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
-import TauIcon from '../icons/Tau';
+import { Tau as TauIcon } from '../icons';
 
 export interface LoginFormValue {
   email: string;
@@ -21,7 +21,7 @@ export interface LoginFormProps {
   onSubmit?(value: LoginFormValue): void;
 }
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
     alignItems: 'center',
@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const LoginForm: FunctionComponent<LoginFormProps> = ({
+const LoginForm: FunctionComponent<PropsWithChildren<LoginFormProps>> = ({
   children,
   onChange,
   onSubmit,
@@ -59,16 +59,19 @@ const LoginForm: FunctionComponent<LoginFormProps> = ({
 
   const handleInput = useCallback(
     (
-      setValue: typeof setEmail | typeof setPassword,
-    ): NonNullable<TextFieldProps['onInput']> => (event) => {
-      onChange?.({ email, password });
-      setValue((event.target as HTMLInputElement).value);
-    },
+        setValue: typeof setEmail | typeof setPassword,
+      ): NonNullable<TextFieldProps['onInput']> =>
+      event => {
+        onChange?.({ email, password });
+        setValue((event.target as HTMLInputElement).value);
+      },
     [email, onChange, password],
   );
 
-  const handleSubmit = useCallback<NonNullable<PaperProps['onSubmit']>>(
-    (event) => {
+  const handleSubmit = useCallback<
+    NonNullable<HTMLAttributes<HTMLFormElement>['onSubmit']>
+  >(
+    event => {
       event.preventDefault();
 
       onSubmit?.({ email, password });
@@ -84,7 +87,6 @@ const LoginForm: FunctionComponent<LoginFormProps> = ({
         <TextField
           type="email"
           autoComplete="username"
-          variant="outlined"
           label="Email"
           required
           fullWidth
@@ -94,7 +96,6 @@ const LoginForm: FunctionComponent<LoginFormProps> = ({
         <TextField
           type="password"
           autoComplete="current-password"
-          variant="outlined"
           label="Password"
           required
           fullWidth

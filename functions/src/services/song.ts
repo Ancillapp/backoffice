@@ -1,8 +1,6 @@
 import { mongoDb } from '../helpers/mongo';
 import { Song } from '../models/mongo';
 
-export type SongData = Omit<Song, '_id'>;
-
 const getSongsCollection = async () => {
   const db = await mongoDb;
 
@@ -21,7 +19,7 @@ export const get = async (number: string) => {
     },
   );
 
-  return song as SongData | null;
+  return song as Song | null;
 };
 
 export const list = async (fullData?: boolean) => {
@@ -39,7 +37,7 @@ export const list = async (fullData?: boolean) => {
         },
       },
     )
-    .toArray()) as SongData[] | Omit<SongData, 'content'>[];
+    .toArray()) as Song[] | Omit<Song, 'content'>[];
 
   return songs.sort(({ number: a }, { number: b }) => {
     const normalizedA = a.slice(2).replace('bis', '').padStart(4, '0');
@@ -63,7 +61,7 @@ export const count = async () => {
 
 export const update = async (
   number: string,
-  { number: newNumber, title, content }: Partial<SongData>,
+  { number: newNumber, title, content }: Partial<Song>,
 ) => {
   const songsCollection = await getSongsCollection();
 
@@ -77,7 +75,7 @@ export const update = async (
       },
     },
     {
-      returnOriginal: false,
+      returnDocument: 'after',
     },
   );
 
@@ -92,7 +90,7 @@ export const remove = async (number: string) => {
   return response.value || null;
 };
 
-export const create = async (song: SongData) => {
+export const create = async (song: Song) => {
   const existingSong = await get(song.number);
 
   if (existingSong) {
@@ -103,7 +101,7 @@ export const create = async (song: SongData) => {
 
   const response = await songsCollection.insertOne(song);
 
-  if (response.insertedCount !== 1) {
+  if (!response.insertedId) {
     return null;
   }
 

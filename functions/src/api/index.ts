@@ -1,7 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as express from 'express';
 import * as cors from 'cors';
-import * as bodyParser from 'body-parser';
 
 import { ssr } from './middlewares/ssr';
 
@@ -44,15 +43,20 @@ app.get('/api/ancillas/:code', authorize, getAncilla);
 app.get('/api/prayers', authorize, getPrayers);
 app.get('/api/prayers/count', authorize, getPrayersCount);
 app.get('/api/prayers/:slug', authorize, getPrayer);
-app.patch('/api/prayers/:slug', authorize, bodyParser.json(), updatePrayer);
+app.patch('/api/prayers/:slug', authorize, express.json(), updatePrayer);
 app.delete('/api/prayers/:slug', authorize, deletePrayer);
-app.post('/api/prayers', authorize, bodyParser.json(), createPrayer);
+app.post('/api/prayers', authorize, express.json(), createPrayer);
 app.get('/api/songs', authorize, getSongs);
 app.get('/api/songs/count', authorize, getSongsCount);
-app.get('/api/songs/:number', authorize, getSong);
-app.patch('/api/songs/:number', authorize, bodyParser.json(), updateSong);
-app.delete('/api/songs/:number', authorize, deleteSong);
-app.post('/api/songs', authorize, bodyParser.json(), createSong);
+app.get('/api/songs/:language/:category/:number', authorize, getSong);
+app.patch(
+  '/api/songs/:language/:category/:number',
+  authorize,
+  express.json(),
+  updateSong,
+);
+app.delete('/api/songs/:language/:category/:number', authorize, deleteSong);
+app.post('/api/songs', authorize, express.json(), createSong);
 app.get('/api/users', authorize, getUsers);
 app.get('/api/users/count', authorize, getUsersCount);
 app.get('/api/analytics/sessions', authorize, getSessionsReport);
@@ -62,7 +66,7 @@ app.get('/api/holy-masses/timetables', authorize, getTimetables);
 app.patch(
   '/api/holy-masses/timetables/:fraternityId',
   authorize,
-  bodyParser.json(),
+  express.json(),
   updateTimetable,
 );
 

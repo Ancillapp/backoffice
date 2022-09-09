@@ -13,16 +13,16 @@ export const useApi = <T>(
   url: string,
   options: RequestInit = {},
 ): UseApiValue<T> => {
-  const firebase = useFirebase();
+  const { auth } = useFirebase();
 
-  const { isLoading: loading, data, error, refetch: refetchQuery } = useQuery<
-    T,
-    Error
-  >(
+  const {
+    isLoading: loading,
+    data,
+    error,
+    refetch: refetchQuery,
+  } = useQuery<T, Error>(
     url,
     async () => {
-      const auth = firebase.auth();
-
       if (!auth.currentUser) {
         throw new Error('User must be logged in to use APIs');
       }
@@ -39,7 +39,7 @@ export const useApi = <T>(
       });
 
       if (res.status === 401 || res.status === 403) {
-        firebase.auth().signOut();
+        auth.signOut();
         return undefined;
       }
 
@@ -90,7 +90,7 @@ export const useMutation = <T, B>(
   url: string,
   options: RequestInit = {},
 ): [(body: B) => Promise<T>, Omit<UseApiValue<T>, 'refetch'>] => {
-  const firebase = useFirebase();
+  const { auth } = useFirebase();
 
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<T | undefined>(undefined);
@@ -100,7 +100,6 @@ export const useMutation = <T, B>(
     async (body: B): Promise<T> => {
       try {
         setLoading(true);
-        const auth = firebase.auth();
 
         if (!auth.currentUser) {
           throw new Error('User must be logged in to use APIs');
@@ -120,8 +119,8 @@ export const useMutation = <T, B>(
         });
 
         if (res.status === 401 || res.status === 403) {
-          firebase.auth().signOut();
-          return (undefined as unknown) as T;
+          auth.signOut();
+          return undefined as unknown as T;
         }
 
         const responseData = res.status === 204 ? undefined : await res.json();
@@ -131,13 +130,13 @@ export const useMutation = <T, B>(
 
         return responseData;
       } catch (error) {
-        setError(error);
+        setError(error as Error);
         setLoading(false);
 
         throw error;
       }
     },
-    [firebase, options, url],
+    [auth, options, url],
   );
 
   return [mutate, { loading, data, error }];

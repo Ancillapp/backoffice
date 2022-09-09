@@ -4,11 +4,11 @@ import { Link as RouterLink, LinkProps } from 'react-router-dom';
 
 import clsx from 'clsx';
 
-import { Link, LinkTypeMap, makeStyles } from '@material-ui/core';
+import { Link, LinkTypeMap } from '@mui/material';
+import { makeStyles } from '@mui/styles';
+import { OverrideProps } from '@mui/material/OverridableComponent';
 
-import { OverrideProps } from '@material-ui/core/OverridableComponent';
-
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     display: 'block',
     willChange: 'transform',
@@ -23,10 +23,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const GrowingLink: FunctionComponent<OverrideProps<
-  LinkTypeMap<LinkProps, typeof RouterLink>,
-  typeof Link
->> = ({ className, ...props }) => {
+const GrowingLink: FunctionComponent<
+  OverrideProps<LinkTypeMap<LinkProps, typeof RouterLink>, typeof Link>
+> = ({ className, ...props }) => {
   const classes = useStyles();
 
   return (

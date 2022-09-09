@@ -15,7 +15,7 @@ module.exports = (config, env) => {
           from: path.resolve(__dirname, 'public'),
           to: '.',
           globOptions: {
-            ignore: ['**/.DS_Store'],
+            ignore: ['**/.DS_Store', '**/index.html'],
           },
         },
       ],
@@ -23,7 +23,7 @@ module.exports = (config, env) => {
   );
 
   const workboxPluginIndex = config.plugins.findIndex(
-    (element) => element instanceof GenerateSW,
+    element => element instanceof GenerateSW,
   );
 
   const injectManifestPlugin = new InjectManifest({

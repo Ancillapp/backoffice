@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useCallback, useState } from 'react';
 
-import { AccordionProps } from '@material-ui/core';
+import { AccordionProps } from '@mui/material';
 
 import Loader from '../../components/common/Loader';
 import CenteredLayout from '../../components/common/CenteredLayout';
@@ -16,12 +16,10 @@ const HolyMassTimetables: FunctionComponent = () => {
   >();
 
   const handleChange = useCallback(
-    (fraternityId: string): NonNullable<AccordionProps['onChange']> => (
-      _,
-      expanded,
-    ) => {
-      setExpandedFraternity(expanded ? fraternityId : undefined);
-    },
+    (fraternityId: string): NonNullable<AccordionProps['onChange']> =>
+      (_, expanded) => {
+        setExpandedFraternity(expanded ? fraternityId : undefined);
+      },
     [],
   );
 
@@ -33,7 +31,7 @@ const HolyMassTimetables: FunctionComponent = () => {
     <Loader />
   ) : (
     <CenteredLayout size="sm">
-      {data?.map((timetable) => (
+      {data?.map(timetable => (
         <FraternityTimetable
           key={timetable.fraternityId}
           data={timetable}

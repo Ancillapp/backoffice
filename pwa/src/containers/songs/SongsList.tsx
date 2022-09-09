@@ -11,7 +11,6 @@ import { Link, useLocation, useHistory } from 'react-router-dom';
 import Fuse from 'fuse.js';
 
 import {
-  Box,
   IconButton,
   InputAdornment,
   Tab,
@@ -20,11 +19,13 @@ import {
   TextFieldProps,
   useMediaQuery,
   useTheme,
-} from '@material-ui/core';
+} from '@mui/material';
 
-import SearchIcon from '@material-ui/icons/Search';
-import ClearIcon from '@material-ui/icons/Clear';
-import AddIcon from '@material-ui/icons/Add';
+import {
+  Search as SearchIcon,
+  Clear as ClearIcon,
+  Add as AddIcon,
+} from '@mui/icons-material';
 
 import { SongSummary, useSongs } from '../../providers/ApiProvider';
 import TopbarLayout, {
@@ -108,29 +109,27 @@ const SongsList: FunctionComponent<TopbarLayoutProps> = props => {
       <TopbarLayout
         title="Canti"
         endAdornment={
-          <Box sx={{ width: 192 }} clone>
-            <TextField
-              type="search"
-              size="small"
-              variant="outlined"
-              placeholder="Cerca"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    {searchKeyword ? (
-                      <IconButton size="small" edge="end" onClick={clearSearch}>
-                        <ClearIcon />
-                      </IconButton>
-                    ) : (
-                      <SearchIcon />
-                    )}
-                  </InputAdornment>
-                ),
-              }}
-              value={searchKeyword}
-              onInput={handleSearchInput}
-            />
-          </Box>
+          <TextField
+            type="search"
+            size="small"
+            placeholder="Cerca"
+            sx={{ width: 192 }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  {searchKeyword ? (
+                    <IconButton size="small" edge="end" onClick={clearSearch}>
+                      <ClearIcon />
+                    </IconButton>
+                  ) : (
+                    <SearchIcon />
+                  )}
+                </InputAdornment>
+              ),
+            }}
+            value={searchKeyword}
+            onInput={handleSearchInput}
+          />
         }
         topbarContent={
           <Tabs

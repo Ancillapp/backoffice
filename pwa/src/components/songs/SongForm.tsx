@@ -12,12 +12,12 @@ import {
   FormControl,
   Grid,
   InputLabel,
-  makeStyles,
   Select,
   SelectProps,
   TextField,
   TextFieldProps,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
 import Page from '../common/Page';
 import SongPreview from './SongPreview';
@@ -172,7 +172,6 @@ const SongForm: FunctionComponent<SongFormProps> = ({
   const SongFormTextField = useCallback<FunctionComponent<TextFieldProps>>(
     ({ InputLabelProps, InputProps, ...props }) => (
       <TextField
-        variant="outlined"
         fullWidth
         InputLabelProps={{
           shrink: true,
@@ -223,7 +222,7 @@ const SongForm: FunctionComponent<SongFormProps> = ({
           />
         </Grid>
         <Grid item xs={6} sm={3} lg={2}>
-          <FormControl variant="outlined" fullWidth>
+          <FormControl fullWidth>
             <InputLabel htmlFor="song-language">Lingua *</InputLabel>
             <Select
               native

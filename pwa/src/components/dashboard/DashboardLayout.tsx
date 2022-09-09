@@ -1,12 +1,12 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, PropsWithChildren } from 'react';
 
-import { makeStyles } from '@material-ui/core';
+import { makeStyles } from '@mui/styles';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(3),
     width: '100%',
-    maxWidth: theme.breakpoints.width('md'),
+    maxWidth: theme.breakpoints.values.md,
     margin: '0 auto',
 
     [theme.breakpoints.down('sm')]: {
@@ -17,7 +17,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const DashboardLayout: FunctionComponent = ({ children }) => {
+const DashboardLayout: FunctionComponent<PropsWithChildren<{}>> = ({
+  children,
+}) => {
   const classes = useStyles();
 
   return <div className={classes.root}>{children}</div>;

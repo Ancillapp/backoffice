@@ -11,14 +11,17 @@ import slugify from 'slugify';
 
 import {
   IconButton,
+  styled,
   Tab,
   Tabs,
   useMediaQuery,
   useTheme,
-} from '@material-ui/core';
+} from '@mui/material';
 
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import SaveIcon from '@material-ui/icons/Save';
+import {
+  ArrowBack as ArrowBackIcon,
+  Save as SaveIcon,
+} from '@mui/icons-material';
 
 import {
   Prayer,
@@ -45,9 +48,13 @@ const languageTranslationsMap: Record<PrayerLanguage, string> = {
   pt: 'Portoghese',
 };
 
+const BackButton = styled(TopbarIcon)(({ theme }) => ({
+  marginRight: theme.spacing(0.5),
+}));
+
 const NewPrayer: FunctionComponent<
   Omit<TopbarLayoutProps, 'startAdornment'>
-> = (props) => {
+> = props => {
   const [language, setLanguage] = useState<PrayerLanguage>(
     supportedLanguages[0],
   );
@@ -63,7 +70,7 @@ const NewPrayer: FunctionComponent<
   const history = useHistory();
 
   const handleBackClick = useCallback<NonNullable<LinkProps['onClick']>>(
-    (event) => {
+    event => {
       if (creatingPrayer) {
         event.preventDefault();
       }
@@ -101,7 +108,7 @@ const NewPrayer: FunctionComponent<
     <TopbarLayout
       title="Nuova preghiera"
       startAdornment={
-        <TopbarIcon sx={{ mr: 0.5 }}>
+        <BackButton>
           <Link to="/preghiere" onClick={handleBackClick}>
             <IconButton
               color="inherit"
@@ -112,7 +119,7 @@ const NewPrayer: FunctionComponent<
               <ArrowBackIcon />
             </IconButton>
           </Link>
-        </TopbarIcon>
+        </BackButton>
       }
       endAdornment={
         <IconButton
@@ -138,7 +145,7 @@ const NewPrayer: FunctionComponent<
             onChange={handleLanguageChange}
             {...(isNarrow ? { centered: true } : { variant: 'fullWidth' })}
           >
-            {supportedLanguages.map((supportedLanguage) => (
+            {supportedLanguages.map(supportedLanguage => (
               <Tab
                 key={supportedLanguage}
                 label={languageTranslationsMap[supportedLanguage]}

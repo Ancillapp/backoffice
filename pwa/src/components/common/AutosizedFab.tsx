@@ -1,12 +1,7 @@
 import React, { FunctionComponent } from 'react';
 
-import {
-  Fab,
-  FabProps,
-  makeStyles,
-  useMediaQuery,
-  useTheme,
-} from '@material-ui/core';
+import { Fab, FabProps, useMediaQuery, useTheme } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -16,7 +11,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const AutosizedFab: FunctionComponent<FabProps> = (props) => {
+const AutosizedFab: FunctionComponent<FabProps> = props => {
   const theme = useTheme();
 
   const classes = useStyles();

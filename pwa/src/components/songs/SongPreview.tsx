@@ -1,12 +1,12 @@
 import React, { FunctionComponent, memo, useCallback } from 'react';
 
-import { makeStyles } from '@material-ui/core';
+import { makeStyles } from '@mui/styles';
 
 export interface SongPreviewProps {
   content: string;
 }
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     '& p': {
       fontSize: '1rem',
@@ -52,7 +52,7 @@ const SongPreview: FunctionComponent<SongPreviewProps> = ({ content }) => {
       rawString
         .split('\n\n')
         .map(
-          (paragraph) =>
+          paragraph =>
             `<p class="${getParagraphClass(paragraph)}">${paragraph
               .replace(/\n/g, '<br>')
               .replace(

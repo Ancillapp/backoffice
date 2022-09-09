@@ -1,12 +1,12 @@
 import React, { FunctionComponent } from 'react';
 import {
-  makeStyles,
   Theme,
   CircularProgress,
   CircularProgressProps,
   LinearProgressProps,
   LinearProgress,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
 export interface CircularLoaderProps
   extends Omit<CircularProgressProps, 'variant' | 'size'> {
@@ -21,7 +21,7 @@ export interface LinearLoaderProps
 
 export type LoaderProps = CircularLoaderProps | LinearLoaderProps;
 
-const useStyles = makeStyles<Theme, { size?: number }>((theme) => ({
+const useStyles = makeStyles<Theme, { size?: number }>(theme => ({
   root: ({ size }) => ({
     position: 'absolute',
     top: '50%',
@@ -40,7 +40,7 @@ const useStyles = makeStyles<Theme, { size?: number }>((theme) => ({
   }),
 }));
 
-const Loader: FunctionComponent<LoaderProps> = (props) => {
+const Loader: FunctionComponent<LoaderProps> = props => {
   const classes = useStyles({
     size: props.variant === 'linear' ? undefined : props.size ?? 32,
   });

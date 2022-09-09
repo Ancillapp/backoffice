@@ -12,13 +12,16 @@ import {
   DialogContentText,
   DialogTitle,
   IconButton,
-} from '@material-ui/core';
+  styled,
+} from '@mui/material';
 
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import DeleteIcon from '@material-ui/icons/Delete';
-import EditIcon from '@material-ui/icons/Edit';
-import CloseIcon from '@material-ui/icons/Close';
-import DoneIcon from '@material-ui/icons/Done';
+import {
+  ArrowBack as ArrowBackIcon,
+  Delete as DeleteIcon,
+  Edit as EditIcon,
+  Close as CloseIcon,
+  Done as DoneIcon,
+} from '@mui/icons-material';
 
 import {
   useSong,
@@ -57,6 +60,10 @@ const mapLanguageToSongNumberPrefix = (language: SongLanguage): string => {
       return 'IT';
   }
 };
+
+const BackButton = styled(TopbarIcon)(({ theme }) => ({
+  marginRight: theme.spacing(0.5),
+}));
 
 const SongDetail: FunctionComponent<
   Omit<TopbarLayoutProps, 'startAdornment'>
@@ -150,7 +157,7 @@ const SongDetail: FunctionComponent<
       <TopbarLayout
         title={`${data.number.slice(2)}. ${data.title}`}
         startAdornment={
-          <TopbarIcon sx={{ mr: 0.5 }}>
+          <BackButton>
             <Link to="/canti" onClick={handleBackClick}>
               <IconButton
                 color="inherit"
@@ -161,7 +168,7 @@ const SongDetail: FunctionComponent<
                 <ArrowBackIcon />
               </IconButton>
             </Link>
-          </TopbarIcon>
+          </BackButton>
         }
         endAdornment={
           editMode ? (
