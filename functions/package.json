@@ -9,11 +9,13 @@
   },
   "main": "lib/index.js",
   "dependencies": {
+    "@google-analytics/data": "^3.0.2",
     "cors": "^2.8.5",
     "express": "^4.18.1",
     "firebase-admin": "^11.0.1",
     "firebase-functions": "^3.23.0",
-    "googleapis": "^107.0.0",
+    "google-auth-library": "^8.5.1",
+    "google-gax": "^3.5.0",
     "mongodb": "^4.9.1",
     "rendertron-middleware": "^0.1.5"
   },
