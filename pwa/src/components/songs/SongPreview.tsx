@@ -1,21 +1,50 @@
-import React, { FunctionComponent, memo, useCallback } from 'react';
+import React, { FunctionComponent, memo, useCallback, useMemo } from 'react';
 
 import { makeStyles } from '@mui/styles';
 
+import { UltimateGuitarParser, HtmlDivFormatter, Song } from 'chordsheetjs';
+import clsx from 'clsx';
+
+const parser = new UltimateGuitarParser();
+const formatter = new HtmlDivFormatter();
+
 export interface SongPreviewProps {
   content: string;
+  enableChords?: boolean;
 }
+
+const scopedStyles = Object.fromEntries(
+  Object.entries(HtmlDivFormatter.cssObject()).map(([className, styles]) => [
+    `& ${className}`,
+    styles,
+  ]),
+);
 
 const useStyles = makeStyles(theme => ({
   root: {
-    '& p': {
-      fontSize: '1rem',
-      textAlign: 'left',
-      margin: '1rem 0',
-    },
+    fontSize: '1rem',
+    textAlign: 'left',
+    margin: '1rem 0',
+
     '& strong': {
       color: theme.palette.secondary.main,
       fontWeight: theme.typography.fontWeightBold,
+    },
+
+    '& .comment': {
+      fontWeight: theme.typography.fontWeightBold,
+      color: theme.palette.secondary.main,
+    },
+
+    '& .chord': {
+      color: theme.palette.secondary.main,
+      fontWeight: theme.typography.fontWeightBold,
+    },
+    ...scopedStyles,
+  },
+  withoutChords: {
+    '& .chord': {
+      display: 'none',
     },
   },
   chorus: {
@@ -25,49 +54,66 @@ const useStyles = makeStyles(theme => ({
     fontStyle: 'italic',
   },
   ending: {},
-  verse: {},
 }));
 
-const SongPreview: FunctionComponent<SongPreviewProps> = ({ content }) => {
+const SongPreview: FunctionComponent<SongPreviewProps> = ({
+  content,
+  enableChords = false,
+}) => {
   const classes = useStyles();
 
   const getParagraphClass = useCallback(
-    (paragraph: string) => {
-      if (/^(?:rit\.|refrain:)/i.test(paragraph)) {
+    (type: string): string => {
+      if (/^(?:rit|refrain)[:.]?$/i.test(type)) {
         return classes.chorus;
       }
-      if (/^bridge/i.test(paragraph)) {
+      if (/^bridge[:.]?$/i.test(type)) {
         return classes.bridge;
       }
-      if (/^(?:finale|fin\.|ende:)/i.test(paragraph)) {
+      if (/^(?:finale|fin|ende)[:.]?$/i.test(type)) {
         return classes.ending;
       }
-      return classes.verse;
+      return '';
     },
-    [classes.bridge, classes.chorus, classes.ending, classes.verse],
+    [classes.bridge, classes.chorus, classes.ending],
   );
 
-  const compile = useCallback(
-    (rawString: string) =>
-      rawString
-        .split('\n\n')
-        .map(
-          paragraph =>
-            `<p class="${getParagraphClass(paragraph)}">${paragraph
-              .replace(/\n/g, '<br>')
-              .replace(
-                /^(rit\.|refrain:|bridge|finale|fin\.|ende:|\d\.)/i,
-                '<strong>$1</strong>',
-              )}</p>`,
-        )
-        .join(''),
-    [getParagraphClass],
-  );
+  const parsedContent = useMemo(() => {
+    try {
+      const song = parser.parse(content);
+      return song;
+    } catch {
+      return content;
+    }
+  }, [content]);
+
+  const formattedContent = useMemo(() => {
+    if (typeof parsedContent === 'string') {
+      return parsedContent;
+    }
+    const formatted: string = formatter.format(parsedContent);
+    const template = document.createElement('template');
+    template.innerHTML = formatted.trim();
+    const element = template.content.firstChild as HTMLDivElement;
+    const paragraphs = Array.from(element.querySelectorAll('.paragraph'));
+    paragraphs.forEach(paragraph => {
+      const comment = paragraph.querySelector<HTMLDivElement>('.comment');
+      if (!comment) {
+        return;
+      }
+      comment.innerHTML = `<strong>${comment.innerHTML}</strong>`;
+      const paragraphClass = getParagraphClass(comment.innerText.trim());
+      if (paragraphClass) {
+        paragraph.classList.add(paragraphClass);
+      }
+    });
+    return element.outerHTML;
+  }, [getParagraphClass, parsedContent]);
 
   return (
     <div
-      className={classes.root}
-      dangerouslySetInnerHTML={{ __html: compile(content) }}
+      className={clsx(classes.root, !enableChords && classes.withoutChords)}
+      dangerouslySetInnerHTML={{ __html: formattedContent }}
     />
   );
 };

@@ -6,10 +6,13 @@ import React, {
   useEffect,
   useMemo,
   useReducer,
+  useState,
 } from 'react';
 
 import {
+  Checkbox,
   FormControl,
+  FormControlLabel,
   Grid,
   InputLabel,
   Select,
@@ -94,6 +97,7 @@ const useStyles = makeStyles(theme => ({
   contentInput: {
     minHeight: '24rem',
     lineHeight: 1.4,
+    fontFamily: 'monospace',
   },
 }));
 
@@ -116,6 +120,7 @@ const SongForm: FunctionComponent<SongFormProps> = ({
   );
 
   const [state, dispatch] = useReducer(reduceSongForm, initialState);
+  const [enablePreviewChords, setEnablePreviewChords] = useState(false);
 
   const createTextFieldInputHandler = useCallback(
     <F extends keyof SongFormState>(
@@ -323,9 +328,22 @@ const SongForm: FunctionComponent<SongFormProps> = ({
           />
         </Grid>
         <Grid item xs={12} md={6}>
-          <SongPreview content={state.content} />
+          <SongPreview
+            content={state.content}
+            enableChords={enablePreviewChords}
+          />
         </Grid>
       </Grid>
+      <FormControlLabel
+        control={
+          <Checkbox
+            value={enablePreviewChords}
+            onChange={event => setEnablePreviewChords(event.target.checked)}
+            color="secondary"
+          />
+        }
+        label="Visualizza accordi"
+      />
     </Page>
   );
 };
