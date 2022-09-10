@@ -7,6 +7,7 @@ import clsx from 'clsx';
 
 const parser = new UltimateGuitarParser();
 const formatter = new HtmlDivFormatter();
+const template = document.createElement('template');
 
 export interface SongPreviewProps {
   content: string;
@@ -92,17 +93,30 @@ const SongPreview: FunctionComponent<SongPreviewProps> = ({
       return parsedContent;
     }
     const formatted: string = formatter.format(parsedContent);
-    const template = document.createElement('template');
     template.innerHTML = formatted.trim();
     const element = template.content.firstChild as HTMLDivElement;
     const paragraphs = Array.from(element.querySelectorAll('.paragraph'));
     paragraphs.forEach(paragraph => {
       const comment = paragraph.querySelector<HTMLDivElement>('.comment');
-      if (!comment) {
-        return;
+      if (comment) {
+        comment.innerHTML = `<strong>${comment.innerHTML}</strong>`;
       }
-      comment.innerHTML = `<strong>${comment.innerHTML}</strong>`;
-      const paragraphClass = getParagraphClass(comment.innerText.trim());
+      const initialParagraphLyrics = paragraph.querySelector(
+        '.row > .column > .lyrics',
+      );
+      const paragraphType = initialParagraphLyrics?.textContent?.match(
+        /^(?:rit|refrain|bridge|finale|fin|ende|\d+)[:.]?/gi,
+      )?.[0];
+      if (paragraphType) {
+        initialParagraphLyrics.innerHTML =
+          initialParagraphLyrics.innerHTML.replace(
+            paragraphType,
+            `<strong>${paragraphType}</strong>`,
+          );
+      }
+      const paragraphClass = getParagraphClass(
+        paragraphType || comment?.innerText.trim() || '',
+      );
       if (paragraphClass) {
         paragraph.classList.add(paragraphClass);
       }
