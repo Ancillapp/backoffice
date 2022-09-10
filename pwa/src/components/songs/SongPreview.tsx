@@ -2,7 +2,7 @@ import React, { FunctionComponent, memo, useCallback, useMemo } from 'react';
 
 import { makeStyles } from '@mui/styles';
 
-import { UltimateGuitarParser, HtmlDivFormatter, Song } from 'chordsheetjs';
+import { UltimateGuitarParser, HtmlDivFormatter } from 'chordsheetjs';
 import clsx from 'clsx';
 
 const parser = new UltimateGuitarParser();
