@@ -27,20 +27,11 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'left',
     margin: '1rem 0',
 
-    '& strong': {
+    '& strong, & .comment, & .chord': {
       color: theme.palette.secondary.main,
       fontWeight: theme.typography.fontWeightBold,
     },
 
-    '& .comment': {
-      fontWeight: theme.typography.fontWeightBold,
-      color: theme.palette.secondary.main,
-    },
-
-    '& .chord': {
-      color: theme.palette.secondary.main,
-      fontWeight: theme.typography.fontWeightBold,
-    },
     ...scopedStyles,
   },
   withoutChords: {
