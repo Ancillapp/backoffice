@@ -84,7 +84,7 @@ const Songs: FunctionComponent<SongsProps> = ({ items }) => {
               title && (
                 <Link
                   to={`/canti/${language}/${category}/${number}`}
-                  key={number}
+                  key={`${language}-${category}-${number}`}
                   className={classes.songLink}
                   style={{
                     width: width - Number(theme.spacing(2).slice(0, -2)),
