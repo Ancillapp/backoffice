@@ -39,25 +39,45 @@ export interface SongPreviewProps {
   enableChords?: boolean;
 }
 
-const scopedStyles = Object.fromEntries(
-  Object.entries(HtmlDivFormatter.cssObject()).map(([className, styles]) => [
-    `& ${className}`,
-    styles,
-  ]),
-);
-
 const useStyles = makeStyles(theme => ({
   root: {
     fontSize: '1rem',
     textAlign: 'left',
     margin: '1rem 0',
 
+    '& .chord': {
+      '&:not(:last-child)': {
+        paddingRight: '10px',
+      },
+      '&:after': {
+        content: "'\\200b'",
+      },
+    },
+
+    '& .paragraph': {
+      marginBottom: '1em',
+    },
+
+    '& .row': {
+      display: 'flex',
+      // If there isn't enough space for the entire row to be shown,
+      // make sure the text wraps properly
+      flexWrap: 'wrap',
+    },
+
+    '& .lyrics': {
+      // Some lyrics column might be longer than the screen, so we need to enable wrapping
+      whiteSpace: 'wrap',
+
+      '&:after': {
+        content: "'\\200b'",
+      },
+    },
+
     '& strong, & .comment, & .chord': {
       color: theme.palette.secondary.main,
       fontWeight: theme.typography.fontWeightBold,
     },
-
-    ...scopedStyles,
   },
   withoutChords: {
     '& .chord': {
