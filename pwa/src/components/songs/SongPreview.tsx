@@ -108,7 +108,7 @@ const SongPreview: FunctionComponent<SongPreviewProps> = ({
 
   const getParagraphClass = useCallback(
     (type: string): string => {
-      if (/^(?:rit|refrain)[:.]?$/i.test(type)) {
+      if (/^(?:rit|ritornello|chorus|ref|refrain)[:.]?$/i.test(type)) {
         return classes.chorus;
       }
       if (/^bridge[:.]?$/i.test(type)) {
@@ -166,7 +166,7 @@ const SongPreview: FunctionComponent<SongPreviewProps> = ({
               '.row > .column > .lyrics',
             );
             const paragraphType = initialParagraphLyrics?.textContent?.match(
-              /^(?:rit|refrain|bridge|finale|fin|ende|\d+)[:.]?/gi,
+              /^(?:rit|ritornello|chorus|ref|refrain|bridge|finale|fin|ende|\d+)[:.]?/gi,
             )?.[0];
             if (paragraphType) {
               initialParagraphLyrics.innerHTML =
