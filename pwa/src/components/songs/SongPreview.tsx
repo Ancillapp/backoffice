@@ -114,7 +114,7 @@ const SongPreview: FunctionComponent<SongPreviewProps> = ({
       if (/^bridge[:.]?$/i.test(type)) {
         return classes.bridge;
       }
-      if (/^(?:finale|fin|ende)[:.]?$/i.test(type)) {
+      if (/^(?:finale|fin|fim|ende)[:.]?$/i.test(type)) {
         return classes.ending;
       }
       return '';
@@ -166,7 +166,7 @@ const SongPreview: FunctionComponent<SongPreviewProps> = ({
               '.row > .column > .lyrics',
             );
             const paragraphType = initialParagraphLyrics?.textContent?.match(
-              /^(?:rit|ritornello|chorus|ref|refrain|bridge|finale|fin|ende|\d+)[:.]?/gi,
+              /^(?:rit|ritornello|chorus|ref|refrain|bridge|finale|fin|fim|ende|\d+)[:.]?/gi,
             )?.[0];
             if (paragraphType) {
               initialParagraphLyrics.innerHTML =
