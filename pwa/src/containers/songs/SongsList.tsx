@@ -135,6 +135,8 @@ const SongsList: FunctionComponent<TopbarLayoutProps> = props => {
         }
         topbarContent={
           <Tabs
+            textColor="inherit"
+            indicatorColor="secondary"
             value={language}
             {...(isNarrow ? { centered: true } : { variant: 'fullWidth' })}
           >

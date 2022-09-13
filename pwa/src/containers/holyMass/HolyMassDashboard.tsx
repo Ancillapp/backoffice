@@ -28,6 +28,8 @@ const HolyMassDashboard: FunctionComponent<TopbarLayoutProps> = props => {
       title="Santa Messa"
       topbarContent={
         <Tabs
+          textColor="inherit"
+          indicatorColor="secondary"
           value={section}
           {...(isNarrow ? { centered: true } : { variant: 'fullWidth' })}
         >

@@ -264,6 +264,8 @@ const PrayerDetail: FunctionComponent<
         topbarContent={
           language && (
             <Tabs
+              textColor="inherit"
+              indicatorColor="secondary"
               value={language}
               onChange={handleLanguageChange}
               {...(isNarrow ? { centered: true } : { variant: 'fullWidth' })}
