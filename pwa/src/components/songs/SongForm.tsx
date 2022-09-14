@@ -292,6 +292,7 @@ const SongForm: FunctionComponent<SongFormProps> = ({
               <option value={SongCategory.HOLY_SPIRIT}>Spirito Santo</option>
               <option value={SongCategory.WORSHIP}>Adorazione</option>
               <option value={SongCategory.EUCHARIST}>Comunione</option>
+              <option value={SongCategory.OTHER_SONGS}>Altri Canti</option>
               <option value={SongCategory.BENEDICTUS}>Benedictus</option>
               <option value={SongCategory.MAGNIFICAT}>Magnificat</option>
               <option value={SongCategory.CANTICLES}>Cantici</option>
@@ -305,7 +306,6 @@ const SongForm: FunctionComponent<SongFormProps> = ({
               <option value={SongCategory.ADVENT}>Avvento</option>
               <option value={SongCategory.CHRISTMAS}>Natale</option>
               <option value={SongCategory.LENT}>Quaresima</option>
-              <option value={SongCategory.OTHER_SONGS}>Altri Canti</option>
             </Select>
           </FormControl>
         </Grid>
