@@ -9,10 +9,10 @@ import { makeStyles } from '@mui/styles';
 
 import { Link } from 'react-router-dom';
 
-import { SongSummary } from '../../providers/ApiProvider';
+import { ExtendedSongSummary } from '../../helpers/songs';
 
 export interface SongsProps {
-  items: SongSummary[];
+  items: ExtendedSongSummary[];
 }
 
 interface SongsRowProps extends Omit<ListChildComponentProps, 'data'> {
@@ -73,6 +73,7 @@ const Songs: FunctionComponent<SongsProps> = ({ items }) => {
                 language = undefined,
                 category = undefined,
                 number = undefined,
+                formattedNumber = undefined,
                 title = undefined,
               } = {},
             } = items;
@@ -81,6 +82,7 @@ const Songs: FunctionComponent<SongsProps> = ({ items }) => {
               language &&
               category &&
               number &&
+              formattedNumber &&
               title && (
                 <Link
                   to={`/canti/${language}/${category}/${number}`}
@@ -96,7 +98,9 @@ const Songs: FunctionComponent<SongsProps> = ({ items }) => {
                       variant={isDesktop ? 'h2' : 'h4'}
                       align="center"
                     >
-                      {number.endsWith('bis') ? number.slice(0, -2) : number}
+                      {formattedNumber.endsWith('bis')
+                        ? formattedNumber.slice(0, -2)
+                        : formattedNumber}
                     </Typography>
                     {isDesktop && (
                       <Typography variant="h6" align="center" color="secondary">

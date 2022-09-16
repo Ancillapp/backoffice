@@ -38,6 +38,7 @@ import Loader from '../../components/common/Loader';
 import SongForm, { SongFormProps } from '../../components/songs/SongForm';
 import PageSkeleton from '../../components/common/PageSkeleton';
 import TopbarIcon from '../../components/common/TopbarIcon';
+import { songCategoryToPrefixMap } from '../../helpers/songs';
 
 const BackButton = styled(TopbarIcon)(({ theme }) => ({
   marginRight: theme.spacing(0.5),
@@ -151,12 +152,15 @@ const SongDetail: FunctionComponent<
     <>
       <Helmet>
         <title>
+          {songCategoryToPrefixMap[data.language]?.[data.category] || ''}
           {data.number}. {data.title}
         </title>
       </Helmet>
 
       <TopbarLayout
-        title={`${data.number}. ${data.title}`}
+        title={`${
+          songCategoryToPrefixMap[data.language]?.[data.category] || ''
+        }${data.number}. ${data.title}`}
         startAdornment={
           <BackButton>
             <Link to="/canti" onClick={handleBackClick}>

@@ -27,7 +27,7 @@ import {
   Add as AddIcon,
 } from '@mui/icons-material';
 
-import { SongSummary, useSongs } from '../../providers/ApiProvider';
+import { SongLanguage, useSongs } from '../../providers/ApiProvider';
 import TopbarLayout, {
   TopbarLayoutProps,
 } from '../../components/common/TopbarLayout';
@@ -35,9 +35,17 @@ import Songs from '../../components/songs/Songs';
 import AutosizedFab from '../../components/common/AutosizedFab';
 import Loader from '../../components/common/Loader';
 import { mergeSearchParams } from '../../helpers/search';
+import {
+  ExtendedSongSummary,
+  songCategoriesArray,
+  songCategoryToPrefixMap,
+  songLanguagesArray,
+} from '../../helpers/songs';
 
 const SongsList: FunctionComponent<TopbarLayoutProps> = props => {
-  const [displayedSongs, setDisplayedSongs] = useState<SongSummary[]>([]);
+  const [displayedSongs, setDisplayedSongs] = useState<ExtendedSongSummary[]>(
+    [],
+  );
   const history = useHistory();
   const { search } = useLocation();
   const searchParams = useMemo(() => new URLSearchParams(search), [search]);
@@ -50,16 +58,58 @@ const SongsList: FunctionComponent<TopbarLayoutProps> = props => {
 
   const { loading, data, error } = useSongs();
 
-  const filteredSongs = useMemo<SongSummary[] | null>(
-    () => data?.filter(song => song.language === language) ?? null,
+  const filteredSongs = useMemo<ExtendedSongSummary[] | null>(
+    () =>
+      data
+        ?.filter(song => song.language === language)
+        .sort((a, b) => {
+          if (a.language !== b.language) {
+            return (
+              songLanguagesArray.indexOf(a.language) -
+              songLanguagesArray.indexOf(b.language)
+            );
+          }
+
+          // If the song language is italian, make sure the categories get properly sorted
+          // Note that we already checked for language equality, so the two songs are in the same language.
+          // For this reason, we don't need to check also for b.language
+          if (a.language === SongLanguage.ITALIAN) {
+            const categoriesDiff =
+              songCategoriesArray.indexOf(a.category) -
+              songCategoriesArray.indexOf(b.category);
+            if (categoriesDiff !== 0) {
+              return categoriesDiff;
+            }
+          }
+
+          const normalizedNumberA = a.number
+            .replace('bis', '')
+            .padStart(5, '0');
+          const normalizedNumberB = b.number
+            .replace('bis', '')
+            .padStart(5, '0');
+
+          if (normalizedNumberA.startsWith(normalizedNumberB)) {
+            return normalizedNumberA.endsWith('bis') ? -1 : 1;
+          }
+
+          return normalizedNumberA.localeCompare(normalizedNumberB);
+        })
+        .map(song => ({
+          ...song,
+          formattedNumber: `${
+            songCategoryToPrefixMap[song.language]?.[song.category] || ''
+          }${song.number}`,
+        })) ?? null,
     [data, language],
   );
 
-  const fuse = useMemo<Fuse<SongSummary> | null>(
+  const fuse = useMemo<Fuse<ExtendedSongSummary> | null>(
     () =>
       filteredSongs
         ? new Fuse(filteredSongs, {
-            keys: ['language', 'category', 'number', 'title'],
+            keys: ['formattedNumber', 'title'],
+            ignoreLocation: true,
           })
         : null,
     [filteredSongs],
