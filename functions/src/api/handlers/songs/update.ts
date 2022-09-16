@@ -20,7 +20,7 @@ export const updateSong: RequestHandler<
   },
   res,
 ) => {
-  if (!newNumber && !title && !content) {
+  if (!newLanguage && !newCategory && !newNumber && !title && !content) {
     res.status(400).send();
     return;
   }
