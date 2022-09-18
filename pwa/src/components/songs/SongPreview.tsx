@@ -90,7 +90,9 @@ const useStyles = makeStyles(theme => ({
   bridge: {
     fontStyle: 'italic',
   },
-  ending: {},
+  ending: {
+    fontWeight: theme.typography.fontWeightBold,
+  },
 }));
 
 const SongPreview: FunctionComponent<SongPreviewProps> = ({
@@ -176,7 +178,7 @@ const SongPreview: FunctionComponent<SongPreviewProps> = ({
                 );
             }
             const paragraphClass = getParagraphClass(
-              paragraphType || comment?.innerText.trim() || '',
+              paragraphType?.trim() || comment?.innerText.trim() || '',
             );
             if (paragraphClass) {
               paragraph.classList.add(paragraphClass);
