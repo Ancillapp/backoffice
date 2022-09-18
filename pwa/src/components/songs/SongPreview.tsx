@@ -92,6 +92,7 @@ const useStyles = makeStyles(theme => ({
   },
   ending: {
     fontWeight: theme.typography.fontWeightBold,
+    fontStyle: 'italic',
   },
 }));
 
