@@ -74,9 +74,11 @@ const SongsList: FunctionComponent<TopbarLayoutProps> = props => {
           // Note that we already checked for language equality, so the two songs are in the same language.
           // For this reason, we don't need to check also for b.language
           if (a.language === SongLanguage.ITALIAN) {
-            const categoriesDiff =
-              songCategoriesArray.indexOf(a.category) -
-              songCategoriesArray.indexOf(b.category);
+            /* eslint-disable @typescript-eslint/no-non-null-assertion */
+            const categoriesDiff = songCategoryToPrefixMap[a.language]![
+              a.category
+            ]!.localeCompare(songCategoryToPrefixMap[b.language]![b.category]!);
+            /* eslint-enable @typescript-eslint/no-non-null-assertion */
             if (categoriesDiff !== 0) {
               return categoriesDiff;
             }
