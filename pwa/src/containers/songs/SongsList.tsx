@@ -37,7 +37,6 @@ import Loader from '../../components/common/Loader';
 import { mergeSearchParams } from '../../helpers/search';
 import {
   ExtendedSongSummary,
-  songCategoriesArray,
   songCategoryToPrefixMap,
   songLanguagesArray,
 } from '../../helpers/songs';
