@@ -22,13 +22,16 @@ import {
   Tab,
   useTheme,
   useMediaQuery,
-} from '@material-ui/core';
+  styled,
+} from '@mui/material';
 
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import DeleteIcon from '@material-ui/icons/Delete';
-import EditIcon from '@material-ui/icons/Edit';
-import CloseIcon from '@material-ui/icons/Close';
-import DoneIcon from '@material-ui/icons/Done';
+import {
+  ArrowBack as ArrowBackIcon,
+  Delete as DeleteIcon,
+  Edit as EditIcon,
+  Close as CloseIcon,
+  Done as DoneIcon,
+} from '@mui/icons-material';
 
 import {
   Prayer,
@@ -58,9 +61,13 @@ const languageTranslationsMap: Record<PrayerLanguage, string> = {
   pt: 'Portoghese',
 };
 
+const BackButton = styled(TopbarIcon)(({ theme }) => ({
+  marginRight: theme.spacing(0.5),
+}));
+
 const PrayerDetail: FunctionComponent<
   Omit<TopbarLayoutProps, 'startAdornment'>
-> = (props) => {
+> = props => {
   const [editMode, setEditMode] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [language, setLanguage] = useState<PrayerLanguage>();
@@ -77,7 +84,7 @@ const PrayerDetail: FunctionComponent<
 
   const { loading, data, error, refetch } = usePrayer(slug);
 
-  const formData = Object.keys(data?.title || {}).map((language) => ({
+  const formData = Object.keys(data?.title || {}).map(language => ({
     language: language as PrayerLanguage,
     title: data?.title[language as keyof Prayer['title']],
     content: data?.content[language as keyof Prayer['content']],
@@ -101,11 +108,11 @@ const PrayerDetail: FunctionComponent<
   }, []);
 
   const toggleEditMode = useCallback(() => {
-    setEditMode((oldEditMode) => !oldEditMode);
+    setEditMode(oldEditMode => !oldEditMode);
   }, []);
 
   const handleBackClick = useCallback<NonNullable<LinkProps['onClick']>>(
-    (event) => {
+    event => {
       if (updatingPrayer) {
         event.preventDefault();
       }
@@ -189,7 +196,7 @@ const PrayerDetail: FunctionComponent<
             : Object.values(data.title)[0]
         }
         startAdornment={
-          <TopbarIcon sx={{ mr: 0.5 }}>
+          <BackButton>
             <Link to="/preghiere" onClick={handleBackClick}>
               <IconButton
                 color="inherit"
@@ -200,7 +207,7 @@ const PrayerDetail: FunctionComponent<
                 <ArrowBackIcon />
               </IconButton>
             </Link>
-          </TopbarIcon>
+          </BackButton>
         }
         endAdornment={
           editMode ? (
@@ -257,11 +264,13 @@ const PrayerDetail: FunctionComponent<
         topbarContent={
           language && (
             <Tabs
+              textColor="inherit"
+              indicatorColor="secondary"
               value={language}
               onChange={handleLanguageChange}
               {...(isNarrow ? { centered: true } : { variant: 'fullWidth' })}
             >
-              {supportedLanguages.map((supportedLanguage) => (
+              {supportedLanguages.map(supportedLanguage => (
                 <Tab
                   key={supportedLanguage}
                   label={languageTranslationsMap[supportedLanguage]}

@@ -1,21 +1,87 @@
-import React, { FunctionComponent, memo, useCallback } from 'react';
+import React, {
+  FunctionComponent,
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
-import { makeStyles } from '@material-ui/core';
+import { makeStyles } from '@mui/styles';
 
-export interface SongPreviewProps {
+import { UltimateGuitarParser, HtmlDivFormatter, Song } from 'chordsheetjs';
+import { renderAbc } from 'abcjs';
+import clsx from 'clsx';
+
+const parser = new UltimateGuitarParser();
+const formatter = new HtmlDivFormatter();
+const template = document.createElement('template');
+
+interface UltimateGuitarSection {
+  type: 'ug';
+  content: Song;
+}
+
+interface ABCSection {
+  type: 'abc';
   content: string;
 }
 
-const useStyles = makeStyles((theme) => ({
+interface RawSection {
+  type: 'raw';
+  content: string;
+}
+
+type Section = UltimateGuitarSection | ABCSection | RawSection;
+
+export interface SongPreviewProps {
+  content: string;
+  enableChords?: boolean;
+}
+
+const useStyles = makeStyles(theme => ({
   root: {
-    '& p': {
-      fontSize: '1rem',
-      textAlign: 'left',
-      margin: '1rem 0',
+    fontSize: '1rem',
+    textAlign: 'left',
+    margin: '1rem 0',
+
+    '& .chord': {
+      '&:not(:last-child)': {
+        paddingRight: '10px',
+      },
+      '&:after': {
+        content: "'\\200b'",
+      },
     },
-    '& strong': {
+
+    '& .paragraph': {
+      marginBottom: '1em',
+    },
+
+    '& .row': {
+      display: 'flex',
+      // If there isn't enough space for the entire row to be shown,
+      // make sure the text wraps properly
+      flexWrap: 'wrap',
+    },
+
+    '& .lyrics': {
+      // Some lyrics column might be longer than the screen, so we need to enable wrapping
+      whiteSpace: 'wrap',
+
+      '&:after': {
+        content: "'\\200b'",
+      },
+    },
+
+    '& strong, & .comment, & .chord': {
       color: theme.palette.secondary.main,
       fontWeight: theme.typography.fontWeightBold,
+    },
+  },
+  withoutChords: {
+    '& .chord': {
+      display: 'none',
     },
   },
   chorus: {
@@ -24,50 +90,120 @@ const useStyles = makeStyles((theme) => ({
   bridge: {
     fontStyle: 'italic',
   },
-  ending: {},
-  verse: {},
+  ending: {
+    fontWeight: theme.typography.fontWeightBold,
+    fontStyle: 'italic',
+  },
 }));
 
-const SongPreview: FunctionComponent<SongPreviewProps> = ({ content }) => {
+const SongPreview: FunctionComponent<SongPreviewProps> = ({
+  content,
+  enableChords = false,
+}) => {
   const classes = useStyles();
+  const [abcSections, setAbcSections] = useState<string[]>([]);
+
+  useEffect(() => {
+    abcSections.forEach((abcSection, index) =>
+      renderAbc(`abc-${index}`, abcSection, { responsive: 'resize' }),
+    );
+  }, [abcSections]);
 
   const getParagraphClass = useCallback(
-    (paragraph: string) => {
-      if (/^(?:rit\.|refrain:)/i.test(paragraph)) {
+    (type: string): string => {
+      if (/^(?:rit|ritornello|chorus|ref|refrain)[:.]?$/i.test(type)) {
         return classes.chorus;
       }
-      if (/^bridge/i.test(paragraph)) {
+      if (/^bridge[:.]?$/i.test(type)) {
         return classes.bridge;
       }
-      if (/^(?:finale|fin\.|ende:)/i.test(paragraph)) {
+      if (/^(?:finale|fin|fim|ende)[:.]?$/i.test(type)) {
         return classes.ending;
       }
-      return classes.verse;
+      return '';
     },
-    [classes.bridge, classes.chorus, classes.ending, classes.verse],
+    [classes.bridge, classes.chorus, classes.ending],
   );
 
-  const compile = useCallback(
-    (rawString: string) =>
-      rawString
-        .split('\n\n')
-        .map(
-          (paragraph) =>
-            `<p class="${getParagraphClass(paragraph)}">${paragraph
-              .replace(/\n/g, '<br>')
-              .replace(
-                /^(rit\.|refrain:|bridge|finale|fin\.|ende:|\d\.)/i,
-                '<strong>$1</strong>',
-              )}</p>`,
-        )
-        .join(''),
-    [getParagraphClass],
-  );
+  const parsedSections = useMemo<Section[]>(() => {
+    const sections = content.split('```').filter(Boolean);
+    return sections.map(section => {
+      if (section.startsWith('abc')) {
+        return {
+          type: 'abc',
+          content: section.slice(3),
+        };
+      }
+      try {
+        const parsedSong = parser.parse(section);
+        return {
+          type: 'ug',
+          content: parsedSong,
+        };
+      } catch {
+        return {
+          type: 'raw',
+          content: section,
+        };
+      }
+    });
+  }, [content]);
+
+  const formattedContent = useMemo<string>(() => {
+    const abcSections: string[] = [];
+
+    const formattedSections = parsedSections.map(section => {
+      switch (section.type) {
+        case 'ug': {
+          const formattedSong: string = formatter.format(section.content);
+          template.innerHTML = formattedSong.trim();
+          const element = template.content.firstChild as HTMLDivElement;
+          element.classList.add('ug');
+          const paragraphs = Array.from(element.querySelectorAll('.paragraph'));
+          paragraphs.forEach(paragraph => {
+            const comment = paragraph.querySelector<HTMLDivElement>('.comment');
+            if (comment) {
+              comment.innerHTML = `<strong>${comment.innerHTML}</strong>`;
+            }
+            const initialParagraphLyrics = paragraph.querySelector(
+              '.row > .column > .lyrics',
+            );
+            const paragraphType = initialParagraphLyrics?.textContent?.match(
+              /^(?:rit|ritornello|chorus|ref|refrain|bridge|finale|fin|fim|ende|\d+)[:.]?\s/gi,
+            )?.[0];
+            if (paragraphType) {
+              initialParagraphLyrics.innerHTML =
+                initialParagraphLyrics.innerHTML.replace(
+                  paragraphType,
+                  `<strong>${paragraphType}</strong>`,
+                );
+            }
+            const paragraphClass = getParagraphClass(
+              paragraphType?.trim() || comment?.innerText.trim() || '',
+            );
+            if (paragraphClass) {
+              paragraph.classList.add(paragraphClass);
+            }
+          });
+          return element.outerHTML;
+        }
+        case 'abc': {
+          const newLength = abcSections.push(section.content);
+          return `<div class="abc" id="abc-${newLength - 1}"></div>`;
+        }
+        default: {
+          return `<div class="raw">${section.content}</div>`;
+        }
+      }
+    });
+    setAbcSections(abcSections);
+    return formattedSections.join('');
+  }, [getParagraphClass, parsedSections]);
 
   return (
     <div
-      className={classes.root}
-      dangerouslySetInnerHTML={{ __html: compile(content) }}
+      className={clsx(classes.root, !enableChords && classes.withoutChords)}
+      dangerouslySetInnerHTML={{ __html: formattedContent }}
     />
   );
 };

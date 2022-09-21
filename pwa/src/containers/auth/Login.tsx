@@ -1,6 +1,12 @@
 import React, { FunctionComponent, useCallback, useState } from 'react';
 
-import { Button, FormHelperText, Typography } from '@material-ui/core';
+import {
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+} from 'firebase/auth';
+
+import { Button, FormHelperText, Typography } from '@mui/material';
 
 import { useFirebase } from '../../providers/FirebaseProvider';
 
@@ -9,7 +15,7 @@ import Loader from '../../components/common/Loader';
 import { Role } from '../../providers/ApiProvider';
 
 const Login: FunctionComponent = () => {
-  const firebase = useFirebase();
+  const { auth } = useFirebase();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | undefined>();
@@ -24,14 +30,17 @@ const Login: FunctionComponent = () => {
     async ({ email, password }) => {
       try {
         setLoading(true);
-
-        const auth = firebase.auth();
-
-        const { user } = await auth.signInWithEmailAndPassword(email, password);
+        const { user } = await signInWithEmailAndPassword(
+          auth,
+          email,
+          password,
+        );
 
         const token = await user?.getIdTokenResult();
 
-        if (!(token?.claims.roles || []).includes(Role.SUPERUSER)) {
+        if (
+          !((token?.claims.roles as string[]) || []).includes(Role.SUPERUSER)
+        ) {
           await auth.signOut();
 
           throw new Error('INVALID_USER');
@@ -48,22 +57,18 @@ const Login: FunctionComponent = () => {
         );
       }
     },
-    [firebase],
+    [auth],
   );
 
   const handleGoogleLogin = useCallback(async () => {
     try {
       setLoading(true);
 
-      const auth = firebase.auth();
-
-      const { user } = await auth.signInWithPopup(
-        new firebase.auth.GoogleAuthProvider(),
-      );
+      const { user } = await signInWithPopup(auth, new GoogleAuthProvider());
 
       const token = await user?.getIdTokenResult();
 
-      if (!(token?.claims.roles || []).includes(Role.SUPERUSER)) {
+      if (!((token?.claims.roles as string[]) || []).includes(Role.SUPERUSER)) {
         await auth.signOut();
 
         throw new Error('INVALID_USER');
@@ -76,7 +81,7 @@ const Login: FunctionComponent = () => {
           : "C'è stato un errore non previsto, riprova più tardi.",
       );
     }
-  }, [firebase]);
+  }, [auth]);
 
   return (
     <LoginForm onChange={handleChange} onSubmit={handleSubmit}>

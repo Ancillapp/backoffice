@@ -1,10 +1,10 @@
 import React from 'react';
 
-import { makeStyles } from '@material-ui/core';
+import { makeStyles } from '@mui/styles';
 
 import { PointTooltip } from '@nivo/line';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     background: theme.palette.background.default,
     borderRadius: theme.shape.borderRadius,

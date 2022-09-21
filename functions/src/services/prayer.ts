@@ -72,7 +72,7 @@ export const update = async (
       },
     },
     {
-      returnOriginal: false,
+      returnDocument: 'after',
     },
   );
 
@@ -98,7 +98,7 @@ export const create = async (prayer: PrayerData) => {
 
   const response = await prayersCollection.insertOne(prayer);
 
-  if (response.insertedCount !== 1) {
+  if (!response.insertedId) {
     return null;
   }
 

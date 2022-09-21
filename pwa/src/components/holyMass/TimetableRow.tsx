@@ -1,17 +1,14 @@
 import React, { FunctionComponent, useCallback } from 'react';
 
-import {
-  Chip,
-  IconButton,
-  makeStyles,
-  TableCell,
-  TableRow,
-} from '@material-ui/core';
+import { Chip, IconButton, TableCell, TableRow } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
-import EditIcon from '@material-ui/icons/Edit';
-import DeleteIcon from '@material-ui/icons/Delete';
-import CloseIcon from '@material-ui/icons/Close';
-import DoneIcon from '@material-ui/icons/Done';
+import {
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+  Close as CloseIcon,
+  Done as DoneIcon,
+} from '@mui/icons-material';
 
 import DaySelect, { DaySelectOption, formatDay } from './DaySelect';
 import AddTimeButton from './AddTimeButton';
@@ -36,7 +33,7 @@ export interface TimetableRowProps {
   onEditClick?(): any;
 }
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     height: 70,
   },
@@ -77,7 +74,7 @@ const TimetableRow: FunctionComponent<TimetableRowProps> = ({
     (time: string) => () => {
       onChange?.({
         day,
-        times: times.filter((t) => t !== time),
+        times: times.filter(t => t !== time),
       });
     },
     [day, onChange, times],
@@ -127,7 +124,7 @@ const TimetableRow: FunctionComponent<TimetableRowProps> = ({
       <TableCell>
         {editMode ? (
           <>
-            {times.map((time) => (
+            {times.map(time => (
               <Chip
                 className={classes.chip}
                 key={time}

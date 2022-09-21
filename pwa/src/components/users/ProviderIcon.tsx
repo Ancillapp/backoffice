@@ -1,17 +1,20 @@
 import React, { FunctionComponent, ReactNode } from 'react';
 
-import { makeStyles, Tooltip } from '@material-ui/core';
+import { Tooltip } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
-import MailIcon from '@material-ui/icons/Mail';
+import { Mail as MailIcon } from '@mui/icons-material';
 
 import { Provider } from '../../providers/ApiProvider';
 
-import GoogleIcon from '../icons/Google';
-import FacebookIcon from '../icons/Facebook';
-import TwitterIcon from '../icons/Twitter';
-import MicrosoftIcon from '../icons/Microsoft';
-import AppleIcon from '../icons/Apple';
-import GitHubIcon from '../icons/GitHub';
+import {
+  Google as GoogleIcon,
+  Facebook as FacebookIcon,
+  Twitter as TwitterIcon,
+  Microsoft as MicrosoftIcon,
+  Apple as AppleIcon,
+  GitHub as GitHubIcon,
+} from '../icons';
 
 export interface ProviderIconProps {
   provider: Provider;
@@ -48,7 +51,7 @@ const providerToDataMap: Record<Provider, { name: string; icon: ReactNode }> = {
   },
 };
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(0.5),
   },

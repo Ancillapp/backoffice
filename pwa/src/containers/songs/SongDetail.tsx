@@ -12,15 +12,20 @@ import {
   DialogContentText,
   DialogTitle,
   IconButton,
-} from '@material-ui/core';
-
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import DeleteIcon from '@material-ui/icons/Delete';
-import EditIcon from '@material-ui/icons/Edit';
-import CloseIcon from '@material-ui/icons/Close';
-import DoneIcon from '@material-ui/icons/Done';
+  styled,
+} from '@mui/material';
 
 import {
+  ArrowBack as ArrowBackIcon,
+  Delete as DeleteIcon,
+  Edit as EditIcon,
+  Close as CloseIcon,
+  Done as DoneIcon,
+} from '@mui/icons-material';
+
+import {
+  SongLanguage,
+  SongCategory,
   useSong,
   useSongDeletion,
   useSongUpdate,
@@ -30,35 +35,43 @@ import TopbarLayout, {
   TopbarLayoutProps,
 } from '../../components/common/TopbarLayout';
 import Loader from '../../components/common/Loader';
-import SongForm, {
-  SongFormProps,
-  SongLanguage,
-} from '../../components/songs/SongForm';
+import SongForm, { SongFormProps } from '../../components/songs/SongForm';
 import PageSkeleton from '../../components/common/PageSkeleton';
 import TopbarIcon from '../../components/common/TopbarIcon';
+import { songCategoryToPrefixMap } from '../../helpers/songs';
 
-const mapSongNumberToLanguage = (number: string): SongLanguage =>
-  number.startsWith('DE') ? SongLanguage.GERMAN : SongLanguage.ITALIAN;
-
-const mapLanguageToSongNumberPrefix = (language: SongLanguage): string =>
-  language === SongLanguage.GERMAN ? 'DE' : 'IT';
+const BackButton = styled(TopbarIcon)(({ theme }) => ({
+  marginRight: theme.spacing(0.5),
+}));
 
 const SongDetail: FunctionComponent<
   Omit<TopbarLayoutProps, 'startAdornment'>
-> = (props) => {
+> = props => {
   const [editMode, setEditMode] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const {
-    params: { number },
-  } = useRouteMatch<{ number: string }>();
+    params: { language, category, number },
+  } = useRouteMatch<{
+    language: SongLanguage;
+    category: SongCategory;
+    number: string;
+  }>();
 
   const history = useHistory();
 
-  const { loading, data, error, refetch } = useSong(number);
+  const { loading, data, error, refetch } = useSong(language, category, number);
 
-  const [updateSong, { loading: updatingSong }] = useSongUpdate(number);
-  const [deleteSong, { loading: deletingSong }] = useSongDeletion(number);
+  const [updateSong, { loading: updatingSong }] = useSongUpdate(
+    language,
+    category,
+    number,
+  );
+  const [deleteSong, { loading: deletingSong }] = useSongDeletion(
+    language,
+    category,
+    number,
+  );
 
   const showDeletionConfirmationDialog = useCallback(() => {
     setDeleteDialogOpen(true);
@@ -69,11 +82,11 @@ const SongDetail: FunctionComponent<
   }, []);
 
   const toggleEditMode = useCallback(() => {
-    setEditMode((oldEditMode) => !oldEditMode);
+    setEditMode(oldEditMode => !oldEditMode);
   }, []);
 
   const handleBackClick = useCallback<NonNullable<LinkProps['onClick']>>(
-    (event) => {
+    event => {
       if (updatingSong) {
         event.preventDefault();
       }
@@ -82,13 +95,11 @@ const SongDetail: FunctionComponent<
   );
 
   const handleSubmit = useCallback<NonNullable<SongFormProps['onSubmit']>>(
-    async ({ number, title, content, language }) => {
-      const computedNumber = `${mapLanguageToSongNumberPrefix(
-        language,
-      )}${number}`;
-
+    async ({ language, category, number, title, content }) => {
       const payload = {
-        ...(data?.number !== computedNumber && { number: computedNumber }),
+        ...(data?.language !== language && { language }),
+        ...(data?.category !== category && { category }),
+        ...(data?.number !== number && { number }),
         ...(data?.title !== title && { title }),
         ...(data?.content !== content && { content }),
       };
@@ -96,8 +107,12 @@ const SongDetail: FunctionComponent<
       if (Object.keys(payload).length > 0) {
         await updateSong(payload);
 
-        if (data?.number !== computedNumber) {
-          history.replace(`/canti/${computedNumber}`);
+        if (
+          data?.language !== language ||
+          data?.category !== category ||
+          data?.number !== number
+        ) {
+          history.replace(`/canti/${language}/${category}/${number}`);
         } else {
           await refetch();
         }
@@ -105,7 +120,16 @@ const SongDetail: FunctionComponent<
 
       setEditMode(false);
     },
-    [data?.content, data?.number, data?.title, history, refetch, updateSong],
+    [
+      data?.category,
+      data?.content,
+      data?.language,
+      data?.number,
+      data?.title,
+      history,
+      refetch,
+      updateSong,
+    ],
   );
 
   const handleReset = useCallback<NonNullable<SongFormProps['onReset']>>(() => {
@@ -128,14 +152,17 @@ const SongDetail: FunctionComponent<
     <>
       <Helmet>
         <title>
-          {data.number.slice(2)}. {data.title}
+          {songCategoryToPrefixMap[data.language]?.[data.category] || ''}
+          {data.number}. {data.title}
         </title>
       </Helmet>
 
       <TopbarLayout
-        title={`${data.number.slice(2)}. ${data.title}`}
+        title={`${
+          songCategoryToPrefixMap[data.language]?.[data.category] || ''
+        }${data.number}. ${data.title}`}
         startAdornment={
-          <TopbarIcon sx={{ mr: 0.5 }}>
+          <BackButton>
             <Link to="/canti" onClick={handleBackClick}>
               <IconButton
                 color="inherit"
@@ -146,7 +173,7 @@ const SongDetail: FunctionComponent<
                 <ArrowBackIcon />
               </IconButton>
             </Link>
-          </TopbarIcon>
+          </BackButton>
         }
         endAdornment={
           editMode ? (
@@ -205,11 +232,7 @@ const SongDetail: FunctionComponent<
         <SongForm
           id="edit-song-form"
           disabled={!editMode || updatingSong}
-          defaultValue={{
-            ...data,
-            number: data.number.slice(2),
-            language: mapSongNumberToLanguage(data.number),
-          }}
+          defaultValue={data}
           onSubmit={handleSubmit}
           onReset={handleReset}
         />

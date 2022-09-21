@@ -4,27 +4,22 @@ import { FixedSizeList, ListChildComponentProps } from 'react-window';
 
 import AutoSizer from 'react-virtualized-auto-sizer';
 
-import {
-  Card,
-  makeStyles,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from '@material-ui/core';
+import { Card, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
 import { Link } from 'react-router-dom';
 
-import { SongSummary } from '../../providers/ApiProvider';
+import { ExtendedSongSummary } from '../../helpers/songs';
 
 export interface SongsProps {
-  items: SongSummary[];
+  items: ExtendedSongSummary[];
 }
 
 interface SongsRowProps extends Omit<ListChildComponentProps, 'data'> {
   data: { width: number; height: number };
 }
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   songsContainer: {
     width: '100%',
     height: '100%',
@@ -35,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
     placeItems: 'center',
     gridTemplateColumns: 'repeat(5, 1fr)',
     width: '100%',
-    maxWidth: theme.breakpoints.width('md'),
+    maxWidth: theme.breakpoints.values.md,
     margin: '0 auto',
   },
   songLink: {
@@ -75,17 +70,23 @@ const Songs: FunctionComponent<SongsProps> = ({ items }) => {
           {[...Array(5)].map((_, subindex) => {
             const {
               [index * 5 + subindex]: {
+                language = undefined,
+                category = undefined,
                 number = undefined,
+                formattedNumber = undefined,
                 title = undefined,
               } = {},
             } = items;
 
             return (
+              language &&
+              category &&
               number &&
+              formattedNumber &&
               title && (
                 <Link
-                  to={`/canti/${number}`}
-                  key={number}
+                  to={`/canti/${language}/${category}/${number}`}
+                  key={`${language}-${category}-${number}`}
                   className={classes.songLink}
                   style={{
                     width: width - Number(theme.spacing(2).slice(0, -2)),
@@ -97,9 +98,9 @@ const Songs: FunctionComponent<SongsProps> = ({ items }) => {
                       variant={isDesktop ? 'h2' : 'h4'}
                       align="center"
                     >
-                      {number.endsWith('bis')
-                        ? number.slice(2, -2)
-                        : number.slice(2)}
+                      {formattedNumber.endsWith('bis')
+                        ? formattedNumber.slice(0, -2)
+                        : formattedNumber}
                     </Typography>
                     {isDesktop && (
                       <Typography variant="h6" align="center" color="secondary">
@@ -121,7 +122,7 @@ const Songs: FunctionComponent<SongsProps> = ({ items }) => {
     <div className={classes.songsContainer}>
       <AutoSizer>
         {({ width, height }) => {
-          const maxWidth = Math.min(width, theme.breakpoints.width('md'));
+          const maxWidth = Math.min(width, theme.breakpoints.values.md);
 
           const itemWidth = Math.floor(maxWidth / 5);
           const itemHeight = Math.floor((itemWidth / 2) * 3);

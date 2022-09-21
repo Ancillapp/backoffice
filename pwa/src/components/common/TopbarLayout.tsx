@@ -1,22 +1,21 @@
-import React, { FunctionComponent, useCallback, ReactNode } from 'react';
+import React, {
+  FunctionComponent,
+  useCallback,
+  ReactNode,
+  PropsWithChildren,
+} from 'react';
 
 import {
   AppBar,
   Toolbar,
   IconButton,
   Typography,
-  makeStyles,
   useMediaQuery,
   useTheme,
-  ThemeProvider,
-  createMuiTheme,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
-import MenuIcon from '@material-ui/icons/Menu';
-
-import darkTheme from '../../themes/dark';
-import lightTheme from '../../themes/light';
-import { useThemeName } from '../../providers/ThemeNameProvider';
+import { Menu as MenuIcon } from '@mui/icons-material';
 
 export interface TopbarLayoutProps {
   title?: ReactNode;
@@ -26,17 +25,7 @@ export interface TopbarLayoutProps {
   onMenuButtonClick?(): void;
 }
 
-const tweakedDarkTheme = createMuiTheme({
-  ...darkTheme,
-  palette: { ...darkTheme.palette, primary: { main: '#424242' } },
-});
-
-const tweakedLightTheme = createMuiTheme({
-  ...lightTheme,
-  palette: { ...lightTheme.palette, mode: 'dark', text: { primary: '#fff' } },
-});
-
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
@@ -67,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const TopbarLayoutTemplate: FunctionComponent<TopbarLayoutProps> = ({
+const TopbarLayout: FunctionComponent<PropsWithChildren<TopbarLayoutProps>> = ({
   title = 'Ancillapp',
   startAdornment,
   endAdornment,
@@ -76,8 +65,6 @@ const TopbarLayoutTemplate: FunctionComponent<TopbarLayoutProps> = ({
   children,
 }) => {
   const theme = useTheme();
-
-  const themeName = useThemeName();
 
   const classes = useStyles();
 
@@ -112,22 +99,8 @@ const TopbarLayoutTemplate: FunctionComponent<TopbarLayoutProps> = ({
         {topbarContent}
       </AppBar>
 
-      <ThemeProvider theme={themeName === 'dark' ? darkTheme : lightTheme}>
-        <div className={classes.content}>{children}</div>
-      </ThemeProvider>
+      <div className={classes.content}>{children}</div>
     </div>
-  );
-};
-
-const TopbarLayout: FunctionComponent<TopbarLayoutProps> = (props) => {
-  const themeName = useThemeName();
-
-  return (
-    <ThemeProvider
-      theme={themeName === 'dark' ? tweakedDarkTheme : tweakedLightTheme}
-    >
-      <TopbarLayoutTemplate {...props} />
-    </ThemeProvider>
   );
 };
 

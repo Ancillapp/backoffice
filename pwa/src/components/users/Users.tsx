@@ -2,15 +2,17 @@ import React, { FunctionComponent } from 'react';
 
 import {
   IconButton,
-  makeStyles,
   Paper,
   TableContainer,
   Tooltip,
   Skeleton,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
-import CloseIcon from '@material-ui/icons/Close';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
+import {
+  Close as CloseIcon,
+  MoreVert as MoreVertIcon,
+} from '@mui/icons-material';
 
 import { Role, User } from '../../providers/ApiProvider';
 
@@ -31,7 +33,7 @@ const dateTimeFormatter = new Intl.DateTimeFormat('it', {
   second: '2-digit',
 });
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     flex: '1 1 auto',
     display: 'flex',
@@ -89,7 +91,7 @@ const Users: FunctionComponent<UsersProps> = ({ items, loading }) => {
                 <Skeleton variant="text" width={48} />
               ) : (
                 <>
-                  {providers.map((provider) => (
+                  {providers.map(provider => (
                     <ProviderIcon key={provider} provider={provider} />
                   ))}
                 </>
@@ -125,7 +127,7 @@ const Users: FunctionComponent<UsersProps> = ({ items, loading }) => {
               loading ? (
                 <Skeleton variant="text" width={96} />
               ) : (
-                <>{roles.map((role) => roleTranslationMap[role]).join(', ')}</>
+                <>{roles.map(role => roleTranslationMap[role]).join(', ')}</>
               ),
             minWidth: 128,
           },

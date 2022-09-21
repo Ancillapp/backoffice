@@ -13,16 +13,16 @@ export const useApi = <T>(
   url: string,
   options: RequestInit = {},
 ): UseApiValue<T> => {
-  const firebase = useFirebase();
+  const { auth } = useFirebase();
 
-  const { isLoading: loading, data, error, refetch: refetchQuery } = useQuery<
-    T,
-    Error
-  >(
+  const {
+    isLoading: loading,
+    data,
+    error,
+    refetch: refetchQuery,
+  } = useQuery<T, Error>(
     url,
     async () => {
-      const auth = firebase.auth();
-
       if (!auth.currentUser) {
         throw new Error('User must be logged in to use APIs');
       }
@@ -39,7 +39,7 @@ export const useApi = <T>(
       });
 
       if (res.status === 401 || res.status === 403) {
-        firebase.auth().signOut();
+        auth.signOut();
         return undefined;
       }
 
@@ -90,7 +90,7 @@ export const useMutation = <T, B>(
   url: string,
   options: RequestInit = {},
 ): [(body: B) => Promise<T>, Omit<UseApiValue<T>, 'refetch'>] => {
-  const firebase = useFirebase();
+  const { auth } = useFirebase();
 
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<T | undefined>(undefined);
@@ -100,7 +100,6 @@ export const useMutation = <T, B>(
     async (body: B): Promise<T> => {
       try {
         setLoading(true);
-        const auth = firebase.auth();
 
         if (!auth.currentUser) {
           throw new Error('User must be logged in to use APIs');
@@ -120,8 +119,8 @@ export const useMutation = <T, B>(
         });
 
         if (res.status === 401 || res.status === 403) {
-          firebase.auth().signOut();
-          return (undefined as unknown) as T;
+          auth.signOut();
+          return undefined as unknown as T;
         }
 
         const responseData = res.status === 204 ? undefined : await res.json();
@@ -131,39 +130,91 @@ export const useMutation = <T, B>(
 
         return responseData;
       } catch (error) {
-        setError(error);
+        setError(error as Error);
         setLoading(false);
 
         throw error;
       }
     },
-    [firebase, options, url],
+    [auth, options, url],
   );
 
   return [mutate, { loading, data, error }];
 };
 
+export enum SongLanguage {
+  ITALIAN = 'it',
+  GERMAN = 'de',
+  PORTUGUESE = 'pt',
+}
+
+export enum SongCategory {
+  KYRIE = 'kyrie',
+  GLORY = 'glory',
+  HALLELUJAH = 'hallelujah',
+  CREED = 'creed',
+  OFFERTORY = 'offertory',
+  HOLY = 'holy',
+  ANAMNESIS = 'anamnesis',
+  AMEN = 'amen',
+  OUR_FATHER = 'our-father',
+  LAMB_OF_GOD = 'lamb-of-god',
+  CANONS_AND_REFRAINS = 'canons-and-refrains',
+  FRANCISCANS = 'franciscans',
+  PRAISE_AND_FAREWELL = 'praise-and-farewell',
+  ENTRANCE = 'entrance',
+  HOLY_SPIRIT = 'holy-spirit',
+  WORSHIP = 'worship',
+  EUCHARIST = 'eucharist',
+  OTHER_SONGS = 'other-songs',
+  BENEDICTUS = 'benedictus',
+  MAGNIFICAT = 'magnificat',
+  CANTICLES = 'canticles',
+  HYMNS = 'hymns',
+  SIMPLE_PRAYER = 'simple-prayer',
+  MARIANS = 'marians',
+  ANIMATION = 'animation',
+  GREGORIANS = 'gregorians',
+  ADVENT = 'advent',
+  CHRISTMAS = 'christmas',
+  LENT = 'lent',
+}
+
 export interface Song {
+  language: SongLanguage;
+  category: SongCategory;
   number: string;
   title: string;
   content: string;
 }
 
-export type SongSummary = Pick<Song, 'number' | 'title'>;
+export type SongSummary = Omit<Song, 'content'>;
 
 export const useSongs = () => useApi<SongSummary[]>('songs');
 
 export const useSongsCount = () => useApi<{ count: number }>('songs/count');
 
-export const useSong = (number: string) => useApi<Song>(`songs/${number}`);
+export const useSong = (
+  language: SongLanguage,
+  category: SongCategory,
+  number: string,
+) => useApi<Song>(`songs/${language}/${category}/${number}`);
 
-export const useSongUpdate = (number: string) =>
-  useMutation<Song, Partial<Song>>(`songs/${number}`, {
+export const useSongUpdate = (
+  language: SongLanguage,
+  category: SongCategory,
+  number: string,
+) =>
+  useMutation<Song, Partial<Song>>(`songs/${language}/${category}/${number}`, {
     method: 'PATCH',
   });
 
-export const useSongDeletion = (number: string) =>
-  useMutation<Song, void>(`songs/${number}`, {
+export const useSongDeletion = (
+  language: SongLanguage,
+  category: SongCategory,
+  number: string,
+) =>
+  useMutation<Song, void>(`songs/${language}/${category}/${number}`, {
     method: 'DELETE',
   });
 

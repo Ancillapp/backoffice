@@ -6,9 +6,6 @@ const db = functions.config().mongodb.name;
 
 export { ObjectId };
 
-export const mongoDb = new MongoClient(uri, {
-  useUnifiedTopology: true,
-  useNewUrlParser: true,
-})
+export const mongoDb = new MongoClient(uri)
   .connect()
-  .then((client) => client.db(db));
+  .then(client => client.db(db));

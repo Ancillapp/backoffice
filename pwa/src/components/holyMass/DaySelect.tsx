@@ -11,13 +11,13 @@ import clsx from 'clsx';
 import {
   Button,
   ListSubheader,
-  makeStyles,
   MenuItem,
   Popover,
   TextField,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
-import { StaticDatePicker } from '@material-ui/lab';
+import { StaticDatePicker } from '@mui/x-date-pickers';
 
 import { toIsoDate } from '../../helpers/dates';
 
@@ -84,7 +84,7 @@ export const formatDay = (day?: string) => {
   return fullDateFormatter.format(new Date(day));
 };
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   select: {
     cursor: 'pointer',
   },
@@ -108,9 +108,10 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   shortDatePicker: {
-    '& [class*="MuiPickersCalendarHeader"] > div[role="presentation"] > div:nth-child(2)': {
-      display: 'none',
-    },
+    '& [class*="MuiPickersCalendarHeader"] > div[role="presentation"] > div:nth-child(2)':
+      {
+        display: 'none',
+      },
   },
 }));
 
@@ -156,7 +157,7 @@ const DaySelect: FunctionComponent<DaySelectProps> = ({
   const weekdays = useMemo(
     () =>
       options.filter(
-        (option) =>
+        option =>
           option !== 'default' &&
           option !== 'recurring' &&
           option !== 'specific',
@@ -207,7 +208,6 @@ const DaySelect: FunctionComponent<DaySelectProps> = ({
     <>
       <TextField
         ref={textFieldRef}
-        variant="outlined"
         size="small"
         InputProps={{ readOnly: true }}
         inputProps={{ className: classes.select }}
@@ -240,7 +240,7 @@ const DaySelect: FunctionComponent<DaySelectProps> = ({
         {weekdays.length > 0 && (
           <ListSubheader>Giorni della settimana</ListSubheader>
         )}
-        {weekdays.map((weekday) => (
+        {weekdays.map(weekday => (
           <MenuItem
             key={weekday}
             value={weekday}
@@ -274,8 +274,8 @@ const DaySelect: FunctionComponent<DaySelectProps> = ({
             displayStaticWrapperAs="desktop"
             views={
               selectedOption === 'specific'
-                ? ['year', 'month', 'date']
-                : ['month', 'date']
+                ? ['year', 'month', 'day']
+                : ['month', 'day']
             }
             value={selectedDate}
             onChange={handleDateChange}

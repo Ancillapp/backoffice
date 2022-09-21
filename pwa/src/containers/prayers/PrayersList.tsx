@@ -11,16 +11,17 @@ import { Link } from 'react-router-dom';
 import Fuse from 'fuse.js';
 
 import {
-  Box,
   IconButton,
   InputAdornment,
   TextField,
   TextFieldProps,
-} from '@material-ui/core';
+} from '@mui/material';
 
-import SearchIcon from '@material-ui/icons/Search';
-import ClearIcon from '@material-ui/icons/Clear';
-import AddIcon from '@material-ui/icons/Add';
+import {
+  Search as SearchIcon,
+  Clear as ClearIcon,
+  Add as AddIcon,
+} from '@mui/icons-material';
 
 import { PrayerSummary, usePrayers } from '../../providers/ApiProvider';
 import TopbarLayout, {
@@ -30,7 +31,7 @@ import Prayers from '../../components/prayers/Prayers';
 import AutosizedFab from '../../components/common/AutosizedFab';
 import Loader from '../../components/common/Loader';
 
-const PrayersList: FunctionComponent<TopbarLayoutProps> = (props) => {
+const PrayersList: FunctionComponent<TopbarLayoutProps> = props => {
   const [search, setSearch] = useState('');
   const [displayedPrayers, setDisplayedPrayers] = useState<PrayerSummary[]>([]);
 
@@ -63,7 +64,7 @@ const PrayersList: FunctionComponent<TopbarLayoutProps> = (props) => {
   }, [data, fuse, search]);
 
   const handleSearchInput = useCallback<NonNullable<TextFieldProps['onInput']>>(
-    (event) => {
+    event => {
       setSearch((event.target as HTMLInputElement).value);
     },
     [],
@@ -82,29 +83,27 @@ const PrayersList: FunctionComponent<TopbarLayoutProps> = (props) => {
       <TopbarLayout
         title="Preghiere"
         endAdornment={
-          <Box sx={{ width: 192 }} clone>
-            <TextField
-              type="search"
-              size="small"
-              variant="outlined"
-              placeholder="Cerca"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    {search ? (
-                      <IconButton size="small" edge="end" onClick={clearSearch}>
-                        <ClearIcon />
-                      </IconButton>
-                    ) : (
-                      <SearchIcon />
-                    )}
-                  </InputAdornment>
-                ),
-              }}
-              value={search}
-              onInput={handleSearchInput}
-            />
-          </Box>
+          <TextField
+            type="search"
+            size="small"
+            placeholder="Cerca"
+            sx={{ width: 192 }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  {search ? (
+                    <IconButton size="small" edge="end" onClick={clearSearch}>
+                      <ClearIcon />
+                    </IconButton>
+                  ) : (
+                    <SearchIcon />
+                  )}
+                </InputAdornment>
+              ),
+            }}
+            value={search}
+            onInput={handleSearchInput}
+          />
         }
         {...props}
       >

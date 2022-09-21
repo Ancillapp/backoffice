@@ -8,24 +8,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           submodules: true
-      - name: Use Node.js 14
-        uses: actions/setup-node@v2-beta
+      - name: Use Node.js 16
+        uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version: 16
       - name: Install deps
-        run: yarn install
+        run: yarn install --immutable
       - name: Build
         run: yarn build
         env:
-          REACT_APP_API_URL: "/api"
-          REACT_APP_FIREBASE_API_KEY: "AIzaSyB6D52G0iHr9TREcR3Lu6OQN8a2jtqpQWA"
-          REACT_APP_FIREBASE_AUTH_DOMAIN: "ffb-ancillapp.firebaseapp.com"
-          REACT_APP_FIREBASE_PROJECT_ID: "ffb-ancillapp"
-          REACT_APP_FIREBASE_APP_ID: "1:890551951388:web:e424e3022dcab15c47bfd9"
+          REACT_APP_API_URL: '/api'
+          REACT_APP_FIREBASE_API_KEY: 'AIzaSyB6D52G0iHr9TREcR3Lu6OQN8a2jtqpQWA'
+          REACT_APP_FIREBASE_AUTH_DOMAIN: 'ffb-ancillapp.firebaseapp.com'
+          REACT_APP_FIREBASE_PROJECT_ID: 'ffb-ancillapp'
+          REACT_APP_FIREBASE_APP_ID: '1:890551951388:web:e424e3022dcab15c47bfd9'
       - name: Deploy
-        run: yarn firebase deploy --project ffb-ancillapp --config firebase.production.json --token "$FIREBASE_TOKEN" --only hosting:ancillapp-backoffice,functions:backoffice
+        run: |
+          echo "$FIREBASE_SERVICE_ACCOUNT_BASE64" | base64 --decode > firebase-service-account.json
+          yarn firebase deploy --project ffb-ancillapp --config firebase.production.json --only hosting:ancillapp-backoffice,functions:backoffice
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          FIREBASE_SERVICE_ACCOUNT_BASE64: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_BASE64_PRODUCTION }}
+          GOOGLE_APPLICATION_CREDENTIALS: firebase-service-account.json

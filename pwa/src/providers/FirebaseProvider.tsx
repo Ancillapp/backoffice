@@ -4,23 +4,23 @@ import React, {
   useContext,
   useState,
   useEffect,
+  PropsWithChildren,
 } from 'react';
 
-import type Firebase from 'firebase';
+import type { Auth, IdTokenResult, User } from 'firebase/auth';
 
 export interface FirebaseProviderProps {
-  firebase: typeof Firebase;
+  auth: Auth;
 }
 
-export const FirebaseContext = createContext<typeof Firebase | undefined>(
+export const FirebaseContext = createContext<FirebaseProviderProps | undefined>(
   undefined,
 );
 
-export const FirebaseProvider: FunctionComponent<FirebaseProviderProps> = ({
-  firebase,
-  children,
-}) => (
-  <FirebaseContext.Provider value={firebase}>
+export const FirebaseProvider: FunctionComponent<
+  PropsWithChildren<FirebaseProviderProps>
+> = ({ auth, children }) => (
+  <FirebaseContext.Provider value={{ auth }}>
     {children}
   </FirebaseContext.Provider>
 );
@@ -36,16 +36,14 @@ export const useFirebase = () => {
 };
 
 export const useUser = () => {
-  const firebase = useFirebase();
+  const { auth } = useFirebase();
 
-  const auth = firebase.auth();
-
-  const [user, setUser] = useState<Firebase.User | null | undefined>(
+  const [user, setUser] = useState<User | null | undefined>(
     auth.currentUser || undefined,
   );
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((nextUser) =>
+    const unsubscribe = auth.onAuthStateChanged(nextUser =>
       setUser(nextUser || null),
     );
 
@@ -55,7 +53,7 @@ export const useUser = () => {
   return user;
 };
 
-export interface Token extends Omit<Firebase.auth.IdTokenResult, 'claims'> {
+export interface Token extends Omit<IdTokenResult, 'claims'> {
   claims: {
     roles?: string[];
   };

@@ -1,8 +1,8 @@
-import { createMuiTheme } from '@material-ui/core';
+import { createTheme, Theme } from '@mui/material';
 
-import { itIT } from '@material-ui/core/locale';
+import { itIT } from '@mui/material/locale';
 
-const darkTheme = createMuiTheme(
+const darkTheme = createTheme(
   {
     typography: {
       fontFamily: "'Rosario', sans-serif",
@@ -22,8 +22,19 @@ const darkTheme = createMuiTheme(
         main: '#ff8f82',
       },
     },
+    components: {
+      MuiLink: {
+        defaultProps: {
+          underline: 'hover',
+        },
+      },
+    },
   },
   itIT,
 );
+
+declare module '@mui/styles' {
+  interface DefaultTheme extends Theme {}
+}
 
 export default darkTheme;

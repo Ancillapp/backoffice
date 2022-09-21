@@ -7,10 +7,10 @@ import {
   CardContent,
   CardHeader,
   CardProps,
-  makeStyles,
   useMediaQuery,
   useTheme,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
 import SessionsChart, { SessionsChartProps } from './SessionsChart';
 

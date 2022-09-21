@@ -1,4 +1,3 @@
-
 import React, {
   FunctionComponent,
   HTMLAttributes,
@@ -9,7 +8,8 @@ import React, {
   useReducer,
 } from 'react';
 
-import { Grid, makeStyles, TextField, TextFieldProps } from '@material-ui/core';
+import { Grid, TextField, TextFieldProps } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
 import Page from '../common/Page';
 import PrayerPreview from './PrayerPreview';
@@ -36,7 +36,7 @@ export interface InitPrayerFormAction {
 }
 
 export interface SetFieldPrayerFormAction<
-  F extends keyof PrayerFormState = keyof PrayerFormState
+  F extends keyof PrayerFormState = keyof PrayerFormState,
 > {
   type: PrayerFormActionType.SET_FIELD;
   field: F;
@@ -77,7 +77,7 @@ const defaultState: PrayerFormState = {
   image: null,
 };
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   disabled: {
     color: theme.palette.text.primary,
   },
@@ -109,20 +109,21 @@ const PrayerForm: FunctionComponent<PrayerFormProps> = ({
 
   const createTextFieldInputHandler = useCallback(
     <F extends keyof PrayerFormState>(
-      field: F,
-    ): NonNullable<TextFieldProps['onInput']> => (event) => {
-      dispatch({
-        type: PrayerFormActionType.SET_FIELD,
-        field,
-        value: (event.target as HTMLTextAreaElement | HTMLInputElement).value,
-      });
-    },
+        field: F,
+      ): NonNullable<TextFieldProps['onInput']> =>
+      event => {
+        dispatch({
+          type: PrayerFormActionType.SET_FIELD,
+          field,
+          value: (event.target as HTMLTextAreaElement | HTMLInputElement).value,
+        });
+      },
     [],
   );
 
   const handleImageChange = useCallback<
     NonNullable<FileInputProps['onChange']>
-  >((file) => {
+  >(file => {
     dispatch({
       type: PrayerFormActionType.SET_FIELD,
       field: 'image',
@@ -133,7 +134,7 @@ const PrayerForm: FunctionComponent<PrayerFormProps> = ({
   const handleSubmit = useCallback<
     NonNullable<HTMLAttributes<HTMLFormElement>['onSubmit']>
   >(
-    (event) => {
+    event => {
       event.preventDefault();
 
       const { image, ...rest } = state;
@@ -146,7 +147,7 @@ const PrayerForm: FunctionComponent<PrayerFormProps> = ({
   const handleReset = useCallback<
     NonNullable<HTMLAttributes<HTMLFormElement>['onReset']>
   >(
-    (event) => {
+    event => {
       dispatch({
         type: PrayerFormActionType.INIT,
         value: initialState,
@@ -160,7 +161,6 @@ const PrayerForm: FunctionComponent<PrayerFormProps> = ({
   const PrayerFormTextField = useCallback<FunctionComponent<TextFieldProps>>(
     ({ InputLabelProps, InputProps, ...props }) => (
       <TextField
-        variant="outlined"
         fullWidth
         InputLabelProps={{
           shrink: true,
@@ -214,7 +214,6 @@ const PrayerForm: FunctionComponent<PrayerFormProps> = ({
         </Grid>
         <Grid item xs={12} md={6}>
           <FileInput
-            variant="outlined"
             fullWidth
             label="Immagine"
             InputLabelProps={{

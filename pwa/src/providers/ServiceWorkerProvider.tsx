@@ -5,6 +5,7 @@ import React, {
   useMemo,
   useState,
   useEffect,
+  PropsWithChildren,
 } from 'react';
 import * as serviceWorker from '../serviceWorker/browser';
 
@@ -16,15 +17,14 @@ export type ServiceWorkerContextValue =
     }
   | undefined;
 
-const ServiceWorkerContext = createContext<ServiceWorkerContextValue>(
-  undefined,
-);
+const ServiceWorkerContext =
+  createContext<ServiceWorkerContextValue>(undefined);
 
-const ServiceWorkerProvider: FunctionComponent = (props) => {
-  const [
-    waitingServiceWorker,
-    setWaitingServiceWorker,
-  ] = useState<ServiceWorker | null>(null);
+const ServiceWorkerProvider: FunctionComponent<
+  PropsWithChildren<{}>
+> = props => {
+  const [waitingServiceWorker, setWaitingServiceWorker] =
+    useState<ServiceWorker | null>(null);
   const [assetsUpdateReady, setAssetsUpdateReady] = useState(false);
   const [assetsCached, setAssetsCached] = useState(false);
 
@@ -35,7 +35,7 @@ const ServiceWorkerProvider: FunctionComponent = (props) => {
       // Call when the user confirm update of application and reload page
       updateAssets: () => {
         if (waitingServiceWorker) {
-          waitingServiceWorker.addEventListener('statechange', (event) => {
+          waitingServiceWorker.addEventListener('statechange', event => {
             const newSW = event?.target as ServiceWorker | undefined;
 
             if (newSW?.state === 'activated') {
@@ -54,7 +54,7 @@ const ServiceWorkerProvider: FunctionComponent = (props) => {
   // CRA's service worker wrapper
   useEffect(() => {
     serviceWorker.register({
-      onUpdate: (registration) => {
+      onUpdate: registration => {
         setWaitingServiceWorker(registration.waiting);
         setAssetsUpdateReady(true);
       },

@@ -13,8 +13,6 @@ import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import clsx from 'clsx';
 
 import {
-  Box,
-  makeStyles,
   Table,
   TableBody,
   TableBodyProps,
@@ -24,26 +22,26 @@ import {
   TableRow,
   Theme,
   Skeleton,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
 const ROW_HEIGHT = 56;
 
 export type VirtualTableItem = Record<string, any>;
 
 export interface VirtualTableCellProps<
-  I extends VirtualTableItem = VirtualTableItem
+  I extends VirtualTableItem = VirtualTableItem,
 > {
   index: number;
   data?: I;
   loading?: boolean;
 }
 
-export type VirtualTableCell<
-  I extends VirtualTableItem = VirtualTableItem
-> = ComponentType<VirtualTableCellProps<I>>;
+export type VirtualTableCell<I extends VirtualTableItem = VirtualTableItem> =
+  ComponentType<VirtualTableCellProps<I>>;
 
 export interface VirtualTableColumn<
-  I extends VirtualTableItem = VirtualTableItem
+  I extends VirtualTableItem = VirtualTableItem,
 > {
   key?: keyof I;
   title?: string;
@@ -72,7 +70,7 @@ export interface VirtualTableColumn<
 }
 
 export interface VirtualTableProps<
-  I extends VirtualTableItem = VirtualTableItem
+  I extends VirtualTableItem = VirtualTableItem,
 > extends HTMLAttributes<HTMLDivElement> {
   columns: VirtualTableColumn<I>[];
   items?: I[];
@@ -87,7 +85,7 @@ export interface VirtualTableStylesProps {
 export type VirtualTableRowProps = ListChildComponentProps;
 
 export type VirtualTableComponent = <
-  I extends VirtualTableItem = VirtualTableItem
+  I extends VirtualTableItem = VirtualTableItem,
 >(
   props: VirtualTableProps<I>,
 ) => ReturnType<FunctionComponent>;
@@ -108,7 +106,7 @@ const formatColumnWidth = (width: VirtualTableColumn['width']): string => {
   }
 };
 
-const useStyles = makeStyles<Theme, VirtualTableStylesProps>((theme) => ({
+const useStyles = makeStyles<Theme, VirtualTableStylesProps>(theme => ({
   root: {
     position: 'relative',
     display: 'flex',
@@ -180,25 +178,28 @@ const VirtualTable: VirtualTableComponent = ({
     ({ index, style }) => (
       <TableRow component="div" className={classes.row} style={style}>
         {columns.map(({ key, justify, cellTemplate: CellTemplate }) => (
-          <Box key={`${key}-${index}`} sx={{ justifyContent: justify }} clone>
-            <TableCell component="div" className={classes.cell}>
-              {typeof CellTemplate === 'function' && (
-                <CellTemplate
-                  index={index}
-                  data={items?.[index]}
-                  loading={loading}
-                />
-              )}
+          <TableCell
+            key={`${key as string}-${index}`}
+            sx={{ justifyContent: justify }}
+            component="div"
+            className={classes.cell}
+          >
+            {typeof CellTemplate === 'function' && (
+              <CellTemplate
+                index={index}
+                data={items?.[index]}
+                loading={loading}
+              />
+            )}
 
-              {typeof CellTemplate !== 'function' &&
-                key &&
-                (loading ? (
-                  <Skeleton variant="text" width={128} />
-                ) : (
-                  `${items?.[index][key]}`
-                ))}
-            </TableCell>
-          </Box>
+            {typeof CellTemplate !== 'function' &&
+              key &&
+              (loading ? (
+                <Skeleton variant="text" width={128} />
+              ) : (
+                `${items?.[index][key]}`
+              ))}
+          </TableCell>
         ))}
       </TableRow>
     ),
@@ -206,18 +207,20 @@ const VirtualTable: VirtualTableComponent = ({
   );
 
   const handleHeadScroll = useCallback<NonNullable<TableHeadProps['onScroll']>>(
-    (event) => {
+    event => {
       if (!bodyRef.current?.firstElementChild) {
         return;
       }
 
-      bodyRef.current.firstElementChild.scrollLeft = (event.target as HTMLDivElement).scrollLeft;
+      bodyRef.current.firstElementChild.scrollLeft = (
+        event.target as HTMLDivElement
+      ).scrollLeft;
     },
     [],
   );
 
   const handleBodyScroll = useCallback<NonNullable<TableBodyProps['onScroll']>>(
-    (event) => {
+    event => {
       if (!headRef.current) {
         return;
       }
@@ -243,12 +246,15 @@ const VirtualTable: VirtualTableComponent = ({
             ref={headRef}
           >
             <TableRow component="div" className={classes.row}>
-              {columns.map(({ key, title = key, justify }) => (
-                <Box key={`${key}`} sx={{ justifyContent: justify }} clone>
-                  <TableCell component="div" className={classes.cell}>
-                    {title}
-                  </TableCell>
-                </Box>
+              {columns.map(({ key, title = key as string, justify }) => (
+                <TableCell
+                  key={key as string}
+                  sx={{ justifyContent: justify }}
+                  component="div"
+                  className={classes.cell}
+                >
+                  {title}
+                </TableCell>
               ))}
             </TableRow>
           </TableHead>

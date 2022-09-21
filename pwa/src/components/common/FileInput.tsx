@@ -5,12 +5,12 @@ import { useDropzone, DropzoneOptions } from 'react-dropzone';
 import {
   IconButton,
   IconButtonProps,
-  makeStyles,
   TextField,
   TextFieldProps,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
-import ClearIcon from '@material-ui/icons/Clear';
+import { Clear as ClearIcon } from '@mui/icons-material';
 
 export interface FileInputProps
   extends Omit<
@@ -53,7 +53,7 @@ const FileInput: FunctionComponent<FileInputProps> = ({
   const handleFileRemoval = useCallback<
     NonNullable<IconButtonProps['onClick']>
   >(
-    (event) => {
+    event => {
       event.stopPropagation();
       onChange?.(null);
     },
@@ -63,7 +63,7 @@ const FileInput: FunctionComponent<FileInputProps> = ({
   const handleTextFieldClick = useCallback<
     NonNullable<TextFieldProps['onClick']>
   >(
-    (event) => {
+    event => {
       if (disabled) {
         event.stopPropagation();
       }

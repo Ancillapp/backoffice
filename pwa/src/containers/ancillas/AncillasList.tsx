@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 
-import AddIcon from '@material-ui/icons/Add';
+import { Add as AddIcon } from '@mui/icons-material';
 
 import TopbarLayout, {
   TopbarLayoutProps,
@@ -11,7 +11,7 @@ import AutosizedFab from '../../components/common/AutosizedFab';
 import { Link } from 'react-router-dom';
 import Loader from '../../components/common/Loader';
 
-const AncillasList: FunctionComponent<TopbarLayoutProps> = (props) => {
+const AncillasList: FunctionComponent<TopbarLayoutProps> = props => {
   const { loading, data, error } = useAncillas();
 
   if (error) {

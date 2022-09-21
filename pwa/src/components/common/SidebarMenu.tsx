@@ -7,23 +7,22 @@ import React, {
 
 import { NavLink } from 'react-router-dom';
 
+import { List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import { makeStyles } from '@mui/styles';
+
 import {
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  makeStyles,
-} from '@material-ui/core';
+  People as PeopleIcon,
+  Dashboard as DashboardIcon,
+  LibraryMusic as LibraryMusicIcon,
+} from '@mui/icons-material';
 
-import PeopleIcon from '@material-ui/icons/People';
-import DashboardIcon from '@material-ui/icons/Dashboard';
-import LibraryMusicIcon from '@material-ui/icons/LibraryMusic';
+import {
+  Prayers as PrayersIcon,
+  AncillaDomini as AncillaDominiIcon,
+  HolyMass as HolyMassIcon,
+} from '../icons';
 
-import PrayersIcon from '../icons/Prayers';
-import AncillaDominiIcon from '../icons/AncillaDomini';
-import HolyMassIcon from '../icons/HolyMass';
-
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   active: {
     '& *': {
       color: theme.palette.primary.main,

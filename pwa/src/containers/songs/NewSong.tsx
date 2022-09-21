@@ -2,35 +2,35 @@ import React, { FunctionComponent, useCallback } from 'react';
 
 import { Link, LinkProps, useHistory } from 'react-router-dom';
 
-import { IconButton } from '@material-ui/core';
+import { IconButton, styled } from '@mui/material';
 
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import SaveIcon from '@material-ui/icons/Save';
+import {
+  ArrowBack as ArrowBackIcon,
+  Save as SaveIcon,
+} from '@mui/icons-material';
 
 import { useSongCreation } from '../../providers/ApiProvider';
 
 import TopbarLayout, {
   TopbarLayoutProps,
 } from '../../components/common/TopbarLayout';
-import SongForm, {
-  SongFormProps,
-  SongLanguage,
-} from '../../components/songs/SongForm';
+import SongForm, { SongFormProps } from '../../components/songs/SongForm';
 import Loader from '../../components/common/Loader';
 import TopbarIcon from '../../components/common/TopbarIcon';
 
-const mapLanguageToSongNumberPrefix = (language: SongLanguage): string =>
-  language === SongLanguage.GERMAN ? 'DE' : 'IT';
+const BackButton = styled(TopbarIcon)(({ theme }) => ({
+  marginRight: theme.spacing(0.5),
+}));
 
-const NewSong: FunctionComponent<Omit<TopbarLayoutProps, 'startAdornment'>> = (
-  props,
-) => {
+const NewSong: FunctionComponent<
+  Omit<TopbarLayoutProps, 'startAdornment'>
+> = props => {
   const [createSong, { loading: creatingSong }] = useSongCreation();
 
   const history = useHistory();
 
   const handleBackClick = useCallback<NonNullable<LinkProps['onClick']>>(
-    (event) => {
+    event => {
       if (creatingSong) {
         event.preventDefault();
       }
@@ -39,17 +39,12 @@ const NewSong: FunctionComponent<Omit<TopbarLayoutProps, 'startAdornment'>> = (
   );
 
   const handleSubmit = useCallback<NonNullable<SongFormProps['onSubmit']>>(
-    async ({ language, number, ...rest }) => {
-      const computedNumber = `${mapLanguageToSongNumberPrefix(
-        language,
-      )}${number}`;
+    async data => {
+      await createSong(data);
 
-      await createSong({
-        number: computedNumber,
-        ...rest,
-      });
-
-      history.replace(`/canti/${computedNumber}`);
+      history.replace(
+        `/canti/${data.language}/${data.category}/${data.number}`,
+      );
     },
     [createSong, history],
   );
@@ -58,7 +53,7 @@ const NewSong: FunctionComponent<Omit<TopbarLayoutProps, 'startAdornment'>> = (
     <TopbarLayout
       title="Nuovo canto"
       startAdornment={
-        <TopbarIcon sx={{ mr: 0.5 }}>
+        <BackButton>
           <Link to="/canti" onClick={handleBackClick}>
             <IconButton
               color="inherit"
@@ -69,7 +64,7 @@ const NewSong: FunctionComponent<Omit<TopbarLayoutProps, 'startAdornment'>> = (
               <ArrowBackIcon />
             </IconButton>
           </Link>
-        </TopbarIcon>
+        </BackButton>
       }
       endAdornment={
         <IconButton

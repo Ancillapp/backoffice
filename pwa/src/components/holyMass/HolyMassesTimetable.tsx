@@ -7,16 +7,16 @@ import React, {
 
 import {
   Button,
-  makeStyles,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
-import AddIcon from '@material-ui/icons/Add';
+import { Add as AddIcon } from '@mui/icons-material';
 
 import { Timetable } from '../../providers/ApiProvider';
 
@@ -46,7 +46,7 @@ const weekdays: Exclude<
   'sunday',
 ];
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   row: {
     height: 70,
   },
@@ -200,7 +200,7 @@ const HolyMassesTimetable: FunctionComponent<HolyMassesTimetableProps> = ({
   }, []);
 
   const missingWeekdays = weekdays.filter(
-    (weekday) => !(weekday in flattenedMasses),
+    weekday => !(weekday in flattenedMasses),
   );
 
   const daySelectOptions = [

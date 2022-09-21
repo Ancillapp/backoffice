@@ -6,23 +6,23 @@ import {
   Drawer,
   Toolbar,
   Typography,
-  makeStyles,
   useMediaQuery,
   useTheme,
   Divider,
   DrawerProps,
   IconButton,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import { ExitToApp as ExitToAppIcon } from '@mui/icons-material';
 
-import TauIcon from '../icons/Tau';
+import { Tau as TauIcon } from '../icons';
 
 export interface SidebarLayoutProps extends DrawerProps {
   menuContent?: ReactNode;
 }
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
     minHeight: '100%',

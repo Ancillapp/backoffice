@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from 'react';
 
-import { Link, makeStyles, Typography } from '@material-ui/core';
+import { Link, Typography } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -10,7 +11,7 @@ export interface PrayersProps {
   items: PrayerSummary[];
 }
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   prayersContainer: {
     display: 'flex',
     justifyContent: 'center',

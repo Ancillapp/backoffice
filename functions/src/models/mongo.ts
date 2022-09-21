@@ -1,10 +1,6 @@
 import type { ObjectId } from 'mongodb';
 
-export interface MongoDBRecord {
-  _id: ObjectId;
-}
-
-export interface Ancilla extends MongoDBRecord {
+export interface Ancilla {
   code: string;
   name: {
     en: string;
@@ -15,7 +11,7 @@ export interface Ancilla extends MongoDBRecord {
   date: Date;
 }
 
-export interface Fraternity extends MongoDBRecord {
+export interface Fraternity {
   location: string;
   seats: number;
   masses: {
@@ -40,7 +36,7 @@ export interface HolyMassParticipant {
   deleted?: boolean;
 }
 
-export interface HolyMass extends MongoDBRecord {
+export interface HolyMass {
   date: Date;
   fraternity: {
     id: ObjectId;
@@ -58,7 +54,7 @@ export interface PrayerLocalizedField {
   pt?: string;
 }
 
-export interface Prayer extends MongoDBRecord {
+export interface Prayer {
   slug: string;
   title: PrayerLocalizedField;
   subtitle?: PrayerLocalizedField;
@@ -66,13 +62,55 @@ export interface Prayer extends MongoDBRecord {
   image?: string;
 }
 
-export interface Song extends MongoDBRecord {
+export enum SongLanguage {
+  ITALIAN = 'it',
+  GERMAN = 'de',
+  PORTUGUESE = 'pt',
+}
+
+export enum SongCategory {
+  KYRIE = 'kyrie',
+  GLORY = 'glory',
+  HALLELUJAH = 'hallelujah',
+  CREED = 'creed',
+  OFFERTORY = 'offertory',
+  HOLY = 'holy',
+  ANAMNESIS = 'anamnesis',
+  AMEN = 'amen',
+  OUR_FATHER = 'our-father',
+  LAMB_OF_GOD = 'lamb-of-god',
+  CANONS_AND_REFRAINS = 'canons-and-refrains',
+  FRANCISCANS = 'franciscans',
+  PRAISE_AND_FAREWELL = 'praise-and-farewell',
+  ENTRANCE = 'entrance',
+  HOLY_SPIRIT = 'holy-spirit',
+  WORSHIP = 'worship',
+  EUCHARIST = 'eucharist',
+  OTHER_SONGS = 'other-songs',
+  BENEDICTUS = 'benedictus',
+  MAGNIFICAT = 'magnificat',
+  CANTICLES = 'canticles',
+  HYMNS = 'hymns',
+  SIMPLE_PRAYER = 'simple-prayer',
+  MARIANS = 'marians',
+  ANIMATION = 'animation',
+  GREGORIANS = 'gregorians',
+  ADVENT = 'advent',
+  CHRISTMAS = 'christmas',
+  LENT = 'lent',
+}
+
+export interface Song {
+  language: SongLanguage;
+  category: SongCategory;
   number: string;
   title: string;
   content: string;
 }
 
-export interface Subscription extends MongoDBRecord {
+export type SongSummary = Omit<Song, 'content'>;
+
+export interface Subscription {
   endpoint: string;
   keys: {
     auth: string;

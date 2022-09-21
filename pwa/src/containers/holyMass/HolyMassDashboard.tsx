@@ -2,7 +2,7 @@ import React, { lazy, FunctionComponent, Suspense } from 'react';
 
 import { Link, useParams, Redirect, Switch, Route } from 'react-router-dom';
 
-import { Tab, Tabs, useMediaQuery, useTheme } from '@material-ui/core';
+import { Tab, Tabs, useMediaQuery, useTheme } from '@mui/material';
 
 import TopbarLayout, {
   TopbarLayoutProps,
@@ -12,7 +12,7 @@ import Loader from '../../components/common/Loader';
 const HolyMassBookings = lazy(() => import('./HolyMassBookings'));
 const HolyMassTimetables = lazy(() => import('./HolyMassTimetables'));
 
-const HolyMassDashboard: FunctionComponent<TopbarLayoutProps> = (props) => {
+const HolyMassDashboard: FunctionComponent<TopbarLayoutProps> = props => {
   const { section } = useParams<{ section: string }>();
 
   const theme = useTheme();
@@ -28,6 +28,8 @@ const HolyMassDashboard: FunctionComponent<TopbarLayoutProps> = (props) => {
       title="Santa Messa"
       topbarContent={
         <Tabs
+          textColor="inherit"
+          indicatorColor="secondary"
           value={section}
           {...(isNarrow ? { centered: true } : { variant: 'fullWidth' })}
         >

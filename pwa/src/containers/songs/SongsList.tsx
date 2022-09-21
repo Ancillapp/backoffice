@@ -11,7 +11,6 @@ import { Link, useLocation, useHistory } from 'react-router-dom';
 import Fuse from 'fuse.js';
 
 import {
-  Box,
   IconButton,
   InputAdornment,
   Tab,
@@ -20,13 +19,15 @@ import {
   TextFieldProps,
   useMediaQuery,
   useTheme,
-} from '@material-ui/core';
+} from '@mui/material';
 
-import SearchIcon from '@material-ui/icons/Search';
-import ClearIcon from '@material-ui/icons/Clear';
-import AddIcon from '@material-ui/icons/Add';
+import {
+  Search as SearchIcon,
+  Clear as ClearIcon,
+  Add as AddIcon,
+} from '@mui/icons-material';
 
-import { SongSummary, useSongs } from '../../providers/ApiProvider';
+import { SongLanguage, useSongs } from '../../providers/ApiProvider';
 import TopbarLayout, {
   TopbarLayoutProps,
 } from '../../components/common/TopbarLayout';
@@ -34,14 +35,21 @@ import Songs from '../../components/songs/Songs';
 import AutosizedFab from '../../components/common/AutosizedFab';
 import Loader from '../../components/common/Loader';
 import { mergeSearchParams } from '../../helpers/search';
+import {
+  ExtendedSongSummary,
+  songCategoryToPrefixMap,
+  songLanguagesArray,
+} from '../../helpers/songs';
 
-const SongsList: FunctionComponent<TopbarLayoutProps> = (props) => {
-  const [displayedSongs, setDisplayedSongs] = useState<SongSummary[]>([]);
+const SongsList: FunctionComponent<TopbarLayoutProps> = props => {
+  const [displayedSongs, setDisplayedSongs] = useState<ExtendedSongSummary[]>(
+    [],
+  );
   const history = useHistory();
   const { search } = useLocation();
   const searchParams = useMemo(() => new URLSearchParams(search), [search]);
   const searchKeyword = searchParams.get('ricerca') || '';
-  const language = searchParams.get('lingua') || 'IT';
+  const language = searchParams.get('lingua') || 'it';
 
   const theme = useTheme();
 
@@ -49,15 +57,61 @@ const SongsList: FunctionComponent<TopbarLayoutProps> = (props) => {
 
   const { loading, data, error } = useSongs();
 
-  const filteredSongs = useMemo<SongSummary[] | null>(
-    () => data?.filter(({ number }) => number.startsWith(language)) ?? null,
+  const filteredSongs = useMemo<ExtendedSongSummary[] | null>(
+    () =>
+      data
+        ?.filter(song => song.language === language)
+        .sort((a, b) => {
+          if (a.language !== b.language) {
+            return (
+              songLanguagesArray.indexOf(a.language) -
+              songLanguagesArray.indexOf(b.language)
+            );
+          }
+
+          // If the song language is italian, make sure the categories get properly sorted
+          // Note that we already checked for language equality, so the two songs are in the same language.
+          // For this reason, we don't need to check also for b.language
+          if (a.language === SongLanguage.ITALIAN) {
+            /* eslint-disable @typescript-eslint/no-non-null-assertion */
+            const categoriesDiff = songCategoryToPrefixMap[a.language]![
+              a.category
+            ]!.localeCompare(songCategoryToPrefixMap[b.language]![b.category]!);
+            /* eslint-enable @typescript-eslint/no-non-null-assertion */
+            if (categoriesDiff !== 0) {
+              return categoriesDiff;
+            }
+          }
+
+          const normalizedNumberA = a.number
+            .replace('bis', '')
+            .padStart(5, '0');
+          const normalizedNumberB = b.number
+            .replace('bis', '')
+            .padStart(5, '0');
+
+          if (normalizedNumberA.startsWith(normalizedNumberB)) {
+            return normalizedNumberA.endsWith('bis') ? -1 : 1;
+          }
+
+          return normalizedNumberA.localeCompare(normalizedNumberB);
+        })
+        .map(song => ({
+          ...song,
+          formattedNumber: `${
+            songCategoryToPrefixMap[song.language]?.[song.category] || ''
+          }${song.number}`,
+        })) ?? null,
     [data, language],
   );
 
-  const fuse = useMemo<Fuse<SongSummary> | null>(
+  const fuse = useMemo<Fuse<ExtendedSongSummary> | null>(
     () =>
       filteredSongs
-        ? new Fuse(filteredSongs, { keys: ['number', 'title'] })
+        ? new Fuse(filteredSongs, {
+            keys: ['formattedNumber', 'title'],
+            ignoreLocation: true,
+          })
         : null,
     [filteredSongs],
   );
@@ -79,7 +133,7 @@ const SongsList: FunctionComponent<TopbarLayoutProps> = (props) => {
   }, [filteredSongs, fuse, searchKeyword]);
 
   const handleSearchInput = useCallback<NonNullable<TextFieldProps['onInput']>>(
-    (event) => {
+    event => {
       history.push({
         pathname: '/canti',
         search: mergeSearchParams(searchParams, {
@@ -108,32 +162,32 @@ const SongsList: FunctionComponent<TopbarLayoutProps> = (props) => {
       <TopbarLayout
         title="Canti"
         endAdornment={
-          <Box sx={{ width: 192 }} clone>
-            <TextField
-              type="search"
-              size="small"
-              variant="outlined"
-              placeholder="Cerca"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    {searchKeyword ? (
-                      <IconButton size="small" edge="end" onClick={clearSearch}>
-                        <ClearIcon />
-                      </IconButton>
-                    ) : (
-                      <SearchIcon />
-                    )}
-                  </InputAdornment>
-                ),
-              }}
-              value={searchKeyword}
-              onInput={handleSearchInput}
-            />
-          </Box>
+          <TextField
+            type="search"
+            size="small"
+            placeholder="Cerca"
+            sx={{ width: 192 }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  {searchKeyword ? (
+                    <IconButton size="small" edge="end" onClick={clearSearch}>
+                      <ClearIcon />
+                    </IconButton>
+                  ) : (
+                    <SearchIcon />
+                  )}
+                </InputAdornment>
+              ),
+            }}
+            value={searchKeyword}
+            onInput={handleSearchInput}
+          />
         }
         topbarContent={
           <Tabs
+            textColor="inherit"
+            indicatorColor="secondary"
             value={language}
             {...(isNarrow ? { centered: true } : { variant: 'fullWidth' })}
           >
@@ -142,10 +196,10 @@ const SongsList: FunctionComponent<TopbarLayoutProps> = (props) => {
               to={{
                 pathname: '/canti',
                 search: mergeSearchParams(searchParams, {
-                  lingua: 'IT',
+                  lingua: 'it',
                 }).toString(),
               }}
-              value="IT"
+              value="it"
               label="Italiano"
             />
             <Tab
@@ -153,11 +207,22 @@ const SongsList: FunctionComponent<TopbarLayoutProps> = (props) => {
               to={{
                 pathname: '/canti',
                 search: mergeSearchParams(searchParams, {
-                  lingua: 'DE',
+                  lingua: 'de',
                 }).toString(),
               }}
-              value="DE"
+              value="de"
               label="Tedesco"
+            />
+            <Tab
+              component={Link}
+              to={{
+                pathname: '/canti',
+                search: mergeSearchParams(searchParams, {
+                  lingua: 'pt',
+                }).toString(),
+              }}
+              value="pt"
+              label="Portoghese"
             />
           </Tabs>
         }

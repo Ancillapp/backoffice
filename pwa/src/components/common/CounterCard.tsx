@@ -3,14 +3,13 @@ import React, { FunctionComponent, ReactNode } from 'react';
 import CountUp from 'react-countup';
 
 import {
-  Box,
   Card,
   CardContent,
   CardHeader,
   CardProps,
   Typography,
   Skeleton,
-} from '@material-ui/core';
+} from '@mui/material';
 
 export interface CounterCardProps
   extends Omit<CardProps, 'title' | 'placeholder'> {
@@ -24,20 +23,16 @@ const CounterCard: FunctionComponent<CounterCardProps> = ({
   title,
   subtitle,
   value,
-  placeholder = <Skeleton variant="text" width={96} />,
+  placeholder = (
+    <Skeleton sx={{ margin: '0 auto' }} variant="text" width={96} />
+  ),
   ...props
 }) => (
   <Card {...props}>
     {title && <CardHeader title={title} subheader={subtitle} />}
     <CardContent>
       <Typography variant="h2" align="center">
-        {typeof value === 'number' ? (
-          <CountUp end={value} />
-        ) : (
-          <Box sx={{ margin: '0 auto' }} clone>
-            {placeholder}
-          </Box>
-        )}
+        {typeof value === 'number' ? <CountUp end={value} /> : placeholder}
       </Typography>
     </CardContent>
   </Card>

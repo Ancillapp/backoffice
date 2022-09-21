@@ -2,7 +2,7 @@ import React, { FunctionComponent } from 'react';
 
 import { ResponsiveLine } from '@nivo/line';
 
-import { useTheme } from '@material-ui/core';
+import { useTheme } from '@mui/material';
 
 import { SessionsReportRecord } from '../../providers/ApiProvider';
 
@@ -56,13 +56,13 @@ const SessionsChart: FunctionComponent<SessionsChartProps> = ({ data }) => {
         format: '%Y-%m-%d',
         precision: 'day',
       }}
-      xFormat={(value) => dateFormatter.format(value as Date)}
+      xFormat={value => dateFormatter.format(value as Date)}
       yScale={{
         type: 'linear',
         stacked: false,
       }}
       axisBottom={{
-        format: (value) => dateFormatter.format(value as Date),
+        format: value => dateFormatter.format(value as Date),
         tickValues: data
           .filter((_, index) => index % 2 === 0)
           .map(({ date }) => new Date(date)),

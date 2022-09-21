@@ -1,6 +1,6 @@
 {
   "functions": {
-    "runtime": "nodejs12"
+    "runtime": "nodejs16"
   },
   "hosting": {
     "site": "ancillapp-backoffice-staging",

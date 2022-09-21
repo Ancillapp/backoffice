@@ -1,5 +1,3 @@
-
-
 import React, {
   FunctionComponent,
   HTMLAttributes,
@@ -8,32 +6,32 @@ import React, {
   useEffect,
   useMemo,
   useReducer,
+  useState,
 } from 'react';
 
 import {
+  Checkbox,
   FormControl,
+  FormControlLabel,
   Grid,
   InputLabel,
-  makeStyles,
   Select,
   SelectProps,
   TextField,
   TextFieldProps,
-} from '@material-ui/core';
+} from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
 import Page from '../common/Page';
 import SongPreview from './SongPreview';
-
-export enum SongLanguage {
-  ITALIAN = 'IT',
-  GERMAN = 'DE',
-}
+import { SongCategory, SongLanguage } from '../../providers/ApiProvider';
 
 export interface SongFormValue {
+  language: SongLanguage;
+  category: SongCategory;
   number: string;
   title: string;
   content: string;
-  language: SongLanguage;
 }
 
 export type SongFormState = SongFormValue;
@@ -49,7 +47,7 @@ export interface InitSongFormAction {
 }
 
 export interface SetFieldSongFormAction<
-  F extends keyof SongFormState = keyof SongFormState
+  F extends keyof SongFormState = keyof SongFormState,
 > {
   type: SongFormActionType.SET_FIELD;
   field: F;
@@ -85,19 +83,21 @@ const reduceSongForm: Reducer<SongFormState, SongFormAction> = (
 };
 
 const defaultState: SongFormState = {
+  language: SongLanguage.ITALIAN,
+  category: SongCategory.OTHER_SONGS,
   number: '',
   title: '',
   content: '',
-  language: SongLanguage.ITALIAN,
 };
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   disabled: {
     color: theme.palette.text.primary,
   },
   contentInput: {
     minHeight: '24rem',
     lineHeight: 1.4,
+    fontFamily: 'monospace',
   },
 }));
 
@@ -120,23 +120,25 @@ const SongForm: FunctionComponent<SongFormProps> = ({
   );
 
   const [state, dispatch] = useReducer(reduceSongForm, initialState);
+  const [enablePreviewChords, setEnablePreviewChords] = useState(false);
 
   const createTextFieldInputHandler = useCallback(
     <F extends keyof SongFormState>(
-      field: F,
-    ): NonNullable<TextFieldProps['onInput']> => (event) => {
-      dispatch({
-        type: SongFormActionType.SET_FIELD,
-        field,
-        value: (event.target as HTMLTextAreaElement | HTMLInputElement).value,
-      });
-    },
+        field: F,
+      ): NonNullable<TextFieldProps['onInput']> =>
+      event => {
+        dispatch({
+          type: SongFormActionType.SET_FIELD,
+          field,
+          value: (event.target as HTMLTextAreaElement | HTMLInputElement).value,
+        });
+      },
     [],
   );
 
   const handleLanguageChange = useCallback<
     NonNullable<SelectProps['onChange']>
-  >((event) => {
+  >(event => {
     dispatch({
       type: SongFormActionType.SET_FIELD,
       field: 'language',
@@ -144,10 +146,20 @@ const SongForm: FunctionComponent<SongFormProps> = ({
     });
   }, []);
 
+  const handleCategoryChange = useCallback<
+    NonNullable<SelectProps['onChange']>
+  >(event => {
+    dispatch({
+      type: SongFormActionType.SET_FIELD,
+      field: 'category',
+      value: event.target.value as SongCategory,
+    });
+  }, []);
+
   const handleSubmit = useCallback<
     NonNullable<HTMLAttributes<HTMLFormElement>['onSubmit']>
   >(
-    (event) => {
+    event => {
       event.preventDefault();
 
       onSubmit?.(state);
@@ -158,7 +170,7 @@ const SongForm: FunctionComponent<SongFormProps> = ({
   const handleReset = useCallback<
     NonNullable<HTMLAttributes<HTMLFormElement>['onReset']>
   >(
-    (event) => {
+    event => {
       dispatch({
         type: SongFormActionType.INIT,
         value: initialState,
@@ -172,7 +184,6 @@ const SongForm: FunctionComponent<SongFormProps> = ({
   const SongFormTextField = useCallback<FunctionComponent<TextFieldProps>>(
     ({ InputLabelProps, InputProps, ...props }) => (
       <TextField
-        variant="outlined"
         fullWidth
         InputLabelProps={{
           shrink: true,
@@ -214,7 +225,7 @@ const SongForm: FunctionComponent<SongFormProps> = ({
         onReset={handleReset}
         {...props}
       >
-        <Grid item xs={6} sm={3} lg={2}>
+        <Grid item xs={6} lg={4}>
           <SongFormTextField
             label="Numero"
             onInput={createTextFieldInputHandler('number')}
@@ -222,8 +233,8 @@ const SongForm: FunctionComponent<SongFormProps> = ({
             disabled={disabled}
           />
         </Grid>
-        <Grid item xs={6} sm={3} lg={2}>
-          <FormControl variant="outlined" fullWidth>
+        <Grid item xs={6} lg={4}>
+          <FormControl fullWidth>
             <InputLabel htmlFor="song-language">Lingua *</InputLabel>
             <Select
               native
@@ -240,10 +251,65 @@ const SongForm: FunctionComponent<SongFormProps> = ({
             >
               <option value={SongLanguage.ITALIAN}>Italiano</option>
               <option value={SongLanguage.GERMAN}>Tedesco</option>
+              <option value={SongLanguage.PORTUGUESE}>Portoghese</option>
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={12} sm={6} lg={8}>
+        <Grid item xs={12} lg={4}>
+          <FormControl fullWidth>
+            <InputLabel htmlFor="song-category">Categoria *</InputLabel>
+            <Select
+              native
+              label="Categoria *"
+              inputProps={{
+                name: 'category',
+                id: 'song-category',
+              }}
+              classes={{ disabled: classes.disabled }}
+              onChange={handleCategoryChange}
+              value={state.category}
+              disabled={disabled}
+              required
+            >
+              <option value={SongCategory.KYRIE}>Kyrie</option>
+              <option value={SongCategory.GLORY}>Gloria</option>
+              <option value={SongCategory.HALLELUJAH}>Alleluia</option>
+              <option value={SongCategory.CREED}>Credo</option>
+              <option value={SongCategory.OFFERTORY}>Offertorio</option>
+              <option value={SongCategory.HOLY}>Santo</option>
+              <option value={SongCategory.ANAMNESIS}>Anamnesi</option>
+              <option value={SongCategory.AMEN}>Amen</option>
+              <option value={SongCategory.OUR_FATHER}>Padre Nostro</option>
+              <option value={SongCategory.LAMB_OF_GOD}>Agnello di Dio</option>
+              <option value={SongCategory.CANONS_AND_REFRAINS}>
+                Canoni e Ritornelli
+              </option>
+              <option value={SongCategory.FRANCISCANS}>Francescani</option>
+              <option value={SongCategory.PRAISE_AND_FAREWELL}>
+                Lode e Congedo
+              </option>
+              <option value={SongCategory.ENTRANCE}>Ingresso</option>
+              <option value={SongCategory.HOLY_SPIRIT}>Spirito Santo</option>
+              <option value={SongCategory.WORSHIP}>Adorazione</option>
+              <option value={SongCategory.EUCHARIST}>Comunione</option>
+              <option value={SongCategory.OTHER_SONGS}>Altri Canti</option>
+              <option value={SongCategory.BENEDICTUS}>Benedictus</option>
+              <option value={SongCategory.MAGNIFICAT}>Magnificat</option>
+              <option value={SongCategory.CANTICLES}>Cantici</option>
+              <option value={SongCategory.HYMNS}>Inni</option>
+              <option value={SongCategory.SIMPLE_PRAYER}>
+                Preghiera Semplice
+              </option>
+              <option value={SongCategory.MARIANS}>Mariani</option>
+              <option value={SongCategory.ANIMATION}>Animazione</option>
+              <option value={SongCategory.GREGORIANS}>Gregoriani</option>
+              <option value={SongCategory.ADVENT}>Avvento</option>
+              <option value={SongCategory.CHRISTMAS}>Natale</option>
+              <option value={SongCategory.LENT}>Quaresima</option>
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item xs={12} lg={12}>
           <SongFormTextField
             label="Titolo"
             onInput={createTextFieldInputHandler('title')}
@@ -262,9 +328,22 @@ const SongForm: FunctionComponent<SongFormProps> = ({
           />
         </Grid>
         <Grid item xs={12} md={6}>
-          <SongPreview content={state.content} />
+          <SongPreview
+            content={state.content}
+            enableChords={enablePreviewChords}
+          />
         </Grid>
       </Grid>
+      <FormControlLabel
+        control={
+          <Checkbox
+            value={enablePreviewChords}
+            onChange={event => setEnablePreviewChords(event.target.checked)}
+            color="secondary"
+          />
+        }
+        label="Visualizza accordi"
+      />
     </Page>
   );
 };

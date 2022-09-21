@@ -2,14 +2,14 @@ import React, { FunctionComponent } from 'react';
 
 import clsx from 'clsx';
 
-import { Box, BoxProps, makeStyles, Theme } from '@material-ui/core';
-import { Breakpoint } from '@material-ui/core/styles/createBreakpoints';
+import { Box, BoxProps, Breakpoint, Theme } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
 export interface PageProps extends BoxProps {
   size?: number | Breakpoint;
 }
 
-const useStyles = makeStyles<Theme, PageProps>((theme) => ({
+const useStyles = makeStyles<Theme, PageProps>(theme => ({
   root: ({ size = 'sm' }) => ({
     margin: 0,
     width: '100%',
@@ -27,7 +27,8 @@ const useStyles = makeStyles<Theme, PageProps>((theme) => ({
       padding: '2rem 3rem',
       background: theme.palette.background.paper,
       width: '100%',
-      maxWidth: typeof size === 'number' ? size : theme.breakpoints.width(size),
+      maxWidth:
+        typeof size === 'number' ? size : theme.breakpoints.values[size],
       margin: '0 auto',
 
       [theme.breakpoints.up('md')]: {

@@ -1,16 +1,17 @@
 import React, { FunctionComponent, useCallback, useRef, useState } from 'react';
 
-import { Button, IconButton, makeStyles, Popover } from '@material-ui/core';
+import { Button, IconButton, Popover } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 
-import { StaticTimePicker } from '@material-ui/lab';
+import { StaticTimePicker } from '@mui/x-date-pickers';
 
-import AddCircleIcon from '@material-ui/icons/AddCircle';
+import { AddCircle as AddCircleIcon } from '@mui/icons-material';
 
 export interface AddTimeButtonProps {
   onConfirm?(value: string): void;
 }
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   button: {
     fontSize: 16,
   },
