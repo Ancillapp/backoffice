@@ -101,6 +101,10 @@ const useStyles = makeStyles(theme => ({
   bridge: {
     fontStyle: 'italic',
   },
+  intro: {
+    fontWeight: theme.typography.fontWeightBold,
+    fontStyle: 'italic',
+  },
   ending: {
     fontWeight: theme.typography.fontWeightBold,
     fontStyle: 'italic',
@@ -127,6 +131,9 @@ const SongPreview: FunctionComponent<SongPreviewProps> = ({
       }
       if (/^bridge[:.]?$/i.test(type)) {
         return classes.bridge;
+      }
+      if (/^introd?[:.]?$/i.test(type)) {
+        return classes.intro;
       }
       if (/^(?:finale|fin|fim|ende)[:.]?$/i.test(type)) {
         return classes.ending;
@@ -180,7 +187,7 @@ const SongPreview: FunctionComponent<SongPreviewProps> = ({
               '.row > .column > .lyrics',
             );
             const paragraphType = initialParagraphLyrics?.textContent?.match(
-              /^(?:rit|ritornello|chorus|ref|refrain|bridge|finale|fin|fim|ende|\d+)[:.]?\s/gi,
+              /^(?:rit|ritornello|chorus|ref|refrain|bridge|introd?|finale|fin|fim|ende|\d+)[:.]?\s/gi,
             )?.[0];
             if (paragraphType) {
               initialParagraphLyrics.innerHTML =
