@@ -17,6 +17,17 @@ const parser = new UltimateGuitarParser();
 const formatter = new HtmlDivFormatter();
 const template = document.createElement('template');
 
+const htmlCharactersEscapeMap: Record<string, string> = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;',
+};
+
+const escapeString = (str: string) =>
+  str.replace(/[&<>"']/g, match => htmlCharactersEscapeMap[match]);
+
 interface UltimateGuitarSection {
   type: 'ug';
   content: Song;
@@ -126,7 +137,7 @@ const SongPreview: FunctionComponent<SongPreviewProps> = ({
   );
 
   const parsedSections = useMemo<Section[]>(() => {
-    const sections = content.split('```').filter(Boolean);
+    const sections = escapeString(content).split('```').filter(Boolean);
     return sections.map(section => {
       if (section.startsWith('abc')) {
         return {
