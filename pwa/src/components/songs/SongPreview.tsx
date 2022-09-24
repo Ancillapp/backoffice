@@ -140,7 +140,7 @@ const SongPreview: FunctionComponent<SongPreviewProps> = ({
       }
       return '';
     },
-    [classes.bridge, classes.chorus, classes.ending],
+    [classes.bridge, classes.chorus, classes.intro, classes.ending],
   );
 
   const parsedSections = useMemo<Section[]>(() => {
