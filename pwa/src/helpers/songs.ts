@@ -34,6 +34,7 @@ export const songCategoryToPrefixMap: Partial<
     [SongCategory.WORSHIP]: 'C',
     [SongCategory.EUCHARIST]: 'C',
     [SongCategory.OTHER_SONGS]: 'C',
+    [SongCategory.VENI_CREATOR]: 'X',
     [SongCategory.BENEDICTUS]: 'X',
     [SongCategory.MAGNIFICAT]: 'X',
     [SongCategory.CANTICLES]: 'X',

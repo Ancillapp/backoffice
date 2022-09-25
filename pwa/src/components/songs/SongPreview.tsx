@@ -17,6 +17,17 @@ const parser = new UltimateGuitarParser();
 const formatter = new HtmlDivFormatter();
 const template = document.createElement('template');
 
+const htmlCharactersEscapeMap: Record<string, string> = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;',
+};
+
+const escapeString = (str: string) =>
+  str.replace(/[&<>"']/g, match => htmlCharactersEscapeMap[match]);
+
 interface UltimateGuitarSection {
   type: 'ug';
   content: Song;
@@ -90,6 +101,10 @@ const useStyles = makeStyles(theme => ({
   bridge: {
     fontStyle: 'italic',
   },
+  intro: {
+    fontWeight: theme.typography.fontWeightBold,
+    fontStyle: 'italic',
+  },
   ending: {
     fontWeight: theme.typography.fontWeightBold,
     fontStyle: 'italic',
@@ -117,16 +132,19 @@ const SongPreview: FunctionComponent<SongPreviewProps> = ({
       if (/^bridge[:.]?$/i.test(type)) {
         return classes.bridge;
       }
+      if (/^introd?[:.]?$/i.test(type)) {
+        return classes.intro;
+      }
       if (/^(?:finale|fin|fim|ende)[:.]?$/i.test(type)) {
         return classes.ending;
       }
       return '';
     },
-    [classes.bridge, classes.chorus, classes.ending],
+    [classes.bridge, classes.chorus, classes.intro, classes.ending],
   );
 
   const parsedSections = useMemo<Section[]>(() => {
-    const sections = content.split('```').filter(Boolean);
+    const sections = escapeString(content).split('```').filter(Boolean);
     return sections.map(section => {
       if (section.startsWith('abc')) {
         return {
@@ -169,7 +187,7 @@ const SongPreview: FunctionComponent<SongPreviewProps> = ({
               '.row > .column > .lyrics',
             );
             const paragraphType = initialParagraphLyrics?.textContent?.match(
-              /^(?:rit|ritornello|chorus|ref|refrain|bridge|finale|fin|fim|ende|\d+)[:.]?\s/gi,
+              /^(?:rit|ritornello|chorus|ref|refrain|bridge|introd?|finale|fin|fim|ende|\d+)[:.]?\s/gi,
             )?.[0];
             if (paragraphType) {
               initialParagraphLyrics.innerHTML =

@@ -293,6 +293,7 @@ const SongForm: FunctionComponent<SongFormProps> = ({
               <option value={SongCategory.WORSHIP}>Adorazione</option>
               <option value={SongCategory.EUCHARIST}>Comunione</option>
               <option value={SongCategory.OTHER_SONGS}>Altri Canti</option>
+              <option value={SongCategory.VENI_CREATOR}>Veni Creator</option>
               <option value={SongCategory.BENEDICTUS}>Benedictus</option>
               <option value={SongCategory.MAGNIFICAT}>Magnificat</option>
               <option value={SongCategory.CANTICLES}>Cantici</option>

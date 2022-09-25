@@ -87,6 +87,7 @@ export enum SongCategory {
   WORSHIP = 'worship',
   EUCHARIST = 'eucharist',
   OTHER_SONGS = 'other-songs',
+  VENI_CREATOR = 'veni-creator',
   BENEDICTUS = 'benedictus',
   MAGNIFICAT = 'magnificat',
   CANTICLES = 'canticles',
