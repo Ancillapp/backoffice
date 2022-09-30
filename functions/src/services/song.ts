@@ -118,7 +118,7 @@ export const list = async (fullData?: boolean) => {
 export const count = async () => {
   const songsCollection = await getSongsCollection();
 
-  const count = await songsCollection.find().count();
+  const count = await songsCollection.countDocuments();
 
   return count;
 };

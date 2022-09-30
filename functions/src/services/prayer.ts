@@ -50,7 +50,7 @@ export const list = async (fullData?: boolean) => {
 export const count = async () => {
   const prayersCollection = await getPrayersCollection();
 
-  const count = await prayersCollection.find().count();
+  const count = await prayersCollection.countDocuments();
 
   return count;
 };
