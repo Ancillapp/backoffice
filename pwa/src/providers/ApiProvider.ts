@@ -184,7 +184,7 @@ export enum SongCategory {
 export interface Song {
   language: SongLanguage;
   category: SongCategory;
-  number: string;
+  number: number;
   title: string;
   content: string;
 }
@@ -198,13 +198,13 @@ export const useSongsCount = () => useApi<{ count: number }>('songs/count');
 export const useSong = (
   language: SongLanguage,
   category: SongCategory,
-  number: string,
+  number: number,
 ) => useApi<Song>(`songs/${language}/${category}/${number}`);
 
 export const useSongUpdate = (
   language: SongLanguage,
   category: SongCategory,
-  number: string,
+  number: number,
 ) =>
   useMutation<Song, Partial<Song>>(`songs/${language}/${category}/${number}`, {
     method: 'PATCH',
@@ -213,7 +213,7 @@ export const useSongUpdate = (
 export const useSongDeletion = (
   language: SongLanguage,
   category: SongCategory,
-  number: string,
+  number: number,
 ) =>
   useMutation<Song, void>(`songs/${language}/${category}/${number}`, {
     method: 'DELETE',
@@ -277,8 +277,7 @@ export const useAncillas = () => useApi<AncillaSummary[]>('ancillas');
 export const useAncillasCount = () =>
   useApi<{ count: number }>('ancillas/count');
 
-export const useAncilla = (number: string) =>
-  useApi<Ancilla>(`ancillas/${number}`);
+export const useAncilla = (code: string) => useApi<Ancilla>(`ancillas/${code}`);
 
 export const useUsersCount = () => useApi<{ count: number }>('users/count');
 

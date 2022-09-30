@@ -104,14 +104,7 @@ export const list = async (fullData?: boolean) => {
       }
     }
 
-    const normalizedNumberA = a.number.replace('bis', '').padStart(5, '0');
-    const normalizedNumberB = b.number.replace('bis', '').padStart(5, '0');
-
-    if (normalizedNumberA.startsWith(normalizedNumberB)) {
-      return normalizedNumberA.endsWith('bis') ? -1 : 1;
-    }
-
-    return normalizedNumberA.localeCompare(normalizedNumberB);
+    return a.number - b.number;
   });
 };
 

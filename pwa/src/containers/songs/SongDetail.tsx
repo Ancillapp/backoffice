@@ -51,12 +51,13 @@ const SongDetail: FunctionComponent<
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const {
-    params: { language, category, number },
+    params: { language, category, number: rawNumber },
   } = useRouteMatch<{
     language: SongLanguage;
     category: SongCategory;
     number: string;
   }>();
+  const number = Number(rawNumber);
 
   const history = useHistory();
 
