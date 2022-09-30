@@ -104,21 +104,14 @@ export const list = async (fullData?: boolean) => {
       }
     }
 
-    const normalizedNumberA = a.number.replace('bis', '').padStart(5, '0');
-    const normalizedNumberB = b.number.replace('bis', '').padStart(5, '0');
-
-    if (normalizedNumberA.startsWith(normalizedNumberB)) {
-      return normalizedNumberA.endsWith('bis') ? -1 : 1;
-    }
-
-    return normalizedNumberA.localeCompare(normalizedNumberB);
+    return a.number - b.number;
   });
 };
 
 export const count = async () => {
   const songsCollection = await getSongsCollection();
 
-  const count = await songsCollection.find().count();
+  const count = await songsCollection.countDocuments();
 
   return count;
 };

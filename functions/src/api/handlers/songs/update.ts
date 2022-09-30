@@ -1,10 +1,16 @@
-import { update, SongIdFields } from '../../../services/song';
-import type { Song } from '../../../models/mongo';
+import { update } from '../../../services/song';
+import type { Song, SongCategory, SongLanguage } from '../../../models/mongo';
 
 import type { RequestHandler } from 'express';
 
+export interface UpdateSongParams extends Record<string, string> {
+  language: SongLanguage;
+  category: SongCategory;
+  number: string;
+}
+
 export const updateSong: RequestHandler<
-  SongIdFields,
+  UpdateSongParams,
   Song,
   Partial<Song>
 > = async (
@@ -26,7 +32,7 @@ export const updateSong: RequestHandler<
   }
 
   const updatedSong = await update(
-    { language, category, number },
+    { language, category, number: Number(number) },
     {
       language: newLanguage,
       category: newCategory,

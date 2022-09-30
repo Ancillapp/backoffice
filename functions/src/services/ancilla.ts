@@ -77,7 +77,7 @@ export const list = async () => {
 export const count = async () => {
   const ancillasCollection = await getAncillasCollection();
 
-  const count = await ancillasCollection.find().count();
+  const count = await ancillasCollection.countDocuments();
 
   return count;
 };

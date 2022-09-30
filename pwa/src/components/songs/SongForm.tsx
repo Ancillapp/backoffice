@@ -29,7 +29,7 @@ import { SongCategory, SongLanguage } from '../../providers/ApiProvider';
 export interface SongFormValue {
   language: SongLanguage;
   category: SongCategory;
-  number: string;
+  number: number;
   title: string;
   content: string;
 }
@@ -85,7 +85,7 @@ const reduceSongForm: Reducer<SongFormState, SongFormAction> = (
 const defaultState: SongFormState = {
   language: SongLanguage.ITALIAN,
   category: SongCategory.OTHER_SONGS,
-  number: '',
+  number: 1,
   title: '',
   content: '',
 };
@@ -228,6 +228,7 @@ const SongForm: FunctionComponent<SongFormProps> = ({
         <Grid item xs={6} lg={4}>
           <SongFormTextField
             label="Numero"
+            type="number"
             onInput={createTextFieldInputHandler('number')}
             value={state.number}
             disabled={disabled}
